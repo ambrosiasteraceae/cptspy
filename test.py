@@ -1,7 +1,16 @@
-from reading import convert_file
+from reading import convert_folder
+from filepaths import *
+import os
+import glob
+import liquepy as lq
+
+#Filter Function is ready  - 100%
+#Loading main & header data is ready - 100%
+# convert_folder(fp_in_nmdc, fp_out_nmdc, verbose = True)
+
+#Loading multiple data frames
 
 
 
-in_fp, out_fp = "C:/Users/dragos/Desktop/data/East Hill-All PreCPTs", "C:/Users/dragos/Desktop/data/cpts"
+cpt = lq.field.load_cpt_from_file(ffps[index], delimiter=";")
 
-convert_file(in_fp, out_fp, verbose = True)

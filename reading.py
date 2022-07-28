@@ -1,4 +1,3 @@
-
 import pandas as pd
 import glob
 import os
@@ -47,7 +46,7 @@ def convert_file(ffp, out_fp, verbose=0):
     :return:
     """
 
-    fns = [convert_hud_to_csv,convert_capsurvey_to_csv]
+    fns = [convert_nmdc_to_csv_00,convert_cs_to_csv]
     for i, fn in enumerate(fns):
         if verbose:
             print(fn.__name__)
@@ -83,7 +82,7 @@ def convert_folder(in_fp, out_fp, verbose=0):
         converter_name = convert_file(ffp, out_fp, verbose)
         fname = ffp.split(in_fp)[-1]
 
-        results.append("{0},{1}".format(fname, converter_name))
+        results.append("{0},{1}".format(fname.split('/')[-1], converter_name))
     if verbose:
         print('SUMMARY: ')
         for line in results:
@@ -92,6 +91,7 @@ def convert_folder(in_fp, out_fp, verbose=0):
     ofile.write("\n".join(results))
     ofile.close()
     return results
+    
 def trim_missing_at_end_data_df(df_data, neg_lim=None):
     """
     Removes rows at end of file that have empty data
@@ -126,13 +126,8 @@ def trim_missing_at_end_data_df(df_data, neg_lim=None):
     return df_data
 
 
-def convert_hud_to_csv(ffp, out_fp, verbose=0):
+def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
 
-
-
-
-
-    
     cpt_num = ffp.split("HUD-")[-1]
     cpt_num = cpt_num.split(".xlsx")[0]
 
@@ -140,8 +135,8 @@ def convert_hud_to_csv(ffp, out_fp, verbose=0):
     if 'Header' in xf.sheet_names and 'Data' in xf.sheet_names:
         if verbose:
             print('found sheet names at convert_raw01_xlsx')
-        else:
-            return 0
+    else:
+        return 0
 
     df = pd.read_excel(ffp, sheet_name='Data')
     
@@ -216,6 +211,10 @@ def convert_hud_to_csv(ffp, out_fp, verbose=0):
 
 def convert_cs_to_csv(ffp, out_fp, verbose = 0):
 
+    xf = pd.ExcelFile(ffp)
+    if len(xf.sheet_names) > 1:
+        return 0
+    
     if "CPT" in ffp:
         cpt_num = ffp.split("CPT-")[-1]
     elif "HUD" in ffp:
@@ -301,27 +300,7 @@ def convert_cs_to_csv(ffp, out_fp, verbose = 0):
     df_data.columns = list(df_top)
     df_top.iloc[0, -1] = inspect.stack()[0][3]
     df_new = pd.concat([df_top, df_z, df_headers, df_data])
-    df_new.to_csv("CPT_{0}.csv".format(cpt_num), index=False , sep = ';')
+    df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False , sep = ';')
     return 1
 
 
-
-
-import liquepy as lq
-import matplotlib.pyplot as plt
-
-
-#convert_capsurvey_to_csv('loading/PRE-HUD-I17D.xlsx','/loading',verbose = True)
-#convert_hud_to_csv('C:/Users/dgs/OneDrive/04_R&D/cptspy/loading/HUDAYRIYAT_PRE-HUD-N21d.xlsx','C:/Users/dgs/OneDrive/04_R&D/cptspy/loading/',verbose = True )
-
-
-cpt = lq.field.load_cpt_from_file("loading/CPT_N21d.csv", delimiter=";")
-bf, sps = plt.subplots(ncols=3, sharey=True, figsize=(8, 6))
-
-lq.fig.make_cpt_plots(sps, cpt)
-plt.show()
-
-bi2014 = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5, gwl=2.5)
-bf, sps = plt.subplots(ncols=4, sharey=True, figsize=(8, 6))
-lq.fig.make_bi2014_outputs_plot(sps, bi2014)
-plt.show()

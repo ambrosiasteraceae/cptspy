@@ -1,0 +1,20 @@
+
+
+import liquepy as lq
+import matplotlib.pyplot as plt
+
+
+#convert_capsurvey_to_csv('loading/PRE-HUD-I17D.xlsx','/loading',verbose = True)
+#convert_hud_to_csv('C:/Users/dgs/OneDrive/04_R&D/cptspy/loading/HUDAYRIYAT_PRE-HUD-N21d.xlsx','C:/Users/dgs/OneDrive/04_R&D/cptspy/loading/',verbose = True )
+
+
+cpt = lq.field.load_cpt_from_file("CPT_N21d.csv", delimiter=";")
+bf, sps = plt.subplots(ncols=3, sharey=True, figsize=(8, 6))
+
+lq.fig.make_cpt_plots(sps, cpt)
+plt.show()
+
+bi2014 = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5, gwl=2.5)
+bf, sps = plt.subplots(ncols=4, sharey=True, figsize=(8, 6))
+lq.fig.make_bi2014_outputs_plot(sps, bi2014)
+plt.show()
