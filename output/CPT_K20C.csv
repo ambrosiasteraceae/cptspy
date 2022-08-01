@@ -7,9 +7,7 @@ E-Mail:;jobi@capital-surveys.com;;
 Phone number:;+971255162255;;
 Name:;PRE-CPT-K20C;;
 Date:;6/23/2022 2:22:38 AM;;
-Name:;PRE-CPT-K20C;;
 Location:;PRE-CPT-K20C;;
-Date:;6/23/2022 2:22:38 AM;;
 Pre-Drill:;0;;
 Assumed GWL:;0;;
 groundlvl;1.9599999999999997;;
@@ -19,6 +17,8 @@ Probe code:;Mks904;;
 Factors:;181240;;
 Zeros:;4015;;
 aratio;0.58;;
+;;;
+;;;
 ;;;
 ;;;
 Depth (m);qc (MPa);fs (MPa);u (MPa)

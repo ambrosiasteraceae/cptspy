@@ -7,9 +7,7 @@ E-Mail:;jobi@capital-surveys.com;;
 Phone number:;+971255162255;;
 Name:;PRE-CPT-J19B;;
 Date:;6/24/2022 12:37:28 AM;;
-Name:;PRE-CPT-J19B;;
 Location:;PRE-CPT-J19B;;
-Date:;6/24/2022 12:37:28 AM;;
 Pre-Drill:;0;;
 Assumed GWL:;0;;
 groundlvl;2.0599999999999996;;
@@ -19,6 +17,8 @@ Probe code:;Mks904;;
 Factors:;181240;;
 Zeros:;4015;;
 aratio;0.58;;
+;;;
+;;;
 ;;;
 ;;;
 Depth (m);qc (MPa);fs (MPa);u (MPa)

@@ -7,9 +7,7 @@ E-Mail:;jobi@capital-surveys.com;;
 Phone number:;+971255162255;;
 Name:;PRE-CPT-J16A;;
 Date:;6/23/2022 10:33:36 PM;;
-Name:;PRE-CPT-J16A;;
 Location:;PRE-CPT-J16A;;
-Date:;6/23/2022 10:33:36 PM;;
 Pre-Drill:;0;;
 Assumed GWL:;0;;
 groundlvl;2.01;;
@@ -19,6 +17,8 @@ Probe code:;Mks904;;
 Factors:;181240;;
 Zeros:;4016;;
 aratio;0.58;;
+;;;
+;;;
 ;;;
 ;;;
 Depth (m);qc (MPa);fs (MPa);u (MPa)

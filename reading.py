@@ -157,6 +157,7 @@ def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
     #Create the dataFrame from the Header sheet
     df_top = pd.read_excel(ffp, sheet_name='Header')
     df_top = df_top.iloc[:, 0:4] #I don't think it does much 
+    df_top.drop_duplicates(inplace = True,ignore_index = True)
     pp = len(df_top)
     limit = 22
     more = limit - pp
@@ -183,7 +184,9 @@ def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
 
         if df_top.iloc[i, 0] == "Ground level":
             df_top.iloc[i, 0] = 'groundlvl'
-
+        if df_top.iloc[i, 0] == "Date":
+            df_top.iloc[i, 0] = 'Date:'
+        
     if predrill_row is not None and predrill_row > limit:
         df_top.iloc[limit - 3, :] = df_top.iloc[predrill_row, :]
     if gwl_row is not None and gwl_row > limit:
@@ -252,6 +255,7 @@ def convert_cs_to_csv(ffp, out_fp, verbose = 0):
     df_top = df.iloc[:di-1,0:2]
     df_top = df_top.dropna().reset_index(drop = True)
     df_top.loc[len(df_top)] = ['aratio', aratio]
+    df_top.drop_duplicates(inplace = True,ignore_index = True)
     pp = len(df_top)
     limit = 22
     more = limit - pp

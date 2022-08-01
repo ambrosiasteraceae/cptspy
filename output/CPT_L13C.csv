@@ -7,9 +7,7 @@ E-Mail:;jobi@capital-surveys.com;;
 Phone number:;+971255162255;;
 Name:;PRE-HUD-L13C;;
 Date:;6/12/2022 3:43:00 PM;;
-Name:;PRE-HUD-L13C;;
 Location:;PRE-HUD-L13C;;
-Date:;6/12/2022 3:43:00 PM;;
 Pre-Drill:;0;;
 Assumed GWL:;0;;
 groundlvl;2.2;;
@@ -19,6 +17,8 @@ Probe code:;Mks904;;
 Factors:;181240;;
 Zeros:;4002;;
 aratio;0.58;;
+;;;
+;;;
 ;;;
 ;;;
 Depth (m);qc (MPa);fs (MPa);u (MPa)

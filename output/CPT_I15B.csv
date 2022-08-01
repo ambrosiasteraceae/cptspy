@@ -7,9 +7,7 @@ E-Mail:;jobi@capital-surveys.com;;
 Phone number:;+971255162255;;
 Name:;PRE-HUD-I15B;;
 Date:;6/23/2022 2:53:00 PM;;
-Name:;PRE-HUD-I15B;;
 Location:;PRE-HUD-I15B;;
-Date:;6/23/2022 2:53:00 PM;;
 Pre-Drill:;0;;
 Assumed GWL:;0;;
 groundlvl;1.97;;
@@ -19,6 +17,8 @@ Probe code:;Mks904;;
 Factors:;181240;;
 Zeros:;4015;;
 aratio;0.58;;
+;;;
+;;;
 ;;;
 ;;;
 Depth (m);qc (MPa);fs (MPa);u (MPa)
