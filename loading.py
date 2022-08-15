@@ -3,12 +3,10 @@ from time import time
 import pandas as pd
 import liquepy as lq
 import matplotlib.pyplot as plt
-from cachetools import cached, TTLCache
 from filepaths import *
-cache = TTLCache(maxsize = 200, ttl = 86400)
 import datetime
 
-@cached(cache)
+
 def load_dataframe(out_fp):
     """"
     Iterates through the output folder, looking for all csv and 
@@ -20,33 +18,37 @@ def load_dataframe(out_fp):
         Folder path where dataframe files should be saved
     """
     ffps = glob.glob(out_fp + "*.csv") #
-    headers = ['Date:', 'Assumed GWL:', 'groundlvl','Pre-Drill:', 'Easting', 'Northing',
-            'aratio','CPT-ID','Object']
 
+    headers = ['Date:', 'Assumed GWL:', 'groundlvl','Pre-Drill:', 'Easting', 'Northing',
+                'aratio','CPT-ID','Object']
+    hh = headers[0:-2]
     dfo = pd.DataFrame(columns = [""]*9)
     dfo.columns = headers
     for i,file in enumerate(ffps):
+        #print(file)
         name = file.split('CPT_')[-1].split('.csv')[0]
         df = pd.read_csv(file, sep = ';')
         limit = 24
         new_df = df.iloc[:limit,0:2]
-        #Create a list out of the dataframe rows, and search for the corresponding values
-        series = list(new_df.iloc[:,0])
-    
-        idcs = [i for i,x in enumerate(series) if x in headers]
-        _ = ["" for i in range(len(idcs))]
-        #To remake this vals thing to list? which one would be faster?
-        vals = dict(zip(headers,df.iloc[idcs,1])) #Values cannot be keys since you have repeated 
-                                                    #values of zeros
-        cpt = lq.field.load_mpa_cpt_file(file, delimiter=";")
 
+        #Create a list out of the dataframe rows, and search for the corresponding values
+        series1=list(new_df.iloc[:,0])
+        series2=list(new_df.iloc[:,1])
+        dicty = dict(zip(series1,series2))
+
+        l=[] #Initiate empty list to store the dict values based on the order of appeareance 
+        for x in hh:
+            l.append(dicty[x])
+
+        vals = dict(zip(headers,l))
+        #print(vals)
+        cpt = lq.field.load_mpa_cpt_file(file, delimiter=";")
         #Create a list out of the dictionary values
         val_list = list(vals.values())
-        val_list.extend([name,cpt])  #append cpt name and cpt object from liquepy
-        #print(val_list)
+        val_list.extend([name,cpt]) #Grow list to the size of headers
+        #Append to data frame
+        dfo.loc[i,:] = val_list
 
-        dfo.loc[i,:] = val_list #add rows iteratively from the ffps 
-    
     return dfo
 
 
