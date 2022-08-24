@@ -13,8 +13,7 @@ cpt = lq.field.load_mpa_cpt_file("output/CPT_N21d.csv", delimiter=";")
 
 print(cpt.file_name)
 
-# lq.fig.make_cpt_plots(sps, cpt)
-# plt.show()
+
 
 bi2014 = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5, gwl=2.5)
 
