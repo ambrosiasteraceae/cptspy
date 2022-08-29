@@ -88,18 +88,36 @@ def bearingVesic(L, B, df, gwl, gl, y_dry, y_sat, phi, c=0, dload=0,f_type='rect
     # nc, nq, ny
     nq = exp(pi * tan(radians(phi))) * pow(tan(radians(45 + phi / 2)), 2)  # checked
     nc = (nq - 1) * (1 / tan(radians(phi)))
-    #ny = 2 * (nq + 1) * tan(radians(phi))  # Vesic
-    ny = (nq-1)*tan(radians(1.4*phi)) #Hansen
+
+    ny = 1.5*(nq-1)*tan(radians(1.4*phi)) #Hansen
+
+
+    if med_b == 0 & med_l == 0:  # This needs testing
+        area = b * l
+        b_eff = b
+        l_eff = l
+
+        eb = 0
+        el = 0
+
+    else:
+        # mb, ml = min(med_b, med_l), max(med_b, med_l)  #Condition not good
+        eb = med_b / v
+        el = med_l / v
+        b_eff = b - 2 * eb
+        l_eff = l - 2 * el
+        area = b_eff * l_eff
 
     # Shape factors
     if f_type == "strip":
         sc = 1
     else:
-        sc = 1 + (nq * b) / (nc * l)
+        sc = 1 + (nq * b_eff) / (nc * l_eff)
 
-    sq = 1 + b * tan(radians(phi)) / l  # Vesic
+    sq = 1 + (b_eff / l_eff) * tan(radians(phi))  # Hansen
 
-    _sy = 1 - 0.4 * b / l
+    _sy = 1 - 0.4 * b_eff / l_eff
+
     if _sy < 0.6:
         sy = 0.6
     else:
@@ -117,21 +135,7 @@ def bearingVesic(L, B, df, gwl, gl, y_dry, y_sat, phi, c=0, dload=0,f_type='rect
 
     ## Inclination factors
 
-    if med_b == 0 & med_l == 0:  # This needs testing
-        area = b * l
-        b_eff = b
-        l_eff = l
 
-        eb = 0
-        el = 0
-
-    else:
-        # mb, ml = min(med_b, med_l), max(med_b, med_l)  #Condition not good
-        eb = med_b / v
-        el = med_l / v
-        b_eff = b - 2 * eb
-        l_eff = l - 2 * el
-        area = b_eff * l_eff
 
     ml = (2 + l / b) / (1 + l / b)
     mb = (2 + b / l) / (1 + b / l)

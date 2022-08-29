@@ -19,7 +19,6 @@
 #TODO - Implement bearing capacity
 
 #TODO - Implement elevation function & apply it to depths. Perhaps we dont have to modify the calculations,\
-#         #just a small artificial thing
-
+         #just a small artificial thing
 #TODO - Implement function to plot & save figures
 #TODO - Add depth/length of CPT in the initial dataframe

@@ -1,9 +1,9 @@
-import pandas as pd
-import glob
 import os
+import glob
+import pandas as pd
 import inspect
 
-
+#Globals
 D_STR = "Depth (m)"
 QC_STR = "qc (MPa)"
 FS_STR = "fs (MPa)"
@@ -11,9 +11,12 @@ U2_STR = "u (MPa)"
 
 def convert_file(ffp, out_fp, verbose=0):
     """
+
     Converts a CPT from different format into the standard liquepy format.
-    This solves the problem of dealing with multiple different file formats by converting to a single format.
-    The additional metadata is mostly maintained in the file.
+    This solves the problem of dealing with multiple different file formats 
+    by converting to a single format. The additional metadata is mostly 
+    maintained in the file.
+
     Algorithm explained
     -------------------
     Algorithm works by trial and error:
@@ -23,6 +26,7 @@ def convert_file(ffp, out_fp, verbose=0):
         attempted
      - if successful, then the converter function name that was successful is returned
      - if unsuccessful, then 'NONE' is returned
+    
     Liquepy CPT format
     ------------------
     The liquepy format is a simple standard format.
@@ -35,15 +39,19 @@ def convert_file(ffp, out_fp, verbose=0):
      - Ground water level is defined in meta data as 'Assumed GWL:,<ground water depth>,'
      - Cone area ratio is defined in meta data as 'aratio,<cone area ratio>,'
      - Second line of metadata contains name of converter function (useful for debugging)
+    
     Parameters
     ----------
-    :param ffp: str
+    ffp : str
         Full file path to original CPT file
-    :param out_fp: str
+    out_fp : str
         Output folder path where formatted CPT file should be saved
-    :param verbose: bool or int
+    verbose: bool or int
         if true then print to algorithm steps to console
-    :return:
+    
+    Returns
+    ----------
+    None   
     """
 
     fns = [convert_nmdc_to_csv_00,convert_cs_to_csv]
@@ -60,14 +68,20 @@ def convert_file(ffp, out_fp, verbose=0):
 
 def convert_folder(in_fp, out_fp, verbose=0):
     """
-    Reads through a folder of NZGD CPT files and converts them to liquepy format
-    :param in_fp: str
-        Folder path of existing NZGD CPT files
-    :param out_fp: str
-        Folder path where formatted NZGD files should be saved
-    :param verbose: int or bool
+    Reads through a folder of different CPT files and converts them to liquepy format.
+
+    Parameters
+    ----------
+    in_fp: str
+        Folder path of existing different CPT files
+    out_fp: str
+        Folder path where formatted different files should be saved
+    verbose: int or bool
         if true then print to algorithm steps to console
-    :return:
+    
+    Returns
+    ----------
+    None 
     """
     results = []
     ffps = glob.glob(in_fp + "*.xls*")  # Does not handle .csv and .txt
@@ -95,9 +109,16 @@ def convert_folder(in_fp, out_fp, verbose=0):
 def trim_missing_at_end_data_df(df_data, neg_lim=None):
     """
     Removes rows at end of file that have empty data
-    :param df_data:
-    :param neg_lim:
-    :return:
+    
+    Parameters
+    ----------
+    df_data: DataFrame
+        Current DataFrame to filter
+    neg_lim:
+
+    Returns
+    ----------
+    None   
     """
     df_data = df_data.reset_index(drop=True)
     nan_rows = df_data[df_data.iloc[:, :3].isnull().T.any().T]
@@ -125,8 +146,52 @@ def trim_missing_at_end_data_df(df_data, neg_lim=None):
 
     return df_data
 
-
 def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
+
+    """
+    Converts NMDC CPT excel file type to liquepy format.
+    Function works by first trying to see if the format 
+    is specific to this function else exits the function
+    by returning 0. Many variables are specific to match
+    this exact format like "d_str, qc_str".
+    
+    The way it converts the CPT excel to CSV is by splitting
+    the Excel file into two DataFrames first, df_data & df_top.
+    Performs operations on df_top searching for the necessary
+    header information like "E,N,GWL,Pre-Drill etc". 
+    At the end, it will concatenate 4 DataFrames into a new one
+    and save it directly to the CSV.
+
+    DataFrames inside functions
+    ----------
+    df_data : DataFrame
+        Holds the depth, q_c, f_s, u_2 info
+    df_top : DataFrame
+        Holds the header information
+    df_z : DataFrame
+        DataFrame to compensate for the number of lines
+        required for the liquepy format. Index / Limit is 
+        22. On 23 we have str repr. of CPT data and on 
+        line 24 the values start
+    df_headers : DataFrame
+        Holds the 4 string representations of data_headers
+        that are applied globally 
+    
+
+
+
+    Parameters
+    ----------
+    ffp : str
+        Full file path to original CPT file
+    out_fp : str
+        Folder path where formatted different files should be saved
+
+    Returns
+    ----------
+    None   
+
+    """
 
     cpt_num = ffp.split("HUD-")[-1]
     cpt_num = cpt_num.split(".xlsx")[0]
@@ -213,6 +278,14 @@ def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
     return 1
 
 def convert_cs_to_csv(ffp, out_fp, verbose = 0):
+    """
+
+    Converts Capital Survey excel file format.
+    --------------
+    
+    See also:
+        convert_nmdc_to_csv_00
+    """
 
     xf = pd.ExcelFile(ffp)
     if len(xf.sheet_names) > 1:

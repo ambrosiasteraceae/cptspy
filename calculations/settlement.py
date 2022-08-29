@@ -1,4 +1,13 @@
 
+import os
+import glob
+import pandas as pd
+import liquepy as lq
+import matplotlib.pyplot as plt
+import timeit
+from collections import OrderedDict 
+import numpy as np 
+
 #@MAJOR MISMATCH WITH FOUNDATION DEPTH @IZ. 
 #DEAL WITH IT
 # OK BRO I THINK I DID
@@ -92,9 +101,9 @@ def calculate_strain_influence_peak (zp,  delta_p, sigmas,depths):
     return i_zp
 
 def calculate_iz(fdo,z_top,zp , z_bottom, i_zp, sigmas, depths):
-    """Calculates the strain influence factor based on line equation
-    AB - BC
-    It starts from the depth of CPT and not at depth of footing.
+    """
+    Calculates the strain influence factor based on line equation
+    AB - BC.It starts from the depth of CPT and not at depth of footing.
     """   
     incs = depths[1] - depths[0] 
     limit = depths[-1]
@@ -176,10 +185,6 @@ def settlement(fdo, liq_obj, load, years, verbose = True, val_limit = 0.025):
     sx - ndarray containing cumulative settlement
     """
 
-    
-       
-            
-
     long = max(fdo.length, fdo.width)
     short = min(fdo.length, fdo.width)
 
@@ -236,39 +241,18 @@ def settlement(fdo, liq_obj, load, years, verbose = True, val_limit = 0.025):
     plt.plot(iz,-depths, color = 'r')    
    # Log output
     if verbose:
-#         log("delta_p:", delta_p)
-#         log("c_1:", c_1)
-#         log("c_2:", c_2)
-#         log("c_3:", c_3)
-#         log("zp:", zp)
-#         log("z_top:",z_top)
-#         log("z_bottom:", z_bottom)
-#         log("overburden / sigma_v1_eff:", overburden)
-#         log("delta_p:", delta_p)
-#         log("i_zp:", i_zp)
-#         log("iz", max(iz))
+        log("delta_p:", delta_p)
+        log("c_1:", c_1)
+        log("c_2:", c_2)
+        log("c_3:", c_3)
+        log("zp:", zp)
+        log("z_top:",z_top)
+        log("z_bottom:", z_bottom)
+        log("overburden / sigma_v1_eff:", overburden)
+        log("delta_p:", delta_p)
+        log("i_zp:", i_zp)
+        log("iz", max(iz))
         log("settlement:", total[-1],total[0]) 
         log("result: ", result)
     return dict(zip(cols,args))
 
-cpt = dfo['Object'][89]
-liq_obj = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5, gwl=-2.5)
-print(dfo['CPT-ID'][89])
-
-fd_1= FoundationObject(1,1,1)
-fd_2 = FoundationObject(11,1,0)
-fd_3 = FoundationObject(5,5,1)
-load = 150
-years = 10
-
-dd = settlement(fd_1, liq_obj, load, years, verbose = True)
-#dd['settlement']
-
-
-
-
-fd_1 = FoundationObject(1,1,1)
-for i,x in enumerate(dfo['Object']):
-    liq_obj = lq.trigger.run_bi2014(x, pga=0.25, m_w=7.5, gwl=0)
-    dd = settlement(fd_1, liq_obj, load, years, verbose = True)
-   # print(i,x)
