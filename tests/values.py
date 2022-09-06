@@ -16,3 +16,15 @@ n_y_hansen_test = np.array([0, 0.1, 0.4, 1.2, 2.9, 6.8, 7.9, 10.9, 15.1, 20.8, 2
 n_y_vezic_test = np.array([0, 0.4, 1.2, 2.6, 5.4, 10.9, 12.5, 16.7, 22.4, 30.2, 41, 56.2, 77.9, 109.3, 271.3, 761.3, ])
 n_y_meyerhof_test = np.array([0, 0.1, 0.4, 1.1, 2.9, 6.8, 8, 11.2, 15.7, 22, 31.1, 44.4, 64, 93.6, 262.3, 871.7])
 
+#from numpy import testing
+# from tests import values
+#
+# n_y_hansen_test = np.array([0, 0.1, 0.4, 1.2, 2.9, 6.8, 7.9, 10.9, 15.1, 20.8, 28.7, 40.0, 56.1, 79.4, 200.5, 567.4])
+#
+# testing.assert_allclose(nc, values.n_c_test, rtol=0.1)
+# # testing.assert_allclose(nq, values.n_q_test, rtol=0.1)
+# # testing.assert_allclose(ny, n_y_hansen_test, rtol=0.1)
+# #
+
+# for phi, _, __, ___ in zip(phiss, nc, nq, ny, ):
+#     print(f"{phi},{_:.2f},{__:.2f},{___:.2f}")
