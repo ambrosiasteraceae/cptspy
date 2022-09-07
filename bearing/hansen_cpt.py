@@ -1,7 +1,7 @@
 import numpy as np
 import liquepy as lq
 
-from fig import log
+from fig import log,timed
 from foundations import foundation
 
 UNIT_WATER = 10
@@ -238,7 +238,7 @@ def calc_inclination_factors(fd, area, phi, cohesion, nc, nq, h_short, h_long, v
 
         return ic, iq, iy
 
-
+@timed.timed
 def bearing_capacity(lf, fd, load=1, gwl=None, **kwargs):
     """
     Returns bearing capacity function
@@ -359,8 +359,8 @@ fd = foundation.FoundationObject(1, 1, 0)
 cpt = lq.field.load_mpa_cpt_file("CPT_H15c.csv", delimiter=";")
 lf = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5, gwl=10)
 
-# bf, sps = plt.subplots(ncols=3, sharey=True, figsize=(8, 6))
+#bf, sps = plt.subplots(ncols=3, sharey=True, figsize=(8, 6))
 # print(cpt.file_name)
 
-aa = bearing_capacity(lf=lf, fd=fd)
+aa = bearing_capacity(lf=lf, fd=fd, verbose = False)
 
