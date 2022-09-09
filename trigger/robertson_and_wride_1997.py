@@ -1,6 +1,7 @@
 import numpy as np
 import liquepy as lq
 from fig import timed
+import matplotlib.pyplot as plt
 
 
 def calc_qt(qc, ar, u2):
@@ -160,33 +161,34 @@ def calc_k_sigma(i_c, big_f):
     cond_1 = (i_c <= 1.64) | (i_c > 2.6)
     cond_2 = ((i_c > 1.64) & (i_c <= 2.36)) & (big_f < 0.5)
     k_sigma_cond_2 = np.where(cond_2, 1,
-                       5.581 * i_c ** 3 - 0.403 * i_c ** 4 - 21.63 * i_c ** 2 + 33.75 * i_c - 17.88)
+                              5.581 * i_c ** 3 - 0.403 * i_c ** 4 - 21.63 * i_c ** 2 + 33.75 * i_c - 17.88)
 
     k_sigma = np.where(cond_1, 1, k_sigma_cond_2)
 
     return k_sigma
 
 
-    
 def calc_crr_m7p5(big_q_cs):
-    
     crr = np.where(big_q_cs < 50,
                    0.833 * big_q_cs / 1000 + 0.05,
-                   93 * big_q_cs ** 3 / 1000 + 0.08)
+                   93 * (big_q_cs / 1000) ** 3 + 0.08)
     return crr
+
+
 def calc_msf(m_w):
     """
     Returns magnitude scaling factor
     """
     return 174 / (m_w ** 2.56)
 
+
 class RobertsonWride1997CPT(object):
 
     def __init__(self, cpt, gwl=None, pga=0.25, m_w=None, **kwargs):
         """
-        Performs the Boulanger and Idriss triggering procedure for a CPT profile
+        Performs the Roberston and Wride triggering procedure for a CPT profile
 
-        ref: Boulanger:2014id
+        ref: R&W:1997id
 
         Parameters
         ----------
@@ -261,7 +263,6 @@ class RobertsonWride1997CPT(object):
         if self.sigma_veff[0] == 0.0:
             self.sigma_veff[0] = 1.0e-10
 
-
         self.big_q, self.big_f, self.i_c = calc_dependent_variables(self.sigma_v, self.sigma_veff, self.cpt.f_s,
                                                                     self.p_a, self.q_t)
 
@@ -272,19 +273,83 @@ class RobertsonWride1997CPT(object):
         self.csr = calc_csr(self.sigma_veff, self.sigma_v, pga, self.rd)
         self.msf = calc_msf(self.m_w)
 
+        fs_unlimited = self.crr_m7p5 / self.csr * self.msf
 
-        fs_unlimited = self.csr / self.crr_m7p5
-        print(fs_unlimited)
         fos = np.where(fs_unlimited > 2, 2, fs_unlimited)
         self.factor_of_safety = np.where(self.i_c <= self.i_c_limit, fos, 2.25)
-        # print(self.big_f[0])
-        # self.k_sigma = calc_k_sigma()
-        # self.big_q_cs = calc_big_q_cs()
+
+
+def run_rw1997(cpt, pga, m_w, gwl=None, p_a=101., cfc=0.0, i_c_limit=2.6, gamma_predrill=17.0, c_0=2.8,
+               unit_wt_method='robertson2009', s_g=2.65, s_g_water=1.0, saturation=None):
+    """
+    Runs the Boulanger and Idriss (2014) triggering method.
+
+    Parameters
+    ----------
+    cpt: liquepy.field.CPT,
+        ground water level below the surface
+    pga: float, g,
+        peak ground acceleration
+    m_w: float, -,
+        Earthquake magnitude
+    gwl: float, m,
+        depth to ground water from surface at time of earthquake
+    p_a: float, kPa, default=101
+        Atmospheric pressure
+    cfc: float, -, default=0.0
+        Fines content correction factor for Eq 2.29
+    i_c_limit: float, -, default=2.6
+        Limit of liquefiable material
+    gamma_predrill: float, kN/m3, default=17.0
+        Unit weight of soil above pre-drill depth
+    c_0: float, -, default=2.8
+        Factor that adjusts the CRR-vs-qc1ncs relationship
+    unit_wt_method: str, -, default='robertson2009'
+        Method used to determine unit weight
+    s_g: float or array_like, -, default=2.65
+        Specific gravity
+    s_g_water: float, -, default=1.0
+        Specific gravity of water
+    saturation: array_like or None
+        Saturation ratio for each depth increment
+
+    Returns
+    -------
+    BoulangerIdriss2014CPT()
+    """
+
+    return RobertsonWride1997CPT(cpt, gwl=gwl, pga=pga, m_w=m_w, cfc=cfc, i_c_limit=i_c_limit, s_g=s_g,
+                                 s_g_water=s_g_water, p_a=p_a,
+                                 saturation=saturation, unit_wt_method=unit_wt_method, gamma_predrill=gamma_predrill,
+                                 c_0=c_0)
 
 
 cpt = lq.field.load_mpa_cpt_file("CPT_H15c.csv", delimiter=";")
-#bi2014 = lq.trigger.run_bi2014(cpt, pga=0.33, m_w=6)
-lf = RobertsonWride1997CPT(cpt)
-print(lf.big_q_cs)
-print(lf.factor_of_safety)
+# bi2014 = lq.trigger.run_bi2014(cpt, m_w=7.5, pga=0.25, gwl=0)
+lf = run_rw1997(cpt, m_w=7.5, pga=0.25, gwl=0)
+#
+# bf, sps = plt.subplots(ncols=3, sharey=True, figsize=(8, 6))
+# lq.fig.make_cpt_plots(sps, cpt)
+# plt.show()
+#
+# bf, sps = plt.subplots(ncols=4, sharey=True, figsize=(8, 6))
+# lq.fig.make_bi2014_outputs_plot(sps, bi2014)
+# plt.show()
+#
+# bf, sps = plt.subplots(ncols=4, sharey=True, figsize=(8, 6))
+# lq.fig.make_bi2014_outputs_plot(sps, rw1997)
+# plt.show()
+# #
+# plt.plot(bi2014.factor_of_safety, 2.97 - bi2014.depth, color='b', label='BI2014')
+# plt.plot(rw1997.factor_of_safety, 2.97 - rw1997.depth, color='r', label='RW1997')
+# plt.legend()
+# plt.show()
+#
 
+
+plt.plot(lf.i_c,-lf.depth)
+plt.show()
+
+
+
+print(lf.i_c)

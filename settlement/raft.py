@@ -21,6 +21,7 @@ def raft_vertical_stress(lf, fd, delta_p, incs):
     vertical_stress = delta_p / (2 * np.pi) * (
             np.arctan(a * b / (z * r_3)) + (a * b * z / r_3) * (1 / r_1 ** 2 + 1 / r_2 ** 2))
 
+    #Add zeros to compensate for fd.depth
     return vertical_stress
 
 
