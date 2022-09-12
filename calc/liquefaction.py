@@ -182,6 +182,12 @@ def calc_msf(m_w):
     return 174 / (m_w ** 2.56)
 
 
+def rolling_mean(q_c, pts = 41):
+    return np.convolve(q_c, np.ones(pts), 'same') / pts
+
+
+
+
 class RobertsonWride1997CPT(object):
 
     def __init__(self, cpt, gwl=None, pga=0.25, m_w=None, **kwargs):

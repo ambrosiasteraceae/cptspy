@@ -6,7 +6,8 @@ def timed(fn):
         start = perf_counter()
         result = fn(*args, **kwargs)
         end = perf_counter()
-        elapsed = end -start
+        elapsed = end - start
         print('{} took {:.6f}s  to run'.format(fn.__name__, elapsed))
         return result
+
     return inner

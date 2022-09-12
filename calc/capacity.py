@@ -362,5 +362,5 @@ lf = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5, gwl=10)
 #bf, sps = plt.subplots(ncols=3, sharey=True, figsize=(8, 6))
 # print(cpt.file_name)
 
-aa = bearing_capacity(lf=lf, fd=fd, verbose = False)
+aa = bearing_capacity(lf=lf, fd=fd)
 
