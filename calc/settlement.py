@@ -1,6 +1,6 @@
 import numpy as np
-from fig.log import log
-from fig.timed import timed
+from miscellaneous.log import log
+from miscellaneous.timed import timed
 
 
 def calculate_peak_settlement_indexes(fd):
@@ -281,7 +281,7 @@ def settlement(lf, fd, load, years, verbose=True, val_limit=0.025):
     cols = ['settlement', 'elastic', 'creep', 'consolidation', 'iz', 'overburden',
             'delta_p', 'i_zp', 'zp', 'z_top', 'z_bottom', 'c_1', 'c_2', 'c_3', 'alfa_e']
     # Create plot figure
-    #     fig = plt.figure()
+    #     miscellaneous = plt.figure()
     #     plt.subplot(131)
     #     plt.plot(np.cumsum(elastic[::-1])[::-1],-lf.depth,color = 'r')
     #     plt.plot(np.cumsum((creep +elastic)[::-1])[::-1],-lf.depth,color = 'orange')

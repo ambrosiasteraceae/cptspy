@@ -1,7 +1,7 @@
 import numpy as np
 import liquepy as lq
 
-from fig import log,timed
+from miscellaneous import log, timed
 from foundations import foundation
 
 UNIT_WATER = 10
@@ -196,15 +196,16 @@ def calc_inclination_factors(fd, area, phi, cohesion, nc, nq, h_short, h_long, v
 
         alfa_1 = alfa_2 = 2  # Use alfa factor of 2
 
-        iq = (1 - (0.5 * hi / (vload + area * base_cohesion * 1 / np.tan(np.radians(phi))))) ** alfa_1
+        iq = (1 - (0.5 * hi * fd.long / (
+                    vload * fd.long + area * base_cohesion * 1 / np.tan(np.radians(phi))))) ** alfa_1
 
-        ic = np.where(phi == 0, 0.5 - np.sqrt(1 - hi / (area * base_cohesion)), iq - (1 - iq) / (nq - 1))
+        ic = np.where(phi == 0, 0.5 - np.sqrt(1 - hi * fd.long / (area * base_cohesion)), iq - (1 - iq) / (nq - 1))
         # if phi == 0:
         #     ic = 0.5 - np.sqrt(1 - hi / (area * base_cohesion))
         # else:
         #     ic = iq - (1 - iq) / (nq - 1)
 
-        iy = (1 - 0.7 * hi / (vload + area * base_cohesion * 1 / np.tan(np.radians(phi)))) ** alfa_2
+        iy = (1 - 0.7 * hi * fd.long / (vload * fd.long + area * base_cohesion * 1 / np.tan(np.radians(phi)))) ** alfa_2
 
         return ic, iq, iy
 
@@ -225,23 +226,25 @@ def calc_inclination_factors(fd, area, phi, cohesion, nc, nq, h_short, h_long, v
             m = 1
 
         # Inclination factors
-        iq = (1 - hi / (vload + area * base_cohesion * 1 / np.tan(np.radians(phi)))) ** m
+        iq = (1 - hi * fd.long / (vload * fd.long + area * base_cohesion * 1 / np.tan(np.radians(phi)))) ** m
 
         # ic
-        ic = np.where(phi == 0, 1 - (m * hi) / (area * base_cohesion * nc), iq - (1 - iq) / (nq - 1))
+        ic = np.where(phi == 0, 1 - (m * hi * fd.long) / (area * base_cohesion * nc), iq - (1 - iq) / (nq - 1))
         # if phi == 0:
         #     ic = 1 - (m * hi) / (area * base_cohesion * nc)
         # else:
         #     ic = iq - (1 - iq) / (nq - 1)
 
-        iy = (1 - hi / (vload + area * base_cohesion * 1 / np.tan(np.radians(phi)))) ** (m + 1)
+        iy = (1 - hi * fd.long / (vload * fd.long + area * base_cohesion * 1 / np.tan(np.radians(phi)))) ** (m + 1)
 
         return ic, iq, iy
 
+
 @timed.timed
-def bearing_capacity(lf, fd, load=1, gwl=None, **kwargs):
+def bearing_capacity(lf, fd, vload=1, gwl=None, **kwargs):
     """
-    Returns bearing capacity function
+    Returns bearing capacity function.
+    Defaults to hansen
 
     """
 
@@ -262,16 +265,16 @@ def bearing_capacity(lf, fd, load=1, gwl=None, **kwargs):
     gamma_dry = kwargs.get('gamma_dry', None)
     gamma_sat = kwargs.get('gamma_sat', None)
     gamma_fill = kwargs.get('gamma_fill', 17)
-    gamma_water = kwargs.get('gamma_water', 10.25)
+    gamma_water = kwargs.get('gamma_water', 10)
 
     # Method
     method = kwargs.get('method', 'hansen')
     verbose = kwargs.get('verbose', True)
 
     if fd.shape == 'circular':
-        vload = load * fd.radius ** 2 * np.pi
+        load = vload / (fd.radius ** 2 * np.pi)
     else:
-        vload = load * fd.short * fd.long
+        load = vload * fd.long / (fd.short * fd.long)
 
     # if lf and phi.all():
     #     raise ValueError("You cannot both CPT object and define your own friction angle")
@@ -317,20 +320,21 @@ def bearing_capacity(lf, fd, load=1, gwl=None, **kwargs):
     q_ult = first_term + second_term + third_term
 
     bc_dict = {
-        "Friction_Angle": phi,
-        "Effective_Unit_Weight": unit_weight_eff,
+        # "Phi": phi,
+        # "Unit_eff": unit_weight_eff,
         "Foundation": f"{fd.short}x{fd.long}x{fd.depth}",
-        "Nc,Nq,Ny": (nc, nq, ny),
-        "Shape_Factors": (sc, sq, sy),
-        "Depth_Factors": (dc, dq, dy),
-        "Inclination_Factors": (ic, iq, iy),
-        "Ground_Factors": (gc, gq, gy),
-        "Base_Factors": (bc, bq, by),
-        "first_second_third_terms": (first_term, second_term, third_term),
-        "q_ultimate": (q_ult),
-        "q_safe": (q_ult / 2),
+        "Nc,Nq,Ny": (np.round(nc, 2), np.round(nq, 2), np.round(ny, 2)),
+        "sc,sq,sy": (np.round(sc, 2), np.round(sq, 2), np.round(sy, 2)),
+        # "dc,dq,dy": (dc, dq, dy),
+        #  "ic,iq,iy": (ic, iq, iy),
+        # "gc,gq,gy": (gc, gq, gy),
+        # "bc,bq,by": (bc, bq, by),
+        # "terms": (np.round(first_term, 2), np.round(second_term, 2), np.round(third_term, 2)),
+        "q_ult": np.round((q_ult), 2),
+        "q_safe": np.round((q_ult / 2), 2),
         "load": load,
-        "Safety_factors": q_ult / load,
+        "FoS": np.round(q_ult / load, 2),
+        "method": method
     }
     if verbose:
         print(fd)
@@ -347,20 +351,24 @@ def bearing_capacity(lf, fd, load=1, gwl=None, **kwargs):
         log.log("Surcharge is:", f"{surcharge}kPa")
         log.log(f"Ultimate bearing capacity is:", np.round(q_ult, 2))
         log.log(f"Net allowable bearing capacity is:", np.round(q_ult, 2) / 2)
-        log.log(f"Design pressure is:", f"{(load / (fd.short * fd.long))}kPa < {np.round(q_ult, 2) / 2}kpa")
+        log.log(f"Design pressure is:", f"{(load)}kPa < {np.round(q_ult, 2) / 2}kpa")
     return bc_dict
 
+
 #
-# phiss = np.array([5, 5, 10, 15, 20, 25, 26, 28, 30, 32, 34, 36, 38, 40, 45, 50])
+phiss = np.array([5, 5, 10, 15, 20, 25, 26, 28, 30])
 
-phis = np.array([30,36])
+phis = np.array([30, 36])
 
-fd = foundation.FoundationObject(1, 1, 0)
+fd = foundation.FoundationObject(1000, 20, 1)
 cpt = lq.field.load_mpa_cpt_file("CPT_H15c.csv", delimiter=";")
-lf = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5, gwl=10)
+lf = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5)
 
-#bf, sps = plt.subplots(ncols=3, sharey=True, figsize=(8, 6))
-# print(cpt.file_name)
+# aa = bearing_capacity(lf=lf, fd=fd)
+# bb = bearing_capacity(lf=lf, fd=fd, method = 'vezic', gwl = 3)
 
-aa = bearing_capacity(lf=lf, fd=fd)
+cc = bearing_capacity(lf=None, fd=fd, method='vezic', gwl=0, phi=30,
+                      cohesion=250, gamma_dry=20, gamma_sat=20, h_short=1255, vload=7188,
+                      verbose=True)
 
+print(cc)

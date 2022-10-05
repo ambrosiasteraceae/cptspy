@@ -1,6 +1,6 @@
 import numpy as np
 import liquepy as lq
-from fig import timed
+from miscellaneous import timed
 import matplotlib.pyplot as plt
 
 
@@ -331,31 +331,25 @@ def run_rw1997(cpt, pga, m_w, gwl=None, p_a=101., cfc=0.0, i_c_limit=2.6, gamma_
 
 
 cpt = lq.field.load_mpa_cpt_file("CPT_H15c.csv", delimiter=";")
-# bi2014 = lq.trigger.run_bi2014(cpt, m_w=7.5, pga=0.25, gwl=0)
-lf = run_rw1997(cpt, m_w=7.5, pga=0.25, gwl=0)
+bi2014 = lq.trigger.run_bi2014(cpt, m_w=7.5, pga=0.25)
+rw1997 = run_rw1997(cpt, m_w=7.5, pga=0.25)
 #
 # bf, sps = plt.subplots(ncols=3, sharey=True, figsize=(8, 6))
-# lq.fig.make_cpt_plots(sps, cpt)
+# lq.miscellaneous.make_cpt_plots(sps, cpt)
 # plt.show()
 #
 # bf, sps = plt.subplots(ncols=4, sharey=True, figsize=(8, 6))
-# lq.fig.make_bi2014_outputs_plot(sps, bi2014)
+# lq.miscellaneous.make_bi2014_outputs_plot(sps, bi2014)
 # plt.show()
 #
-# bf, sps = plt.subplots(ncols=4, sharey=True, figsize=(8, 6))
-# lq.fig.make_bi2014_outputs_plot(sps, rw1997)
-# plt.show()
-# #
+bf, sps = plt.subplots(ncols=4, sharey=True, figsize=(8, 6))
+lq.fig.make_bi2014_outputs_plot(sps, rw1997)
+plt.show()
+bf, sps = plt.subplots(ncols=4, sharey=True, figsize=(8, 6))
+lq.fig.make_bi2014_outputs_plot(sps, bi2014)
+plt.show()
+
 # plt.plot(bi2014.factor_of_safety, 2.97 - bi2014.depth, color='b', label='BI2014')
 # plt.plot(rw1997.factor_of_safety, 2.97 - rw1997.depth, color='r', label='RW1997')
 # plt.legend()
 # plt.show()
-#
-
-
-plt.plot(lf.i_c,-lf.depth)
-plt.show()
-
-
-
-print(lf.i_c)
