@@ -321,15 +321,15 @@ def bearing_capacity(lf, fd, vload=1, gwl=None, **kwargs):
 
     bc_dict = {
         # "Phi": phi,
-        # "Unit_eff": unit_weight_eff,
+        "Unit_eff": unit_weight_eff,
         "Foundation": f"{fd.short}x{fd.long}x{fd.depth}",
         "Nc,Nq,Ny": (np.round(nc, 2), np.round(nq, 2), np.round(ny, 2)),
         "sc,sq,sy": (np.round(sc, 2), np.round(sq, 2), np.round(sy, 2)),
-        # "dc,dq,dy": (dc, dq, dy),
-        #  "ic,iq,iy": (ic, iq, iy),
-        # "gc,gq,gy": (gc, gq, gy),
-        # "bc,bq,by": (bc, bq, by),
-        # "terms": (np.round(first_term, 2), np.round(second_term, 2), np.round(third_term, 2)),
+        "dc,dq,dy": (dc, dq, dy),
+         "ic,iq,iy": (ic, iq, iy),
+        "gc,gq,gy": (gc, gq, gy),
+        "bc,bq,by": (bc, bq, by),
+        "terms": (np.round(first_term, 2), np.round(second_term, 2), np.round(third_term, 2)),
         "q_ult": np.round((q_ult), 2),
         "q_safe": np.round((q_ult / 2), 2),
         "load": load,
@@ -357,9 +357,7 @@ def bearing_capacity(lf, fd, vload=1, gwl=None, **kwargs):
 
 #
 phiss = np.array([5, 5, 10, 15, 20, 25, 26, 28, 30])
-
 phis = np.array([30, 36])
-
 fd = foundation.FoundationObject(1000, 20, 1)
 cpt = lq.field.load_mpa_cpt_file("CPT_H15c.csv", delimiter=";")
 lf = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5)
@@ -369,6 +367,6 @@ lf = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5)
 
 cc = bearing_capacity(lf=None, fd=fd, method='vezic', gwl=0, phi=30,
                       cohesion=250, gamma_dry=20, gamma_sat=20, h_short=1255, vload=7188,
-                      verbose=True)
+                      verbose=False)
 
 print(cc)

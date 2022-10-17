@@ -35,8 +35,8 @@ class FoundationObject:
         if self.radius:
             return f'Foundation: \n Radius:{self.radius} \n Depth:{self.depth}m  \n Shape:{self.shape} '
         else:
-            return f'Foundation: \n Length:{self.long}m \n Width:{self.short}m\n Depth:{self.depth}m\n Shape: {self.shape}'
-
+            #return f'Foundation: \n Length:{self.long}m \n Width:{self.short}m\n Depth:{self.depth}m\n Shape: {self.shape}'
+            return f'Foundation:  Length:{self.long}m  Width:{self.short}m Depth:{self.depth}m Shape: {self.shape}'
     def get_shape(self):
         """
         Cycles through the foundation attributes to check

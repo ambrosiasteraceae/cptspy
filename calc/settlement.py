@@ -1,8 +1,10 @@
 import numpy as np
 from miscellaneous.log import log
 from miscellaneous.timed import timed
-
-
+from miscellaneous import figures
+import matplotlib.pyplot as plt
+import liquepy as lq
+from foundations import foundation
 def calculate_peak_settlement_indexes(fd):
     """
     Calculate the limit variables of the influence factor variables.
@@ -281,15 +283,16 @@ def settlement(lf, fd, load, years, verbose=True, val_limit=0.025):
     cols = ['settlement', 'elastic', 'creep', 'consolidation', 'iz', 'overburden',
             'delta_p', 'i_zp', 'zp', 'z_top', 'z_bottom', 'c_1', 'c_2', 'c_3', 'alfa_e']
     # Create plot figure
-    #     miscellaneous = plt.figure()
-    #     plt.subplot(131)
-    #     plt.plot(np.cumsum(elastic[::-1])[::-1],-lf.depth,color = 'r')
-    #     plt.plot(np.cumsum((creep +elastic)[::-1])[::-1],-lf.depth,color = 'orange')
-    #     plt.plot(settlement[::-1],-lf.depth,color = 'green')
-    #     plt.subplot(132)
-    #     plt.plot(settlement[::-1], -lf.depth)
-    #     plt.subplot(133)
-    #     plt.plot(iz,-lf.depth, color = 'r')
+    # miscellaneous = plt.figure()
+    # plt.subplot(131)
+    # plt.plot(np.cumsum(elastic[::-1])[::-1],-lf.depth,color = 'r')
+    # plt.plot(np.cumsum((creep +elastic)[::-1])[::-1],-lf.depth,color = 'orange')
+    # plt.plot(settlement[::-1],-lf.depth,color = 'green')
+    # plt.subplot(132)
+    # plt.plot(settlement[::-1], -lf.depth)
+    # plt.subplot(133)
+    # plt.plot(iz,-lf.depth, color = 'r')
+    # plt.show()
     # Log output
     if verbose:
         log("delta_p:", delta_p)
@@ -306,3 +309,18 @@ def settlement(lf, fd, load, years, verbose=True, val_limit=0.025):
         log("settlement:", settlement[-1], settlement[0], max(settlement))
         log("result: ", result)
     return dict(zip(cols, args))
+
+
+fd = foundation.FoundationObject(2, 20, 1)
+cpt = lq.field.load_mpa_cpt_file("CPT_H15c.csv", delimiter=";")
+lf = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5, gwl = -2)
+
+settle  = settlement(lf, fd, 150, 10, verbose = False)
+
+print(max(settle['settlement']))
+
+bf, sps = plt.subplots(ncols=2, sharey=True, figsize=(8, 6))
+figures.make_settlement_plots(sps, lf, settle)
+
+bf.suptitle(str("CPT_H15c.csv"))
+plt.show()
