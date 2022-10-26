@@ -262,8 +262,7 @@ def settlement(lf, fd, load, years, verbose=True, val_limit=0.025):
     i_zp = calculate_strain_influence_peak(lf, zp, delta_p)
     iz = calculate_iz(lf, fd, z_top, zp, z_bottom, i_zp)
     alfa_e = calculate_young_modulus(lf)
-    young_modulus = alfa_e * (np.where(lf.q_t <= 0.1, np.nan, lf.q_t) - overburden)  # q_c is 0 at start,
-
+    young_modulus = alfa_e * (np.where(lf.q_t <= 0.1, np.nan, lf.q_t) - lf.sigma_v)  # q_c is 0 at start,
     elastic = (c_1 * delta_p * iz / (c_3 * young_modulus) * delta_z)
     creep = elastic * (c_2 - 1)
     consolidation = calculate_consolidation(lf, alfa_e, incs, iz, overburden, delta_p)
