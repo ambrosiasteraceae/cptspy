@@ -51,3 +51,4 @@ for i, t in enumerate(coords_bhs):
                   icon=folium.Icon(color='green', angle=30, size=2)).add_to(map)
 
 map
+

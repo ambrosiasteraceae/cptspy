@@ -1,7 +1,7 @@
 import numpy as np
 from miscellaneous.log import log
 from miscellaneous.timed import timed
-from miscellaneous import plots
+from miscellaneous import figures
 import matplotlib.pyplot as plt
 import liquepy as lq
 from foundations import foundation
@@ -319,7 +319,7 @@ settle  = settlement(lf, fd, 150, 10, verbose = False)
 print(max(settle['settlement']))
 
 bf, sps = plt.subplots(ncols=2, sharey=True, figsize=(8, 6))
-plots.make_settlement_plots(sps, lf, settle)
+figures.make_settlement_plots(sps, lf, settle)
 
 bf.suptitle(str("CPT_H15c.csv"))
 plt.show()

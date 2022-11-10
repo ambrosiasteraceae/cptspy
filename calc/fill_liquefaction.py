@@ -41,12 +41,14 @@ def calc_sigma_veff(sigma_v, pore_pressure):
     return sigma_veff
 
 
-def calc_rd(depth):
+def calc_rd(depth, fill_height):
     """
     Returns rd from CPT
     For the moment only works for a CPT depth < 23meters
     """
-    rd = np.where(depth < 9.15, 1.0 - 0.00765 * depth, 1.174 - 0.0267 * depth)
+    #depth += fill_height
+    rd_depth = depth + fill_height
+    rd = np.where(rd_depth < 9.15, 1.0 - 0.00765 * rd_depth, 1.174 - 0.0267 * rd_depth)
     return rd
 
 
@@ -169,36 +171,6 @@ def calc_k_sigma(i_c, big_f):
     return k_sigma
 
 
-def calc_phi(i_c, big_q):
-    """
-    Returns friction angle array based on Jefferies and Been (2006)
-    """
-    k_c = np.where(i_c <= 1.64, 1,
-                   5.581 * i_c ** 3 - 0.403 * i_c ** 4 - 21.63 * i_c ** 2 + 33.75 * i_c - 17.88)
-    q_tn_cs = np.abs(big_q * k_c)
-    # _phi = 33 + 15.84 * np.log10(q_tn_cs) - 26.88
-    _phi = np.nan_to_num(33 + 15.84 * np.log10(q_tn_cs) - 26.88, nan=33)
-
-    return np.where(_phi > 45, 45, _phi)
-
-
-def calc_young_modulus_factor(i_c, big_q):
-    """
-   Returns alfa_e for young modulus coefficient.
-   This is for I_c > 2.6 (fine soils)
-   See eq. ->                for reference
-    """
-    _alfa_e = 0.015 * np.power(10, (0.55 * i_c + 1.68))
-    alfa_ee = np.where(_alfa_e > 7, 7, _alfa_e)
-    alfa_bb = np.where((big_q < 7) & (big_q > 0), big_q, 7)
-    alfa_e = np.where(i_c < 2.6, alfa_ee, alfa_bb)
-    return alfa_e
-
-
-def calc_young_modulus(alfa_e, q_t, sigma_v):
-    return alfa_e * (np.where(q_t <= 0.1, np.nan, q_t) - sigma_v)
-
-
 def calc_crr_m7p5(big_q_cs):
     crr = np.where(big_q_cs < 50,
                    0.833 * big_q_cs / 1000 + 0.05,
@@ -212,36 +184,13 @@ def calc_msf(m_w):
     """
     return 174 / (m_w ** 2.56)
 
+def calc_sigma_fill(fill_height, fill_gamma):
+    return fill_height * fill_gamma
 
-def rolling_mean(q_c, pts=41):
-    return np.convolve(q_c, np.ones(pts), 'same') / pts
+class RobertsonWride1997CPTFILL(object):
 
-
-def calc_s_u(q_t, sigma_v, nkt=18):
-    return (q_t - sigma_v) / nkt
-
-
-def calc_permeability(i_c):
-    """
-    Returns permeability
-    """
-
-    k_perm = np.ones(len(i_c))
-
-    cond_1 = np.where((1 < i_c) & (i_c <= 3.27))
-    cond_2 = np.where((3.27 < i_c) & (i_c < 4))
-    cond_3 = np.where((i_c < 1) & (i_c > 4))
-
-    k_perm[cond_1] = np.power(10, 0.952 - 3.04 * i_c[cond_1])
-    k_perm[cond_2] = np.power(10, -4.52 - 1.37 * i_c[cond_2])
-    k_perm[cond_3] = np.nan
-
-    return k_perm
-
-
-class RobertsonWride1997CPT(object):
-
-    def __init__(self, cpt, gwl=None, pga=0.25, m_w=None, **kwargs):
+    def __init__(self, cpt, gwl=None, pga=0.25, m_w=None, fill_height=None,
+                 fill_gamma=None, k_factor=0.25, **kwargs):
         """
         Performs the Roberston and Wride triggering procedure for a CPT profile
 
@@ -298,6 +247,11 @@ class RobertsonWride1997CPT(object):
         self.gwl = gwl
         self.pga = pga
         self.a_ratio = cpt.a_ratio
+
+        self.fill_height = fill_height
+        self.fill_gamma = fill_gamma
+        self.k_factor = k_factor
+
         if cpt.a_ratio is None:
             self.a_ratio = 0.8
         self.i_c_limit = i_c_limit
@@ -320,29 +274,42 @@ class RobertsonWride1997CPT(object):
         if self.sigma_veff[0] == 0.0:
             self.sigma_veff[0] = 1.0e-10
 
-        self.big_q, self.big_f, self.i_c = calc_dependent_variables(self.sigma_v, self.sigma_veff, self.cpt.f_s,
-                                                                    self.p_a, self.q_t)
-        self.phi = calc_phi(self.i_c, self.big_q)
-
-        self.alfa_e = calc_young_modulus_factor(self.i_c, self.big_q)
-        self.elastic_modulus = calc_young_modulus(self.alfa_e, self.q_t, self.sigma_v)
-        self.permeability = calc_permeability(self.i_c)
-        self.s_u = calc_s_u(self.q_t, self.sigma_v)
-        self.k_sigma = calc_k_sigma(self.i_c, self.big_f)
-        self.big_q_cs = self.big_q * self.k_sigma
-        self.crr_m7p5 = calc_crr_m7p5(self.big_q_cs)
-        self.rd = calc_rd(self.depth)
-        self.csr = calc_csr(self.sigma_veff, self.sigma_v, pga, self.rd)
-        self.msf = calc_msf(self.m_w)
-
-        fs_unlimited = self.crr_m7p5 / self.csr * self.msf
-
-        fos = np.where(fs_unlimited > 2, 2, fs_unlimited)
-        self.factor_of_safety = np.where(self.i_c <= self.i_c_limit, fos, 2.25)
+        self.sigma_fill = calc_sigma_fill(self.fill_height, self.fill_gamma ) #1
+        self.sigma_veff_new = self.sigma_veff + self.sigma_fill #2
+        self.sigma_v_new = self.sigma_v + self.sigma_fill #3
 
 
-def run_rw1997(cpt, pga, m_w, gwl=None, p_a=101., cfc=0.0, i_c_limit=2.6, gamma_predrill=17.0, c_0=2.8,
-               unit_wt_method='robertson2009', s_g=2.65, s_g_water=1.0, saturation=None):
+        self.factor = k_factor * (self.sigma_veff_new - self.sigma_veff) / self.sigma_veff #4
+        self.cpt.q_c = self.factor * self.cpt.q_c + self.cpt.q_c # 5
+        self.cpt.f_s = self.factor * self.cpt.f_s + self.cpt.f_s #6
+        self.q_t = calc_qt(self.cpt.q_c, self.a_ratio, self.cpt.u_2) #7
+
+
+
+        self.big_q, self.big_f, self.i_c = calc_dependent_variables(self.sigma_v_new, self.sigma_veff_new, self.cpt.f_s,
+                                                                    self.p_a, self.q_t) #8
+        # self.phi = calc_phi(self.i_c, self.big_q)
+
+        # self.alfa_e = calc_young_modulus_factor(self.i_c, self.big_q)
+        # self.elastic_modulus = calc_young_modulus(self.alfa_e, self.q_t, self.sigma_v)
+        # self.permeability = calc_permeability(self.i_c)
+        # self.s_u = calc_s_u(self.q_t, self.sigma_v)
+        self.k_sigma = calc_k_sigma(self.i_c, self.big_f) #9
+        self.big_q_cs = self.big_q * self.k_sigma #10
+        self.crr_m7p5 = calc_crr_m7p5(self.big_q_cs) #11
+        self.rd = calc_rd(self.depth, self.fill_height) #12
+        self.csr = calc_csr(self.sigma_veff_new, self.sigma_v_new, pga, self.rd) #13
+        self.msf = calc_msf(self.m_w) #14
+
+        fs_unlimited = self.crr_m7p5 / self.csr * self.msf #15
+
+        fos = np.where(fs_unlimited > 2, 2, fs_unlimited) #16
+        self.factor_of_safety = np.where(self.i_c <= self.i_c_limit, fos, 2.25) #17
+
+
+def run_rw1997_fill(cpt, pga, m_w, gwl=None, p_a=101., cfc=0.0, i_c_limit=2.6, gamma_predrill=17.0, c_0=2.8,
+               unit_wt_method='robertson2009', s_g=2.65, s_g_water=1.0, saturation=None, fill_height=None,
+               fill_gamma=None, k_factor=0.25):
     """
     Runs the Boulanger and Idriss (2014) triggering method.
 
@@ -380,110 +347,22 @@ def run_rw1997(cpt, pga, m_w, gwl=None, p_a=101., cfc=0.0, i_c_limit=2.6, gamma_
     BoulangerIdriss2014CPT()
     """
 
-    return RobertsonWride1997CPT(cpt, gwl=gwl, pga=pga, m_w=m_w, cfc=cfc, i_c_limit=i_c_limit, s_g=s_g,
+    return RobertsonWride1997CPTFILL(cpt, gwl=gwl, pga=pga, m_w=m_w, cfc=cfc, i_c_limit=i_c_limit, s_g=s_g,
                                  s_g_water=s_g_water, p_a=p_a,
                                  saturation=saturation, unit_wt_method=unit_wt_method, gamma_predrill=gamma_predrill,
-                                 c_0=c_0)
+                                 c_0=c_0, fill_height=fill_height,
+                                 fill_gamma=fill_gamma, k_factor=k_factor)
 
+# print(dfs['Object'][0].q_c)
+import liquefaction
+cpt = lq.field.load_mpa_cpt_file('CPT_H15c.csv', delimiter = ';')
 
-class RobertsonWride1997GI(object):
-    """
-    Performs the post improvement liquefaction triggering analysis considering thed presence
-    of inclusions (CMC & Stone Columns). It uses the appraoch of Baez & Martinez.
+obs = lq.field.load_mpa_cpt_file('CPT_H15c.csv', delimiter = ';')
 
-
-    Parameters
-    ----------
-        rw1997: RobertsonWride1997CPT object,
-
-        gi: ground improvement object,
-
-    Returns
-    -----------
-        rw1997_gi object
-
-    """
-
-    def __init__(self, rw1997, gi):
-        self.depth = rw1997.depth
-        self.gi = gi
-        self.csr = np.where(self.depth <= gi.depth,
-                            rw1997.csr * self.gi.ssr_factor,
-                            rw1997.csr)  # Taking into account depth of ground improvement
-        fs_unlimited = rw1997.crr_m7p5 / self.csr * rw1997.msf
-        fos = np.where(fs_unlimited > 2, 2, fs_unlimited)
-        self.factor_of_safety = np.where(rw1997.i_c <= rw1997.i_c_limit, fos, 2.25)
-
-
-def run_rw1997_gi(rw1997, gi):
-    """
-    Returns RW1997GroundImprovement
-    """
-    return RobertsonWride1997GI(rw1997=rw1997, gi=gi)
-
-
-class RobertsonWride1997CPTFILL(RobertsonWride1997CPT):
-    def __init__(self, cpt, gwl=None, pga=0.25, m_w=None, fill_height=None,
-                 fill_gamma=None, k_factor=0.25, **kwargs, ):
-        super().__init__(cpt, gwl=gwl, pga=pga, m_w=m_w, **kwargs)
-
-        self.fill_height = fill_height
-        self.fill_gamma = fill_gamma
-        self.k_factor = k_factor
-
-        self.sigma_fill = fill_height * fill_gamma  # 1
-        self.sigma_veff_new = self.sigma_veff + self.sigma_fill  # 2
-        self.sigma_v_new = self.sigma_v + self.sigma_fill  # 3
-
-        self.factor = k_factor * (self.sigma_veff_new - self.sigma_veff) / self.sigma_veff  # 4
-        self.cpt.q_c = self.factor * self.cpt.q_c + self.cpt.q_c  # 5
-        self.cpt.f_s = self.factor * self.cpt.f_s + self.cpt.f_s  # 6
-        self.q_t = calc_qt(self.cpt.q_c, self.a_ratio, self.cpt.u_2)  # 7
-
-        self.big_q, self.big_f, self.i_c = calc_dependent_variables(self.sigma_v_new, self.sigma_veff_new, self.cpt.f_s,
-                                                                    self.p_a, self.q_t)  # 8
-        self.k_sigma = calc_k_sigma(self.i_c, self.big_f)  # 9
-        self.big_q_cs = self.big_q * self.k_sigma  # 10
-        self.crr_m7p5 = calc_crr_m7p5(self.big_q_cs)  # 11
-        self.rd = self.calc_rd(self.depth, self.fill_height)  # 12
-        self.csr = calc_csr(self.sigma_veff_new, self.sigma_v_new, pga, self.rd)  # 13
-        self.msf = calc_msf(self.m_w)  # 14
-
-        fs_unlimited = self.crr_m7p5 / self.csr * self.msf  # 15
-
-        fos = np.where(fs_unlimited > 2, 2, fs_unlimited)  # 16
-        self.factor_of_safety = np.where(self.i_c <= self.i_c_limit, fos, 2.25)  # 17
-
-    def calc_rd(self, depth, fill_height):
-        """
-        Returns rd from CPT
-        For the moment only works for a CPT depth < 23meters
-        """
-        # depth += fill_height
-        rd_depth = depth + fill_height
-        rd = np.where(rd_depth < 9.15, 1.0 - 0.00765 * rd_depth, 1.174 - 0.0267 * rd_depth)
-        return rd
-
-
-def run_rw1997_fill(cpt, gwl=None, pga=0.25, m_w=None, fill_height=None,
-                 fill_gamma=None, k_factor=0.25, **kwargs):
-    return RobertsonWride1997CPTFILL(cpt, gwl=gwl, pga=pga, m_w=m_w, fill_height=fill_height,
-                 fill_gamma=fill_gamma, k_factor=k_factor, **kwargs)
-
-
-
-# from foundations.foundation import GroundImprovement
-#
-# gi = GroundImprovement(0.6,3,5)
-# cpt = lq.field.load_mpa_cpt_file('CPT_H15c.csv', delimiter=';')
-# #RobertsonWride1997CPTFILL(cpt, pga=0.122, m_w=6, gwl=2, fill_height=5, fill_gamma=17)
-# rw_1997 = run_rw1997(cpt, pga = 0.122, m_w = 6, gwl = 4)
-# rw_fill = run_rw1997_fill(cpt, pga = 0.122, m_w = 6, gwl = 2, fill_gamma= 17, fill_height= 8)
-# rw_gi = run_rw1997_gi(rw_1997,gi)
-#
-# plt.plot(rw_1997.factor_of_safety, -cpt.depth, label = 'R&W')
-# plt.plot(rw_fill.factor_of_safety, -cpt.depth, label = 'R&W Fill')
-# plt.plot(rw_gi.factor_of_safety, -cpt.depth, label ='R&W GI')
-#
-# plt.legend()
-# plt.show()
+rw = run_rw1997_fill(cpt, pga = 0.122, m_w = 6, gwl = 2, fill_gamma= 17, fill_height= 8)
+#print(rw.sigma_veff_new)
+rw_old = liquefaction.run_rw1997(cpt, pga = 0.122, m_w = 6, gwl = 2)
+plt.scatter(rw.factor_of_safety, -obs.depth, label = 'new')
+plt.scatter(rw_old.factor_of_safety, -obs.depth, label = 'old')
+plt.legend()
+plt.show()

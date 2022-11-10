@@ -35,8 +35,9 @@ class FoundationObject:
         if self.radius:
             return f'Foundation: \n Radius:{self.radius} \n Depth:{self.depth}m  \n Shape:{self.shape} '
         else:
-            #return f'Foundation: \n Length:{self.long}m \n Width:{self.short}m\n Depth:{self.depth}m\n Shape: {self.shape}'
+            # return f'Foundation: \n Length:{self.long}m \n Width:{self.short}m\n Depth:{self.depth}m\n Shape: {self.shape}'
             return f'Foundation:  Length:{self.long}m  Width:{self.short}m Depth:{self.depth}m Shape: {self.shape}'
+
     def get_shape(self):
         """
         Cycles through the foundation attributes to check
@@ -56,3 +57,37 @@ class FoundationObject:
         return self.shape
     # TODO: Implement setter & getter to avoid overwriting of obj.attributes
     # avoid fd.shape = 'raft' -> fd.shape = 'raft' instead of what is defined
+
+
+class GroundImprovement:
+    """
+    A class to store the GI parameters in improving liquefaction triggering safety margin
+    """
+
+    # Implement only where depth is applicable
+    def __init__(self, diameter, spacing, depth, sm_ratio=10):
+
+        self.diameter = diameter
+        self.spacing = spacing
+        self.depth = depth
+        self.sm_ratio = sm_ratio
+        self._area_ratio = None
+        self._ssr_factor = None
+
+    @property
+    def area_ratio(self):
+        if self._area_ratio is None:
+            self._area_ratio = self.diameter ** 2 * 3.1415926535 / (4 * self.spacing ** 2)
+        return self._area_ratio
+
+    @property
+    def ssr_factor(self):  # Shear Stress Reduction (SSR) factor
+        if self._ssr_factor is None:
+            self._ssr_factor = 1 / ((self.area_ratio + (1 - self.area_ratio) / self.sm_ratio) * self.sm_ratio)
+        return self._ssr_factor
+
+
+    def __repr__(self):
+        return f'GroundImprovement: diameter:{self.diameter}m ' \
+               f'spacing{self.spacing}m depth{self.depth}m ' \
+               f'ssr_factor{self.ssr_factor}'

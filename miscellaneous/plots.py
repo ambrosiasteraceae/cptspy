@@ -1,11 +1,11 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 from matplotlib.lines import Line2D
-from calc.liquefaction import  run_rw1997
-
+from calc.liquefaction import run_rw1997, run_rw1997_gi, run_rw1997_fill
+# from calc.fill_liquefaction import run_rw1997_fill
+from miscellaneous.timed import timed
 
 def pad_array(arr, max_size):
     return [np.pad(row, (0, max_size - row.size), 'constant', constant_values=(0, np.nan))
@@ -47,9 +47,8 @@ def label_x_ticks(sps, major_tick, minor_tick):
     sps.xaxis.set_minor_locator(MultipleLocator(minor_tick))
     sps.tick_params(axis='x', which='minor', length=10, direction='inout')
 
-
+@timed
 def create_cpt_9_plot(cpts):
-
     bf, ax = plt.subplots(3, 3, sharey=True, figsize=(8, 36))
 
     qcs = []
@@ -182,3 +181,125 @@ def create_cpt_9_plot(cpts):
     plt.show()
     bf.savefig('cpt_9_chart_plot.pdf', papertype='a2', bbox_inches='tight')
 
+@timed
+def create_cpt_before_and_after(cpts):
+    bf, ax = plt.subplots(1, 2, sharey=True, figsize=(12, 36))
+    #print(ax)
+    foss_rw = []
+    foss_fill = []
+
+
+    depths = []
+
+    max_size = 0
+
+    for i, cpt in enumerate(cpts):
+        rw = run_rw1997(cpt, pga=0.122, m_w=6, gwl=2)
+        rw_fill = run_rw1997_fill(cpt, pga=0.122, m_w=6, gwl=2, fill_gamma=17, fill_height=8)
+
+        if rw.cpt.q_c.size > max_size:
+            max_size = rw.cpt.q_c.size
+
+        depths.append(rw.depth)
+
+        foss_rw.append(rw.factor_of_safety)
+        foss_fill.append(rw_fill.factor_of_safety)
+
+        ax[0].plot(rw.factor_of_safety, -rw.depth, color='gray', alpha=.3)
+        ax[1].plot(rw_fill.factor_of_safety, -rw.depth, color='gray', alpha=.3)
+
+
+        ax[0].grid(True, alpha=0.5)
+        ax[0].set_xlabel('FoS - Liquefaction - Before improvement')
+        ax[0].axvline(x=1.25, c='black', ls='--', lw=2.5)
+        ax[0].set_xlim(0.5, 2.25)
+        ax[0].set_ylabel('Depth (m)')
+        customlines = [Line2D([0], [0], color='#fe8a71', lw=4),
+                       Line2D([0], [0], color='#3da4ab', lw=4),
+                       Line2D([0], [0], color='#f6cd61', lw=4),
+                       Line2D([0], [0], color='gray', lw=4)]
+        ax[0].legend(customlines, ['Minimum', 'Maximum', 'Mean', 'CPTs'], loc='lower left')
+
+        ax[1].grid(True, alpha=0.5)
+        ax[1].set_xlabel('FoS - Liquefaction - After improvement')
+        ax[1].axvline(x=1.25, c='black', ls='--', lw=2.5)
+        ax[1].set_xlim(0.5, 2.25)
+        ax[1].set_ylabel('Depth (m)')
+        ax[1].legend(customlines, ['Minimum', 'Maximum', 'Mean', 'CPTs'], loc='lower left')
+
+
+    depth = calc_max_depth(max_size)
+
+    generate_plot(ax[0], foss_rw, max_size)
+    generate_plot(ax[1], foss_fill, max_size)
+
+    matplotlib.rcParams.update({'font.size': 14})
+    plt.show()
+    bf.savefig('cpt_2_chart_plot.png', papertype='a3', bbox_inches='tight')
+
+
+
+@timed
+def create_plots_liq_gi_fill(cpts,gi,fill_gamma,fill_height):
+    bf, ax = plt.subplots(1, 3, sharey=True, figsize=(12, 36))
+    #print(ax)
+    foss_rw = []
+    foss_rw_fill = []
+    foss_rw_gi = []
+
+    depths = []
+
+    max_size = 0
+
+    for i, cpt in enumerate(cpts):
+        rw = run_rw1997(cpt, pga=0.122, m_w=6, gwl=2)
+        rw_fill = run_rw1997_fill(cpt, pga=0.122, m_w=6, gwl=2, fill_gamma=17, fill_height=8)
+        rw_gi = run_rw1997_gi(rw,gi)
+        if rw.cpt.q_c.size > max_size:
+            max_size = rw.cpt.q_c.size
+
+        depths.append(rw.depth)
+
+        foss_rw.append(rw.factor_of_safety)
+        foss_rw_fill.append(rw_fill.factor_of_safety)
+        foss_rw_gi.append(rw_gi.factor_of_safety)
+
+        ax[0].plot(rw.factor_of_safety, -rw.depth, color='gray', alpha=.3)
+        ax[1].plot(rw_fill.factor_of_safety, -rw.depth, color='gray', alpha=.3)
+        ax[2].plot(rw_gi.factor_of_safety, -rw.depth, color='gray', alpha=.3)
+
+
+        ax[0].grid(True, alpha=0.5)
+        ax[0].set_xlabel('FoS - Liquefaction - RW1997')
+        ax[0].axvline(x=1.25, c='black', ls='--', lw=2.5)
+        ax[0].set_xlim(0.5, 2.25)
+        ax[0].set_ylabel('Depth (m)')
+        customlines = [Line2D([0], [0], color='#fe8a71', lw=4),
+                       Line2D([0], [0], color='#3da4ab', lw=4),
+                       Line2D([0], [0], color='#f6cd61', lw=4),
+                       Line2D([0], [0], color='gray', lw=4)]
+        ax[0].legend(customlines, ['Minimum', 'Maximum', 'Mean', 'CPTs'], loc='lower left')
+
+        ax[1].grid(True, alpha=0.5)
+        ax[1].set_xlabel('FoS - Liquefaction - RWFILL')
+        ax[1].axvline(x=1.25, c='black', ls='--', lw=2.5)
+        ax[1].set_xlim(0.5, 2.25)
+        ax[1].set_ylabel('Depth (m)')
+        ax[1].legend(customlines, ['Minimum', 'Maximum', 'Mean', 'CPTs'], loc='lower left')
+
+        ax[2].grid(True, alpha=0.5)
+        ax[2].set_xlabel('FoS - Liquefaction - RWGI')
+        ax[2].axvline(x=1.25, c='black', ls='--', lw=2.5)
+        ax[2].set_xlim(0.5, 2.25)
+        ax[2].set_ylabel('Depth (m)')
+        ax[2].legend(customlines, ['Minimum', 'Maximum', 'Mean', 'CPTs'], loc='lower left')
+
+    depth = calc_max_depth(max_size)
+
+    generate_plot(ax[0], foss_rw, max_size)
+    generate_plot(ax[1], foss_rw_fill, max_size)
+    generate_plot(ax[2], foss_rw_gi, max_size)
+
+    matplotlib.rcParams.update({'font.size': 14})
+    plt.show()
+    bf.savefig('cpt_3_chart_plot.png', papertype='a3', bbox_inches='tight')
