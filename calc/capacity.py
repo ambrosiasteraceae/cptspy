@@ -367,6 +367,6 @@ lf = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5)
 
 cc = bearing_capacity(lf=None, fd=fd, method='vezic', gwl=0, phi=30,
                       cohesion=250, gamma_dry=20, gamma_sat=20, h_short=1255, vload=7188,
-                      verbose=False)
+                      verbose=True)
 
 print(cc)

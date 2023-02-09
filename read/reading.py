@@ -55,7 +55,7 @@ def convert_file(ffp, out_fp, verbose=0):
     None
     """
 
-    fns = [convert_nmdc_to_csv_00, convert_cs_to_csv_01, convert_cs_to_csv_02]
+    fns = [convert_nmdc_to_csv_00,convert_cs_to_csv_01, convert_cs_to_csv_02]
     for i, fn in enumerate(fns):
         if verbose:
             print(fn.__name__)
@@ -150,7 +150,6 @@ def trim_missing_at_end_data_df(df_data, neg_lim=None):
 
     return df_data
 
-
 def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
     """
     Converts NMDC CPT excel file type to liquepy format.
@@ -196,9 +195,152 @@ def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
     None
 
     """
+    if "BTA" in ffp:
+        cpt_num = ffp.split("BTA-")[-1]
 
-    cpt_num = ffp.split("HUD-")[-1]
+    elif "PTA" in ffp:
+        cpt_num = ffp.split("PTA-")[-1]
+
+    else:
+        cpt_num = ffp.split("HUD-")[-1]
+
     cpt_num = cpt_num.split(".xlsx")[0]
+
+    print(cpt_num)
+
+    xf = pd.ExcelFile(ffp)
+    if 'Header' in xf.sheet_names and 'Data' in xf.sheet_names:
+        if verbose:
+            print('found sheet names at convert_raw01_xlsx')
+    else:
+        return 0
+
+    df = pd.read_excel(ffp, sheet_name='Data')
+
+    d_str = 'Depth [m]'
+    qc_str = 'Cone resistance (qc) in MPa'
+    fs_str = 'Sleeve friction (fs) in MPa'
+    u2_str = 'Dynamic pore pressure (u2) in MPa'
+
+    cols = list(df)
+
+    if cols[0] == d_str and cols[1] == qc_str and cols[2] == fs_str and cols[3] == u2_str:
+        pass
+    else:
+        return 0
+    # Cut the remaining columns from the original data sheet
+    df_data = df.iloc[:, 0:4]
+    df_data = trim_missing_at_end_data_df(df_data)
+    # Create the dataFrame from the Header sheet
+    df_top = pd.read_excel(ffp, sheet_name='Header')
+    df_top = df_top.iloc[:, 0:4]  # I don't think it does much
+    df_top.drop_duplicates(inplace=True, ignore_index=True)
+    pp = len(df_top)
+    limit = 22
+    more = limit - pp
+    gwl_row = None
+    aratio_row = None
+    predrill_row = None
+    for i in range(len(df_top)):
+        if df_top.iloc[i, 0] == "Predrill":
+            df_top.iloc[i, 0] = 'Pre-Drill:'
+            predrill_row = i
+        if df_top.iloc[i, 0] == "Water level":
+            df_top.iloc[i, 0] = 'Assumed GWL:'
+            if df_top.iloc[i, 1] < 0:
+                df_top.iloc[i, 1] *= -1
+            gwl_row = i
+        if df_top.iloc[i, 0] == "Alpha Factor":
+            df_top.iloc[i, 0] = 'aratio'
+            aratio_row = i
+        if df_top.iloc[i, 0] == "E Coordinate":
+            df_top.iloc[i, 0] = 'Easting'
+
+        if df_top.iloc[i, 0] == "N Coordinate":
+            df_top.iloc[i, 0] = 'Northing'
+
+        if df_top.iloc[i, 0] == "Ground level":
+            df_top.iloc[i, 0] = 'groundlvl'
+        if df_top.iloc[i, 0] == "Date":
+            df_top.iloc[i, 0] = 'Date:'
+
+    if predrill_row is not None and predrill_row > limit:
+        df_top.iloc[limit - 3, :] = df_top.iloc[predrill_row, :]
+    if gwl_row is not None and gwl_row > limit:
+        df_top.iloc[limit - 2, :] = df_top.iloc[gwl_row, :]
+    if aratio_row is not None and aratio_row > limit:
+        df_top.iloc[limit - 1, :] = df_top.iloc[aratio_row, :]
+    if more < 0:
+        df_top = df_top[:limit]
+    n_cols = len(list(df_top))
+    if n_cols < 4:
+        for i in range(n_cols, 4):
+            df_top["C%i" % i] = ""
+
+    n_cols = len(list(df_top))
+    if more < 0:
+        df_top = df_top[:limit]
+    zeros = [["", "", "", ""]] * more  # [[""]*n_data_cols] * more
+    df_z = pd.DataFrame(zeros, columns=list(df_top))
+    df_headers = pd.DataFrame([[D_STR, QC_STR, FS_STR, U2_STR]], columns=list(df_top))
+    df_data.columns = list(df_top)
+    df_top.iloc[0, -1] = inspect.stack()[0][3]
+    df_new = pd.concat([df_top, df_z, df_headers, df_data])
+    df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
+    return 1
+
+def convert_nmdc_to_csv_01(ffp, out_fp, verbose=0):
+    """
+    Converts NMDC CPT excel file type to liquepy format.
+    Function works by first trying to see if the format
+    is specific to this function else exits the function
+    by returning 0. Many variables are specific to match
+    this exact format like "d_str, qc_str".
+
+    The way it converts the CPT excel to CSV is by splitting
+    the Excel file into two DataFrames first, df_data & df_top.
+    Performs operations on df_top searching for the necessary
+    header information like "E,N,GWL,Pre-Drill etc".
+    At the end, it will concatenate 4 DataFrames into a new one
+    and save it directly to the CSV.
+
+    DataFrames inside functions
+    ----------
+    df_data : DataFrame
+        Holds the depth, q_c, f_s, u_2 info
+    df_top : DataFrame
+        Holds the header information
+    df_z : DataFrame
+        DataFrame to compensate for the number of lines
+        required for the liquepy format. Index / Limit is
+        22. On 23 we have str repr. of CPT data and on
+        line 24 the values start
+    df_headers : DataFrame
+        Holds the 4 string representations of data_headers
+        that are applied globally
+
+
+
+
+    Parameters
+    ----------
+    ffp : str
+        Full file path to original CPT file
+    out_fp : str
+        Folder path where formatted different files should be saved
+
+    Returns
+    ----------
+    None
+
+    """
+    if "BTA" in ffp:
+        cpt_num = ffp.split("BTA-")[-1]
+    elif "PTA" in ffp:
+        cpt_num = ffp.split("PTA-")[-1]
+    cpt_num = cpt_num.split(".xlsx")[0]
+
+    print(cpt_num)
 
     xf = pd.ExcelFile(ffp)
     if 'Header' in xf.sheet_names and 'Data' in xf.sheet_names:
