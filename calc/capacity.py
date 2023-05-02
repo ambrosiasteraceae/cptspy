@@ -352,20 +352,21 @@ def bearing_capacity(lf, fd, vload=1, gwl=None, **kwargs):
         log.log(f"Ultimate bearing capacity is:", np.round(q_ult, 2))
         log.log(f"Net allowable bearing capacity is:", np.round(q_ult, 2) / 2)
         log.log(f"Design pressure is:", f"{(load)}kPa < {np.round(q_ult, 2) / 2}kpa")
+        log.log(f"Factor of safety is : {np.round(q_ult / load, 2)}")
     return bc_dict
 
 
 #
 phiss = np.array([5, 5, 10, 15, 20, 25, 26, 28, 30])
 phis = np.array([30, 36])
-fd = foundation.FoundationObject(1000, 20, 1)
+fd = foundation.FoundationObject(1, 2, 1)
 cpt = lq.field.load_mpa_cpt_file("CPT_H15c.csv", delimiter=";")
 lf = lq.trigger.run_bi2014(cpt, pga=0.25, m_w=7.5)
 
 # aa = bearing_capacity(lf=lf, fd=fd)
 # bb = bearing_capacity(lf=lf, fd=fd, method = 'vezic', gwl = 3)
 
-cc = bearing_capacity(lf=None, fd=fd, method='vezic', gwl=0, phi=30,
+cc = bearing_capacity(lf=None, fd=fd, method='vezic', gwl=3, phi=phis,
                       cohesion=250, gamma_dry=20, gamma_sat=20, h_short=1255, vload=7188,
                       verbose=True)
 
