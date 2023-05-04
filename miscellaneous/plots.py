@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
@@ -6,6 +5,7 @@ from matplotlib.lines import Line2D
 from calc.liquefaction import run_rw1997, run_rw1997_gi, run_rw1997_fill
 # from calc.fill_liquefaction import run_rw1997_fill
 from miscellaneous.timed import timed
+
 
 def pad_array(arr, max_size):
     return [np.pad(row, (0, max_size - row.size), 'constant', constant_values=(0, np.nan))
@@ -303,3 +303,6 @@ def create_plots_liq_gi_fill(cpts,gi,fill_gamma,fill_height):
     matplotlib.rcParams.update({'font.size': 14})
     plt.show()
     bf.savefig('cpt_3_chart_plot.png', papertype='a3', bbox_inches='tight')
+
+
+

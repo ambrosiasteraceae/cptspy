@@ -475,9 +475,9 @@ def run_rw1997_fill(cpt, gwl=None, pga=0.25, m_w=None, fill_height=None,
 # from foundations.foundation import GroundImprovement
 #
 # gi = GroundImprovement(0.6,3,5)
-# cpt = lq.field.load_mpa_cpt_file('CPT_H15c.csv', delimiter=';')
+cpt = lq.field.load_mpa_cpt_file('CPT_H15c.csv', delimiter=';')
 # #RobertsonWride1997CPTFILL(cpt, pga=0.122, m_w=6, gwl=2, fill_height=5, fill_gamma=17)
-# rw_1997 = run_rw1997(cpt, pga = 0.122, m_w = 6, gwl = 4)
+rw_1997 = run_rw1997(cpt, pga = 0.122, m_w = 6, gwl = 4)
 # rw_fill = run_rw1997_fill(cpt, pga = 0.122, m_w = 6, gwl = 2, fill_gamma= 17, fill_height= 8)
 # rw_gi = run_rw1997_gi(rw_1997,gi)
 #
@@ -487,3 +487,17 @@ def run_rw1997_fill(cpt, gwl=None, pga=0.25, m_w=None, fill_height=None,
 #
 # plt.legend()
 # plt.show()
+# print([(x,y) for x,y in zip (rw_1997.cpt.q_c/10**3, rw_1997.cpt.f_s/rw_1997.q_t * 100)])
+
+from miscellaneous import figures
+
+#
+color = figures.generate_massarsch_points(rw_1997)
+# plt.scatter( rw_1997.cpt.f_s/rw_1997.q_t * 100, rw_1997.cpt.q_c/10**3, color = color)
+# plt.semilogy()
+# plt.show()
+    # Plot 3
+
+figures.create_soil_index_plot(rw_1997)
+
+
