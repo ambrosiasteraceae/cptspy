@@ -98,7 +98,10 @@ def generate_massarsch_points(obj):
     marginally_compactable = [(0, 1),(0, 3),(1, 9.33),(1, 100),(1.5, 100),(1.5, 13),(0, 1)]
     not_compactable = [(0, 1), (3, 1), (3, 100), (1.5, 100), (1.5, 13), (0, 1)]
 
-    compactable_p, marginally_compactable_p, not_compactable_p = shapely.Polygon(compactable), shapely.Polygon(marginally_compactable), shapely.Polygon(not_compactable)
+    compactable_p = shapely.Polygon(compactable)
+    marginally_compactable_p = shapely.Polygon(marginally_compactable)
+    not_compactable_p = shapely.Polygon(not_compactable)
+
 
     colors_pp = np.empty(len(obj.depth), dtype='U30')
     # colors_pp.fill(COLORS_IC[4])
@@ -146,13 +149,15 @@ def create_soil_index_plot(obj, save = False):
     # Plot 2
     colors_pp = generate_massarsch_points(obj)
     axs[1].set_ylim([-obj.depth.max(), 0.05])
-    axs[1].set_xticks(indexes)
-    axs[1].barh(-obj.depth, obj.i_c, height=0.01, color=colors_pp, alpha=0.75)
-    axs[1].set_xlabel('Soil Type Index')
+    # axs[1].set_xticks(indexes)
+    axs[1].barh(-obj.depth, obj.q_t / 10**3, height=0.01, color=colors_pp, alpha=0.75)
+    axs[1].legend()
+    axs[1].set_xlabel('Tip Resistance (MPa)')
     axs[1].set_ylabel('Depth (m)')
-    axs[1].set_title('Ic index', fontsize = FONTSIZE, fontweight='bold')
+    axs[1].set_title('Cone Resistance, qt', fontsize = FONTSIZE, fontweight='bold')
     axs[1].grid()
-    axs[1].plot(obj.i_c, -obj.depth, color='black', linewidth=1.5)
+    axs[1].plot(obj.q_t / 10**3, -obj.depth, color='black', linewidth=1.5)
+
     #limit axs[1] plot to size
 
     Path = mpath.Path

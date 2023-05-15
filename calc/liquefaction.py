@@ -487,17 +487,13 @@ rw_1997 = run_rw1997(cpt, pga = 0.122, m_w = 6, gwl = 4)
 #
 # plt.legend()
 # plt.show()
-# print([(x,y) for x,y in zip (rw_1997.cpt.q_c/10**3, rw_1997.cpt.f_s/rw_1997.q_t * 100)])
+print([(x,y) for x,y in zip (rw_1997.cpt.q_c/10**3, rw_1997.cpt.f_s/rw_1997.q_t * 100)])
 
 from miscellaneous import figures
 
-#
-color = figures.generate_massarsch_points(rw_1997)
-# plt.scatter( rw_1997.cpt.f_s/rw_1997.q_t * 100, rw_1997.cpt.q_c/10**3, color = color)
-# plt.semilogy()
-# plt.show()
-    # Plot 3
 
 figures.create_soil_index_plot(rw_1997)
+plt.show()
+
 
 
