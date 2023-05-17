@@ -5,6 +5,7 @@ from matplotlib.lines import Line2D
 from calc.liquefaction import run_rw1997, run_rw1997_gi, run_rw1997_fill
 # from calc.fill_liquefaction import run_rw1997_fill
 from miscellaneous.timed import timed
+import matplotlib.pyplot as plt
 
 
 def pad_array(arr, max_size):

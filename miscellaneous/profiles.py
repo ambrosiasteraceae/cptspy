@@ -7,8 +7,6 @@ import liquepy as lq
 from calc.liquefaction import run_rw1997
 
 
-
-
 def create_soil_params(layers):
     mask = np.where((layers[1:] - layers[:-1]) != 0)  # Mask, condition is true where there is a change in soil type.
     mask = mask[0]  # Remove the tuple
@@ -24,6 +22,7 @@ def create_soil_params(layers):
 
     return soil_type, soil_layers, soil_indexes
 
+
 # i_c, depth = np.loadtxt('abc.txt', delimiter=',', skiprows=1)
 
 soils = ['Gravelly sand to dense sand',
@@ -31,8 +30,9 @@ soils = ['Gravelly sand to dense sand',
          'Clayey silt to silty clay', 'Clays - silty clay to clay',
          'Oranic soils - clav']
 
-#Create a dictionary with 1...5 as keys and the soil types as values
+# Create a dictionary with 1...5 as keys and the soil types as values
 COLORS_IC = ['#f19e45', '#b8a365', '#76c0a2', '#469186', '#4d567c', '#bb6639']
+
 
 def color_filter(ics):
     colors = np.empty(len(ics), dtype='U30')
@@ -47,7 +47,8 @@ def color_filter(ics):
 
     return colors
 
-def ic_absorption_reduce(soil_indexes, soil_layers, soil_type, layers = None, absorption=20):
+
+def ic_absorption_reduce(soil_indexes, soil_layers, soil_type, layers=None, absorption=20):
     """
         Reduces the soil layers (thickness) values  based on a threshold.
 
@@ -83,9 +84,8 @@ def ic_absorption_reduce(soil_indexes, soil_layers, soil_type, layers = None, ab
     for i in range(len(soils)):
         soil_array_types[start[i]:end[i] + 1] = soils[i]
 
-
-
     return soil_array_types, (soils, start, end)
+
 
 def map_soil_index(arr):
     # Map the soil index array to the soil types
@@ -98,6 +98,7 @@ def map_soil_index(arr):
     layers[arr >= 3.6] = 6
     return layers
 
+
 def map_soil_dict():
     return {1: 'Gravelly Sand to Dense Sand',
             2: 'Clean Sand to Silty Sand',
@@ -105,6 +106,7 @@ def map_soil_dict():
             4: 'Clayey Silt to Silty Clay',
             5: 'Silty Clay to Clay',
             6: 'Oranic Soils - Clay'}
+
 
 def create_soil_profile(i_c, absorption=20):
     """
@@ -139,11 +141,13 @@ def create_soil_profile(i_c, absorption=20):
     soil_layers = soil_indexes[1:] - soil_indexes[:-1]
     soil_layers = np.insert(soil_layers, 0, 0)
 
-    ic_absorbed, soil_tuple= ic_absorption_reduce(soil_indexes, soil_layers, soil_type, layers = layers, absorption=absorption)
+    ic_absorbed, soil_tuple = ic_absorption_reduce(soil_indexes, soil_layers, soil_type, layers=layers,
+                                                   absorption=absorption)
 
     soils, start, end = remove_adjacent_values(*soil_tuple)
 
     return ic_absorbed, soils, start, end
+
 
 def remove_adjacent_values(soils, start, end):
     """
@@ -192,6 +196,7 @@ def remove_adjacent_values(soils, start, end):
 
     return soils, start, end
 
+
 def create_dictionary_for_sql():
     createdon = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     createdby = 'map-soil-index-dgs'
@@ -208,7 +213,6 @@ def create_dictionary_for_sql():
     return sql_dict
 
 
-
 def plot_sp_from_obj(sp):
     colors = color_filter(sp.i_c_abs)
     fig, ax = plt.subplots(figsize=(6, 12))
@@ -220,6 +224,7 @@ def plot_sp_from_obj(sp):
     ax.set_ylabel('Depth (m)')
     ax.set_title('Soil Profile')
     plt.show()
+
 
 def plot_ic_single(ic_absorbed, soils, start, end):
     colors = color_filter(ic_absorbed)
@@ -235,6 +240,7 @@ def plot_ic_single(ic_absorbed, soils, start, end):
     ax.set_title('IC profile')
     plt.show()
 
+
 def plot_ic_multiple():
     layers = map_soil_index(i_c)
     fig, axs = plt.subplots(2, 3, figsize=(10, 10), sharex=True, sharey=True)
@@ -245,8 +251,9 @@ def plot_ic_multiple():
         generate_ax_soil_at_absorbtion(axs[i], x, layers)
     plt.show()
 
-def generate_ax_soil_at_absorbtion(ax, absorption, layers ):
-    ic_absorbed, soils, start, end = create_soil_profile(i_c = i_c, absorption = absorption)
+
+def generate_ax_soil_at_absorbtion(ax, absorption, layers):
+    ic_absorbed, soils, start, end = create_soil_profile(i_c=i_c, absorption=absorption)
     # ic_absorbed, soils, start, end = ic_absorption_reduce(soil_indexes, soil_layers, soil_type, absorption=absorption)
     colors = color_filter(ic_absorbed)
     ax.barh(-depth, ic_absorbed, height=0.01, color=colors, alpha=0.75)
@@ -271,10 +278,10 @@ def generate_ax_soil_at_absorbtion(ax, absorption, layers ):
 
     x2 = x2[x2 == 0].size
 
-
     ax.set_xlabel('IC (%)')
     ax.set_ylabel('Depth (m)')
     ax.set_title(f'Absorption: {absorption}, Accuracy:{np.round(x2 / x1 * 100, 2)}')
+
 
 class SoilProfile():
     def __init__(self, obj):
@@ -318,7 +325,7 @@ class SoilProfile():
             self._s_u = np.zeros(self.soils.size)
             for i, (start, end) in enumerate(zip(self.start, self.end)):
                 self._s_u[i] = np.average(self.obj.s_u[start:end])
-                self._s_u[self.soils<=2] = 0
+                self._s_u[self.soils <= 2] = 0
         return self._s_u
 
     @property
@@ -328,7 +335,6 @@ class SoilProfile():
             for i, (start, end) in enumerate(zip(self.start, self.end)):
                 self._elastic_modulus[i] = np.average(self.obj.elastic_modulus[start:end])
         return self._elastic_modulus
-
 
     def plot_sp(self):
         pass
@@ -347,44 +353,24 @@ class SoilProfile():
         with open('sp.json', 'w', ) as fp:
             json.dump(template, fp)
 
-
     def to_latex(self):
         pass
 
 
 def serialize(temp):
-
     for key, value in temp.items():
         if isinstance(value, np.ndarray):
             temp[key] = value.tolist()
     return temp
 
 
-def sp_to_json(soil_prof):
-    template = serialize(soil_prof)
-    with open('soil_prof.json', 'w', ) as fp:
-        json.dump(template, fp)
-
-
 
 
 cpt = lq.field.load_mpa_cpt_file('C:/Users/dragos/PycharmProjects/cptspy/calc/CPT_H15d.csv', delimiter = ';')
-rw1997 = run_rw1997(cpt, pga=0.20, m_w = 6.0, gwl = 2)
+rw1997 = run_rw1997(cpt, pga=0.20, m_w=6.0, gwl=8)
+print(rw1997.i_c)
 sp = SoilProfile(rw1997)
-
-print(sp.soils, sp.start, sp.end)
-# print(rw1997.unit_wt)
-
-print(sp.unit_wt)
-print(sp.phi)
-print(sp.s_u)
-print(sp.elastic_modulus)
 
 sp.to_json()
 
-
-
-
-
-# plot_sp_from_obj(sp)
-
+print(sp.soils)

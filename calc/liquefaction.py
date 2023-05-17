@@ -239,6 +239,7 @@ def calc_permeability(i_c):
     return k_perm
 
 
+
 class RobertsonWride1997CPT(object):
 
     def __init__(self, cpt, gwl=None, pga=0.25, m_w=None, **kwargs):
@@ -453,6 +454,8 @@ class RobertsonWride1997CPTFILL(RobertsonWride1997CPT):
 
         fos = np.where(fs_unlimited > 2, 2, fs_unlimited)  # 16
         self.factor_of_safety = np.where(self.i_c <= self.i_c_limit, fos, 2.25)  # 17
+
+
 
     def calc_rd(self, depth, fill_height):
         """
