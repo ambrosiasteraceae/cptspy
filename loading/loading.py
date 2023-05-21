@@ -3,6 +3,28 @@ import pandas as pd
 import liquepy as lq
 
 
+
+
+class CPTHeader:
+    def __init__(self, ffp):
+        headers = ['Date:', 'Assumed GWL:', 'groundlvl', 'Pre-Drill:', 'Easting', 'Northing',
+                   'aratio', 'CPT-ID', 'Object']
+
+
+        self.date = None
+        self.gwl = None
+        self.groundlvl = None
+        self.pre_drill = None
+        self.easting = None
+        self.northing = None
+        self.aratio = None
+        self.cpt_id = None
+
+
+
+
+
+
 def load_dataframe(out_fp):
     """"
 

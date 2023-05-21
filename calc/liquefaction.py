@@ -1,8 +1,5 @@
 import numpy as np
-import liquepy as lq
-from miscellaneous import timed
-import matplotlib.pyplot as plt
-from loading import loading
+
 
 
 def calc_qt(qc, ar, u2):
@@ -475,32 +472,6 @@ def run_rw1997_fill(cpt, gwl=None, pga=0.25, m_w=None, fill_height=None,
 
 
 
-# from foundations.foundation import GroundImprovement
-#
-# gi = GroundImprovement(0.6,3,5)
-# cpt = lq.field.load_mpa_cpt_file('CPT_H15c.csv', delimiter=';')
-# #RobertsonWride1997CPTFILL(cpt, pga=0.122, m_w=6, gwl=2, fill_height=5, fill_gamma=17)
-# rw_1997 = run_rw1997(cpt, pga = 0.122, m_w = 6, gwl = 4)
-# rw_fill = run_rw1997_fill(cpt, pga = 0.122, m_w = 6, gwl = 2, fill_gamma= 17, fill_height= 8)
-# rw_gi = run_rw1997_gi(rw_1997,gi)
-#
-# plt.plot(rw_1997.factor_of_safety, -cpt.depth, label = 'R&W')
-# plt.plot(rw_fill.factor_of_safety, -cpt.depth, label = 'R&W Fill')
-# plt.plot(rw_gi.factor_of_safety, -cpt.depth, label ='R&W GI')
-#
-# plt.legend()
-# plt.show()
-# print([(x,y) for x,y in zip (rw_1997.cpt.q_c/10**3, rw_1997.cpt.f_s/rw_1997.q_t * 100)])
-
-from miscellaneous import figures
-
-
-#Save rw_1997.i_c, rw_1997.depth into a txt file
-# np.savetxt('abc.txt', [rw_1997.i_c, rw_1997.depth], delimiter=',', header='i_c, depth')
-# i_c, depth = np.loadtxt('abc.txt', delimiter=',', skiprows=1)
-
-# figures.create_soil_index_plot(rw_1997)
-# plt.show()
 
 
 
