@@ -28,19 +28,24 @@ def calc_cumulative_ic(i_c):
     mm = np.diff(mask).flatten()
     cumuls = [x.size for x in np.split(mm, np.where(mm != 1)[0])]
     print(cumuls)
-    return np.max(cumuls)
+
+    return ("-").join([str(x) for x in cumuls])
+
 
 def calc_min_elev_ic(i_c, depth):
     """
     Returns the minimum elevation of Ic > 2.6
     """
-    return np.min([depth[1:][i_c[1:]>2.6]])
+    a = np.min([depth[1:][i_c[1:]>2.6]])
+    return np.round(a,2)
 
 def calc_max_elev_ic(i_c, depth):
     """
     Returns the maximum elevation of Ic > 2.6
     """
-    return np.max([depth[1:][i_c[1:]>2.6]])
+    a = np.max([depth[1:][i_c[1:]>2.6]])
+
+    return np.round(a,2)
 
 def calc_cumulative_fos(fos):
     """
@@ -49,7 +54,8 @@ def calc_cumulative_fos(fos):
     mask = np.where(fos < 1.25)
     mm = np.diff(mask).flatten()
     cumuls = [x.size for x in np.split(mm, np.where(mm != 1)[0])]
-    return np.max(cumuls)
+    # return np.max(cumuls)
+
 
 def calc_min_fos(fos, depth):
     """
@@ -57,6 +63,7 @@ def calc_min_fos(fos, depth):
     """
     try:
         d = np.min(depth[fos < 1.25])
+        d = np.round(d,2)
     except ValueError:
         return None
     return d
@@ -67,12 +74,10 @@ def calc_max_fos(fos, depth):
     """
     try:
         d = np.max(depth[fos < 1.25])
+        d = np.round(d, 2)
     except ValueError:
         return None
     return d
-
-
-
 
 class CPTSummary():
     def __init__(self, obj):
@@ -84,7 +89,13 @@ class CPTSummary():
         self.cum_fos = calc_cumulative_fos(obj.factor_of_safety)
         self.min_fos_elev = calc_min_fos(obj.factor_of_safety, obj.depth)
         self.max_fos_elev = calc_max_fos(obj.factor_of_safety, obj.depth)
-#mindepth 2.76
-#max depth 6.59
 
-
+    @property
+    def latex_dict(self):
+        _keys = ['Cumulative Ic:', 'Min. Elevation Ic:', 'Max. Elevation Ic:', 'Min. Liq. FoS:', 'Cumulative Liq. FoS:', 'Min. FoS Elevation:', 'Max. FOS Elevation:']
+        _vals = [self.cum_ic,  self.min_elev_ic, self.max_elev_ic,
+                 np.round(self.min_fos,2), self.cum_fos,self.min_fos_elev, self.max_fos_elev]
+        _dict = {}
+        for k,v in zip(_keys, _vals):
+            _dict[k] = v
+        return _dict

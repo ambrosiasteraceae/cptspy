@@ -366,7 +366,7 @@ def serialize(temp):
 
 
 
-cpt = lq.field.load_mpa_cpt_file('C:/Users/dragos/PycharmProjects/cptspy/calc/CPT_H15d.csv', delimiter = ';')
+cpt = lq.field.load_mpa_cpt_file('D:/04_R&D/cptspy/calc/CPT_H15c.csv', delimiter = ';')
 rw1997 = run_rw1997(cpt, pga=0.20, m_w=6.0, gwl=8)
 print(rw1997.i_c)
 sp = SoilProfile(rw1997)

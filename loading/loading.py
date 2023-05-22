@@ -1,26 +1,49 @@
+import datetime
 import glob
 import pandas as pd
 import liquepy as lq
 
 
 
-
 class CPTHeader:
-    def __init__(self, ffp):
-        headers = ['Date:', 'Assumed GWL:', 'groundlvl', 'Pre-Drill:', 'Easting', 'Northing',
-                   'aratio', 'CPT-ID', 'Object']
+    def __init__(self, date, gwl, ground_lvl, pre_drill, easting, northing, name):
 
 
-        self.date = None
-        self.gwl = None
-        self.groundlvl = None
-        self.pre_drill = None
-        self.easting = None
-        self.northing = None
-        self.aratio = None
-        self.cpt_id = None
+        self.date = date
+        self.gwl = gwl
+        self.ground_lvl = ground_lvl
+        self.pre_drill = pre_drill
+        self.easting = easting
+        self.northing = northing
+        self.name = name
+
+    @property
+    def latex_dict(self):
+
+        _list = ['Name:', 'Date:', 'Ground Water Level:', 'Ground Level:', 'Pre-Drill:', 'Easting', 'Northing']
+        _values =[self.name, self.date, self.gwl, self.ground_lvl, self.pre_drill, self.easting, self.northing]
+        _suffix = ['', '', ' m', ' m', ' m', ' m', ' m']
+        _dict = {}
+        for k,v,s in zip(_list, _values, _suffix):
+            _dict[k] = str(v) + s
+        return _dict
 
 
+def load_cpt_header(file):
+    headers = ['Date:', 'Assumed GWL:', 'groundlvl', 'Pre-Drill:', 'Easting', 'Northing',
+               'aratio', 'Sounding Number']
+
+    limit = 24
+    name = file.split('CPT_')[-1].split('.csv')[0]
+    df = pd.read_csv(file, sep=';')
+    new_df = df.iloc[:limit, 0:2]
+    series1 = list(new_df.iloc[:, 0])  # Store  all 1st row variables  from DataFrame
+    series2 = list(new_df.iloc[:, 1])  # Store all 2nd row values from DataFrame
+    d = dict(zip(series1, series2))
+
+    d['Date:'] = datetime.datetime.strptime(d['Date:'], '%Y-%m-%d %H:%M:%S')
+    d['Date:'] = d['Date:'].strftime('%d-%m-%Y')
+    return CPTHeader(d['Date:'], d['Assumed GWL:'], d['groundlvl'], d['Pre-Drill:'], d['Easting'], d['Northing'], name)
 
 
 

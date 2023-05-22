@@ -634,3 +634,13 @@ def convert_cs_to_csv_02(ffp, out_fp, verbose=0):
     df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
     return 1
 
+import json
+import numpy as np
+def load_json(ffp):
+    with open(ffp) as f:
+        data = json.load(f)
+    return data
+
+
+
+print(load_json('D:/04_R&D/cptspy/loading/CPT-10211-PO-AP11b4-1P.json'))
