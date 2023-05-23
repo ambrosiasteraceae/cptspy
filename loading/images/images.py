@@ -21,31 +21,31 @@ TXTWEIGHT = 'bold'
 FIGURESIZE = (4, 4)
 def generate_ic_legend():
     fig, ax = plt.subplots(1, 1, figsize=FIGURESIZE)
-    plt.barh([1,2,3,4,5,6], [1,1,1,1,1,1], color=COLORS_IC[::-1], height = 1, edgecolor='black')
-    ax.set_xlim(0, 4)
+    plt.barh([1,2,3,4,5,6], [2,2,2,2,2,2], color=COLORS_IC[::-1], height = 1, edgecolor='black')
+    ax.set_xlim(0, 5)
     ax.set_ylim(0.5, 7)
     for i, layer in enumerate(layers[::-1]):
-        ax.text(1.1, i+0.8, layer, fontsize=FONTSIZE, color=TXTCOLOR, fontweight=TXTWEIGHT)
-    ax.text(0.5, 7, 'Soil Index Legend', fontsize=FONTSIZE, color=TXTCOLOR, fontweight=TXTWEIGHT)
+        ax.text(2.05, i+0.8, layer, fontsize=FONTSIZE, color=TXTCOLOR, fontweight=TXTWEIGHT)
+    ax.text(0.5, 7, 'Soil Type Index Legend', fontsize=FONTSIZE, color=TXTCOLOR, fontweight=TXTWEIGHT)
     ax.axis('off')
     fig.savefig('ic_legend.png', bbox_inches='tight')
-    plt.show()
+    # plt.show()
 
 
 def generate_fos_legend():
 
     fig,ax = plt.subplots(1,1,figsize=FIGURESIZE)
-    ax.barh([1,2,3,4,5,6], [1,1,1,1,1,1], color=COLORS_FOS[::-1], height = 1, edgecolor='black', alpha = 0.5)
+    ax.barh([1,2,3,4,5,6], [2,2,2,2,2,2], color=COLORS_FOS[::-1], height = 1, edgecolor='black', alpha = 0.5)
     # ax.xlim(-1,4)
     # ax.ylim(-1,8)
-    ax.set_xlim(0,4)
+    ax.set_xlim(0,5)
     ax.set_ylim(0.5,7)
     for i, fos in enumerate(foses[::-1]):
-        ax.text(1.1, i+0.8, fos, fontsize=FONTSIZE, color=TXTCOLOR, fontweight=TXTWEIGHT)
+        ax.text(2.05, i+0.8, fos, fontsize=FONTSIZE, color=TXTCOLOR, fontweight=TXTWEIGHT)
     ax.text(0.5, 7, 'Factor of Safety Legend', fontsize=FONTSIZE, color=TXTCOLOR, fontweight=TXTWEIGHT)
     ax.axis('off')
     fig.savefig('fos_legend.png', bbox_inches='tight')
-    plt.show()
+    # plt.show()
 
 generate_ic_legend()
 generate_fos_legend()

@@ -24,26 +24,27 @@ def calc_cumulative_ic(i_c):
             count = 1
 
     """
-    mask = np.where(i_c > 2.6)
+    mask = np.where(i_c >= 2.6)
     mm = np.diff(mask).flatten()
     cumuls = [x.size for x in np.split(mm, np.where(mm != 1)[0])]
-    print(cumuls)
 
-    return ("-").join([str(x) for x in cumuls])
+
+    return np.sum(cumuls)
 
 
 def calc_min_elev_ic(i_c, depth):
     """
     Returns the minimum elevation of Ic > 2.6
     """
-    a = np.min([depth[1:][i_c[1:]>2.6]])
+    # a = np.min([depth[1:][i_c[1:]>2.6]])
+    a = np.min([depth[i_c > 2.6]])
     return np.round(a,2)
 
 def calc_max_elev_ic(i_c, depth):
     """
     Returns the maximum elevation of Ic > 2.6
     """
-    a = np.max([depth[1:][i_c[1:]>2.6]])
+    a = np.max([depth[i_c>2.6]])
 
     return np.round(a,2)
 
@@ -55,6 +56,7 @@ def calc_cumulative_fos(fos):
     mm = np.diff(mask).flatten()
     cumuls = [x.size for x in np.split(mm, np.where(mm != 1)[0])]
     # return np.max(cumuls)
+    return np.sum(cumuls)
 
 
 def calc_min_fos(fos, depth):
@@ -81,18 +83,20 @@ def calc_max_fos(fos, depth):
 
 class CPTSummary():
     def __init__(self, obj):
-
+        self.min_elev_ic = calc_min_elev_ic(obj.i_c, obj.cpt.elevation)
+        self.min_fos_elev = calc_min_fos(obj.factor_of_safety, obj.cpt.elevation)
+        self.max_elev_ic = calc_max_elev_ic(obj.i_c, obj.cpt.elevation)
+        self.max_fos_elev = calc_max_fos(obj.factor_of_safety, obj.cpt.elevation)
         self.cum_ic = calc_cumulative_ic(obj.i_c)
-        self.min_elev_ic = calc_min_elev_ic(obj.i_c, obj.depth)
-        self.max_elev_ic = calc_max_elev_ic(obj.i_c, obj.depth)
-        self.min_fos = obj.factor_of_safety.min()
         self.cum_fos = calc_cumulative_fos(obj.factor_of_safety)
-        self.min_fos_elev = calc_min_fos(obj.factor_of_safety, obj.depth)
-        self.max_fos_elev = calc_max_fos(obj.factor_of_safety, obj.depth)
+        self.min_fos = obj.factor_of_safety.min()
+
+
+
 
     @property
     def latex_dict(self):
-        _keys = ['Cumulative Ic:', 'Min. Elevation Ic:', 'Max. Elevation Ic:', 'Min. Liq. FoS:', 'Cumulative Liq. FoS:', 'Min. FoS Elevation:', 'Max. FOS Elevation:']
+        _keys = ['Cumulative Ic:', 'Min. Elevation Ic:', 'Max. Elevation Ic:', 'Min. Liq. FoS:', 'Cumulative Liq. FoS:', 'Min. Elevation FoS :', 'Max. Elevation FOS :']
         _vals = [self.cum_ic,  self.min_elev_ic, self.max_elev_ic,
                  np.round(self.min_fos,2), self.cum_fos,self.min_fos_elev, self.max_fos_elev]
         _dict = {}

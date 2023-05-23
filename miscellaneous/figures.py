@@ -114,7 +114,8 @@ def generate_massarsch_points(obj):
     # colors_pp.fill(COLORS_IC[4])
     colors_pp.fill(COLORS_IC[4])
 
-    friction_ratio = obj.cpt.f_s/obj.cpt.q_t * 100 #in percentages
+    friction_ratio = obj.cpt.f_s[1:]/obj.cpt.q_t[1:] * 100 #in percentages
+    friction_ratio = np.insert(friction_ratio, 0,0)
     points = np.array([shapely.Point(x,y) for x,y in zip(friction_ratio, obj.cpt.q_c/10**3)])
     compactable_mask = shapely.contains(compactable_p, points)
     marginally_compactable_mask = shapely.contains(marginally_compactable_p, points)
@@ -153,7 +154,7 @@ def create_soil_index_plot(obj, save = False):
     indexes = [0, 1.31, 2.05, 2.6, 2.95, 3.6, ]
     axs[0].plot(obj.i_c, -obj.depth, color='yellow', alpha=1, linewidth=4)
     axs[0].set_xlabel('I(SBT)')
-    axs[0].set_ylabel('Depth (m)')
+    axs[0].set_ylabel('Elevation (m ACD)')
     axs[0].set_title('SBT Index', fontsize=FONTSIZE, fontweight='bold')
     axs[0].set_xticks(indexes)
 
@@ -175,7 +176,7 @@ def create_soil_index_plot(obj, save = False):
     axs[1].barh(-obj.depth, obj.q_t / 10**3, height=0.01, color=colors_pp, alpha=0.75)
     axs[1].legend()
     axs[1].set_xlabel('Tip Resistance (MPa)')
-    axs[1].set_ylabel('Depth (m)')
+    axs[1].set_ylabel('Elevation (m ACD)')
     axs[1].set_title('Cone Resistance, qt', fontsize = FONTSIZE, fontweight='bold')
     axs[1].grid()
     axs[1].plot(obj.q_t / 10**3, -obj.depth, color='black', linewidth=1.5)
@@ -226,36 +227,45 @@ def create_soil_index_plot(obj, save = False):
 
 
 
-def create_fos_and_index_plot(axs, obj, save = False):
-    # Create subplots
-    # fig, axs = plt.subplots(nrows=1, ncols=4, figsize=(22, 16))
+def create_fos_and_index_plot(axs, obj):
 
     FONTSIZE = 14
     # Plot 1
     colors_pp = generate_massarsch_points(obj)
-    axs[0].set_ylim([-obj.depth.max(), 0.05])
+    axs[0].set_ylim([obj.cpt.elevation.min(), obj.cpt.elevation.max() + 0.05])
+    axs[1].set_ylim([obj.cpt.elevation.min(), obj.cpt.elevation.max()+ 0.05])
+    axs[2].set_ylim([obj.cpt.elevation.min(), obj.cpt.elevation.max()+ 0.05])
     # axs[1].set_xticks(indexes)
-    axs[0].barh(-obj.depth, obj.q_t / 10**3, height=0.01, color=colors_pp, alpha=0.75)
-    axs[0].legend()
-    axs[0].set_xlabel('Tip Resistance (MPa)')
-    axs[0].set_ylabel('Depth (m)')
+    axs[0].barh(obj.cpt.elevation, obj.q_t / 10**3, height=0.01, color=colors_pp, alpha=0.75)
+
+    axs[0].legend(labels = ['Compactable', 'Marginally Compactable', 'Not Compactable'], labelcolor =[COLORS_IC[0], COLORS_IC[2], COLORS_IC[4]])
+    axs[0].set_xlabel('Qt Tip Resistance (MPa)')
+    axs[0].set_ylabel('Elevation (m ACD)')
     axs[0].set_title('Cone Resistance, qt', fontsize = FONTSIZE, fontweight='bold')
+
+    p1 = mpatches.Patch(color=COLORS_IC[0], label='Compactable', alpha = 0.8)
+    p2 = mpatches.Patch(color=COLORS_IC[2], label='Marginally Compactable', alpha = 0.8)
+    p3 = mpatches.Patch(color=COLORS_IC[4], label='Not Compactable', alpha = 0.8)
+
+    axs[0].legend(handles=[p1, p2, p3], loc='upper right', framealpha = 0.6)
+
     axs[0].grid()
-    axs[0].plot(obj.q_t / 10**3, -obj.depth, color='black', linewidth=1.5)
+    axs[0].plot(obj.q_t / 10**3, obj.cpt.elevation, color='black', linewidth=1.5)
+
+
     
-    
-    axs[1].scatter(obj.factor_of_safety, -obj.depth, color='black', linewidth=1.5)
+    axs[1].scatter(obj.factor_of_safety, obj.cpt.elevation, color='black', linewidth=1.5)
     make_factor_of_safety_plot(axs[1])
     axs[1].set_xlabel('Factor of Safety')
-    axs[1].set_ylabel('Depth (m)')
+    axs[1].set_ylabel('Elevation (m ACD)')
     axs[1].set_title('Factor of Safety', fontsize = FONTSIZE, fontweight='bold')
     
     # Plot 3
     
     indexes = [0, 1.31, 2.05, 2.6, 2.95, 3.6, ]
-    axs[2].plot(obj.i_c, -obj.depth, color='yellow', alpha=1, linewidth=4)
-    axs[2].set_xlabel('I(SBT)')
-    axs[2].set_ylabel('Depth (m)')
+    axs[2].plot(obj.i_c, obj.cpt.elevation, color='yellow', alpha=1, linewidth=4)
+    axs[2].set_xlabel('Ic')
+    axs[2].set_ylabel('Elevation (m ACD)')
     axs[2].set_title('SBT Index', fontsize=FONTSIZE, fontweight='bold')
     axs[2].set_xticks(indexes)
 
@@ -266,8 +276,10 @@ def create_fos_and_index_plot(axs, obj, save = False):
     axs[2].axvspan(2.95, 3.60, alpha=1, color=COLORS_IC[4])
     axs[2].axvspan(3.60, 4.00, alpha=1, color=COLORS_IC[5])
 
-    axs[2].set_ylim([-obj.depth.max(), 0])
+    # axs[2].set_ylim([obj.cpt.elevation.max(), 0])
+    # axs[0].set_ylim([obj.cpt.elevation.min(), obj.cpt.elevation.max()])
     axs[2].set_xlim([0, 4])
+
 
 
 
@@ -301,8 +313,8 @@ def create_compactibilty_plot(ax, obj):
     ax.set_ylim(1, 100)
     ax.set_xlabel('Friction Ratio %')
     ax.set_ylabel('Cone Penetration Resistance MPa')
-    ax.legend(['Compactable', 'Marginally Compactable', 'Not Compactable'])
-    ax.set_title('S.C. for Deep Compaction Works', fontsize=10, fontweight='bold')
+    # ax.legend(['Compactable', 'Marginally Compactable', 'Not Compactable'])
+    ax.set_title('Massarasch Chart', fontsize=10, fontweight='bold')
     ax.scatter(obj.cpt.f_s / obj.q_t * 100, obj.cpt.q_c / 10 ** 3, color='red', marker='o', s=10)
     ax.plot(x, y, color='blue', linewidth=2)
 

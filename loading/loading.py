@@ -1,14 +1,12 @@
 import datetime
 import glob
 import pandas as pd
-import liquepy as lq
-
+import numpy as np
+import ntpath
 
 
 class CPTHeader:
     def __init__(self, date, gwl, ground_lvl, pre_drill, easting, northing, name):
-
-
         self.date = date
         self.gwl = gwl
         self.ground_lvl = ground_lvl
@@ -19,12 +17,11 @@ class CPTHeader:
 
     @property
     def latex_dict(self):
-
         _list = ['Name:', 'Date:', 'Ground Water Level:', 'Ground Level:', 'Pre-Drill:', 'Easting', 'Northing']
-        _values =[self.name, self.date, self.gwl, self.ground_lvl, self.pre_drill, self.easting, self.northing]
+        _values = [self.name, self.date, self.gwl, self.ground_lvl, self.pre_drill, self.easting, self.northing]
         _suffix = ['', '', ' m', ' m', ' m', ' m', ' m']
         _dict = {}
-        for k,v,s in zip(_list, _values, _suffix):
+        for k, v, s in zip(_list, _values, _suffix):
             _dict[k] = str(v) + s
         return _dict
 
@@ -41,11 +38,14 @@ def load_cpt_header(file):
     series2 = list(new_df.iloc[:, 1])  # Store all 2nd row values from DataFrame
     d = dict(zip(series1, series2))
 
-    d['Date:'] = datetime.datetime.strptime(d['Date:'], '%Y-%m-%d %H:%M:%S')
+    try:
+        d['Date:'] = datetime.datetime.strptime(d['Date:'], '%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        d['Date:'] = datetime.datetime.strptime(d['Date:'], '%m/%d/%Y %H:%M:%S %p')
+
     d['Date:'] = d['Date:'].strftime('%d-%m-%Y')
+    d['groundlvl'] = round(float(d['groundlvl']), 2)
     return CPTHeader(d['Date:'], d['Assumed GWL:'], d['groundlvl'], d['Pre-Drill:'], d['Easting'], d['Northing'], name)
-
-
 
 
 def load_dataframe(out_fp):
@@ -109,7 +109,7 @@ def load_dataframe(out_fp):
 
         vals = dict(zip(headers, l))
         # print(vals)
-        cpt = lq.field.load_mpa_cpt_file(file, delimiter=";")
+        cpt = load_mpa_cpt_file(file, delimiter=";")
         # Create a list out of the dictionary values
         val_list = list(vals.values())
         val_list.extend([name, cpt])  # Grow list to the size of headers
@@ -171,3 +171,106 @@ def convert_to_dtype(df):
     df['CPT-ID'] = df['CPT-ID'].astype(str)
 
     return None
+
+
+def load_mpa_cpt_file(ffp, scf=1, delimiter=";", a_ratio_override=None):
+    """
+    scf - Shell Correction Factor, Defaults to 1.0
+    """
+    # import data from csv file
+    folder_path, file_name = ntpath.split(ffp)
+    ncols = 4
+    try:
+        data = np.loadtxt(ffp, skiprows=24, delimiter=delimiter, usecols=(0, 1, 2, 3))
+    except:
+        ncols = 3
+        data = np.loadtxt(ffp, skiprows=24, delimiter=delimiter, usecols=(0, 1, 2))
+    depth = data[:, 0]
+    q_c = data[:, 1] * 1e3 * scf  # convert to kPa
+    f_s = data[:, 2] * 1e3  # convert to kPa
+    if ncols == 4:
+        u_2 = data[:, 3] * 1e3  # convert to kPa
+    else:
+        u_2 = np.zeros_like(depth)
+    gwl = None
+    a_ratio = 1.0
+    pre_drill = None
+    infile = open(ffp)
+    lines = infile.readlines()
+    for line in lines:
+        if "Assumed GWL:" in line:
+            gwl = line.split(delimiter)[1]
+            if gwl == '-':
+                gwl = None
+            else:
+                gwl = float(line.split(delimiter)[1])
+        if "aratio" in line:
+            try:
+                a_ratio = float(line.split(delimiter)[1])
+            except ValueError:
+                pass
+        if "Pre-Drill:" in line:
+            val = line.split(delimiter)[1]
+            if val != '':
+                pre_drill = float(val)
+        if "groundlvl" in line:
+            val = line.split(delimiter)[1]
+            if val != '':
+                groundlvl = float(val)
+    if a_ratio_override:
+        a_ratio = a_ratio_override
+    if pre_drill is not None:
+        if depth[0] < pre_drill:
+            indy = np.argmin(abs(depth - pre_drill))
+            depth = depth[indy:]
+            q_c = q_c[indy:]
+            f_s = f_s[indy:]
+            u_2 = u_2[indy:]
+    return CPT(depth, q_c, f_s, u_2, gwl, groundlvl,a_ratio, folder_path=folder_path, file_name=file_name, delimiter=delimiter)
+
+
+class CPT(object):
+    def __init__(self, depth, q_c, f_s, u_2, gwl, groundlvl, a_ratio=None,  folder_path="<path-not-set>",
+                 file_name="<name-not-set>",
+                 delimiter=";"):
+        """
+        A cone penetration resistance test
+
+        Parameters
+        ----------
+        depth: array_like
+            depths from surface, properties are forward projecting (i.e. start at 0.0 for surface)
+        q_c: array_like, [kPa]
+        f_s: array_like, [kPa]
+        u_2: array_like, [kPa]
+        gwl: float, [m]
+            ground water level
+        a_ratio: float,
+            Area ratio
+        """
+        self.depth = depth
+        self.q_c = q_c
+        self.f_s = f_s
+        self.u_2 = u_2
+        self.gwl = gwl
+        self.a_ratio = a_ratio
+        self.folder_path = folder_path
+        self.file_name = file_name
+        self.delimiter = delimiter
+        self.elevation = groundlvl - depth
+
+    @property
+    def q_t(self):
+        """
+        Pore pressure corrected cone tip resistance
+
+        """
+        # qt the cone tip resistance corrected for unequal end area effects, eq 2.3
+        return self.q_c + ((1 - self.a_ratio) * self.u_2)
+
+    @q_t.setter
+    def q_t(self, q_t):
+        self.q_c = q_t - ((1 - self.a_ratio) * self.u_2)
+
+
+
