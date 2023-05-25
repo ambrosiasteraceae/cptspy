@@ -1,15 +1,18 @@
+import matplotlib.pyplot as plt
+import subprocess
+import os
 from pylatex import Document, Section, Subsection, Command, Tabular, Figure, NewPage
 from pylatex.utils import NoEscape
-import liquepy as lq
+
 from loading import load_cpt_header, load_mpa_cpt_file #CREATE cpt_file module
 from calc.liquefaction import run_rw1997
 from calc.summary import CPTSummary
-import matplotlib.pyplot as plt
+
 from miscellaneous.figures import create_fos_and_index_plot, create_compactibilty_plot
-import subprocess
+
+
 
 paths = ['D:/04_R&D/cptspy/output/CPT_L21d.csv']
-# paths = ['D:/04_R&D/cptspy/output/CPT_L21d.csv', 'D:/04_R&D/cptspy/output/CPT_K18b.csv', 'D:/04_R&D/cptspy/output/CPT_H15c.csv']
 
 # paths =['D:/04_R&D/cptspy/output/CPT_I18C.csv',
 #         'D:/04_R&D/cptspy/output/CPT_J16c.csv',
@@ -23,24 +26,19 @@ scf = 1.30
 for path in paths:
     cpt = load_mpa_cpt_file(path, scf=scf)
     rw_1997 = run_rw1997(cpt, pga=0.122, m_w=6, gwl=0)
-
-
-
     cpth = load_cpt_header(path)
     cpts = CPTSummary(rw_1997)
 
+
     fig, sps = plt.subplots(nrows=1, ncols=3, figsize=(16, 10))
     create_fos_and_index_plot(sps, rw_1997)
+    fig.savefig(cpth.name + '.png', bbox_inches='tight')
 
     fig2, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4))
     create_compactibilty_plot(ax, rw_1997)
     fig2.savefig(cpth.name + '_compactibility.png', bbox_inches='tight')
-    fig.savefig(cpth.name + '.png', bbox_inches='tight')
 
-    # Home
-    # logo_image_path = 'C:/Users/dragos/Documents/GitHub/cptspy/loading/nmdc.png'
-    # cpt_file_path = 'C:/Users/dragos/Documents/GitHub/cptspy/loading/CPT_H15c.csv.png'
-    # Work
+
     logo_image_path = 'D:/04_R&D/cptspy/loading/nmdc.png'
     cpt_file_path = 'D:/04_R&D/cptspy/loading/H15c.png'
 
@@ -174,10 +172,6 @@ for path in paths:
     doc.append(table6)
 
 
-    doc.append(r'\vspace{10cm}')
-    doc.append('The following pages contain the raw data of the CPT')
-    with doc.create(Section('Basic CPT Plots')):
-        doc.append('AAAAA')
     # Generate PDF
     try:
         doc.generate_pdf(cpth.name, clean_tex = True, clean = True)

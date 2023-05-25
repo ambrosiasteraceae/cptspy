@@ -1,12 +1,15 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import shapely
 
-COLORS_IC = ['#f19e45', '#b8a365', '#76c0a2', '#469186', '#4d567c', '#bb6639']
+plt.rcParams.update({"text.usetex" : True,
+                     "font.family" : "serif"})
 
+COLORS_IC = ['#f19e45', '#b8a365', '#76c0a2', '#469186', '#4d567c', '#bb6639']
+# MASSARRASCH = ['#6dd47e', '#ffd55a', '#1d3c45'] #Option 1
+MASSARRASCH = ['#ffe3b3', '#53d2dc', '#4f8fc0'] #Option 2
 FS_LOW_to_0p75 = (0.75, 0, 0)
 FS_0p75_to_1p0 = (0.95, 0, 0)
 FS_1p0_to_1p25 = (0.9, 0.4, 0.15)
@@ -14,6 +17,16 @@ FS_1p25_to_1p5 = (1, 0.65, 0.25)
 FS_1p5_to_HIGH = (0.1, 0.6, 0.1)
 FS_NON_LIQ = (0.4, 0.4, 0.4)
 FONTSIZE = 14
+COLORS_FOS = [FS_LOW_to_0p75, FS_0p75_to_1p0, FS_1p0_to_1p25, FS_1p25_to_1p5, FS_1p5_to_HIGH, FS_NON_LIQ]
+layers = ['Gravelly Sand to Dense Sand', 'Clean Sand to Silty Sand', 'Silty Sand to Sandy Silt',
+          'Clayey Silt to Silty Clay', 'Silty Clay to Clay', 'Organic Soils - Clay']
+foses = ['FoS < 0.75', '0.75 < FoS < 1.0', '1.0 < FoS < 1.25', '1.25 < FoS < 1.5', 'FoS > 1.5', 'Non-Liquefiable']
+LEGENDFONTSIZE = 10
+TXTCOLOR = 'gray'
+TXTWEIGHT = 'bold'
+FIGURESIZE = (4, 4)
+
+
 def make_settlement_plots(sps, lf, settlements, settlement_val_limit=0.025):
 
     sps[0].plot(np.cumsum(settlements['elastic'][::-1])[::-1], -lf.depth, lw=1.2, c='lightgreen', label = 'Elastic')
@@ -112,7 +125,8 @@ def generate_massarsch_points(obj):
 
     colors_pp = np.empty(len(obj.depth), dtype='U30')
     # colors_pp.fill(COLORS_IC[4])
-    colors_pp.fill(COLORS_IC[4])
+    #The compactibility array is not entirely filled with correct. Ther are points outside the given areas.
+    colors_pp.fill(COLORS_IC[5])
 
     friction_ratio = obj.cpt.f_s[1:]/obj.cpt.q_t[1:] * 100 #in percentages
     friction_ratio = np.insert(friction_ratio, 0,0)
@@ -121,9 +135,9 @@ def generate_massarsch_points(obj):
     marginally_compactable_mask = shapely.contains(marginally_compactable_p, points)
     not_compactable_mask = shapely.contains(not_compactable_p, points)
 
-    colors_pp[compactable_mask] = COLORS_IC[0]
-    colors_pp[marginally_compactable_mask] = COLORS_IC[2]
-    colors_pp[not_compactable_mask] = COLORS_IC[4]
+    colors_pp[compactable_mask] = MASSARRASCH[0]
+    colors_pp[marginally_compactable_mask] = MASSARRASCH[1]
+    colors_pp[not_compactable_mask] = MASSARRASCH[2]
 
     return colors_pp
 
@@ -236,16 +250,16 @@ def create_fos_and_index_plot(axs, obj):
     axs[1].set_ylim([obj.cpt.elevation.min(), obj.cpt.elevation.max()+ 0.05])
     axs[2].set_ylim([obj.cpt.elevation.min(), obj.cpt.elevation.max()+ 0.05])
     # axs[1].set_xticks(indexes)
-    axs[0].barh(obj.cpt.elevation, obj.q_t / 10**3, height=0.01, color=colors_pp, alpha=0.75)
+    axs[0].barh(obj.cpt.elevation, obj.cpt.q_c/ 10**3, height=0.01, color=colors_pp, alpha=0.75)
 
     axs[0].legend(labels = ['Compactable', 'Marginally Compactable', 'Not Compactable'], labelcolor =[COLORS_IC[0], COLORS_IC[2], COLORS_IC[4]])
-    axs[0].set_xlabel('Qt Tip Resistance (MPa)')
+    axs[0].set_xlabel('Qc Tip Resistance (MPa)')
     axs[0].set_ylabel('Elevation (m ACD)')
-    axs[0].set_title('Cone Resistance, qt', fontsize = FONTSIZE, fontweight='bold')
+    axs[0].set_title('Cone Resistance, qc', fontsize = FONTSIZE, fontweight='bold')
 
-    p1 = mpatches.Patch(color=COLORS_IC[0], label='Compactable', alpha = 0.8)
-    p2 = mpatches.Patch(color=COLORS_IC[2], label='Marginally Compactable', alpha = 0.8)
-    p3 = mpatches.Patch(color=COLORS_IC[4], label='Not Compactable', alpha = 0.8)
+    p1 = mpatches.Patch(color=MASSARRASCH[0], label='Compactable', alpha = 0.8)
+    p2 = mpatches.Patch(color=MASSARRASCH[1], label='Marginally Compactable', alpha = 0.8)
+    p3 = mpatches.Patch(color=MASSARRASCH[2], label='Not Compactable', alpha = 0.8)
 
     axs[0].legend(handles=[p1, p2, p3], loc='upper right', framealpha = 0.6)
 
@@ -258,13 +272,13 @@ def create_fos_and_index_plot(axs, obj):
     make_factor_of_safety_plot(axs[1])
     axs[1].set_xlabel('Factor of Safety')
     axs[1].set_ylabel('Elevation (m ACD)')
-    axs[1].set_title('Factor of Safety', fontsize = FONTSIZE, fontweight='bold')
+    axs[1].set_title('Liquefaction Safety Factor', fontsize = FONTSIZE, fontweight='bold')
     
     # Plot 3
     
     indexes = [0, 1.31, 2.05, 2.6, 2.95, 3.6, ]
     axs[2].plot(obj.i_c, obj.cpt.elevation, color='yellow', alpha=1, linewidth=4)
-    axs[2].set_xlabel('Ic')
+    axs[2].set_xlabel('IC')
     axs[2].set_ylabel('Elevation (m ACD)')
     axs[2].set_title('SBT Index', fontsize=FONTSIZE, fontweight='bold')
     axs[2].set_xticks(indexes)
@@ -305,9 +319,9 @@ def create_compactibilty_plot(ax, obj):
                        (Path.LINETO, (1.5, 13)),
                        (Path.CLOSEPOLY, (0, 1))]
 
-    x, y = create_path_obj_from_tuple(compactable_path_data, ax, color=COLORS_IC[0])
-    _, __ = create_path_obj_from_tuple(marginally_compactable, ax, color=COLORS_IC[2])
-    _, __ = create_path_obj_from_tuple(not_compactable, ax, color=COLORS_IC[4])
+    x, y = create_path_obj_from_tuple(compactable_path_data, ax, color=MASSARRASCH[0])
+    _, __ = create_path_obj_from_tuple(marginally_compactable, ax, color=MASSARRASCH[1])
+    _, __ = create_path_obj_from_tuple(not_compactable, ax, color=MASSARRASCH[2])
     ax.semilogy()
     ax.set_xlim(0, 3)
     ax.set_ylim(1, 100)
@@ -315,23 +329,112 @@ def create_compactibilty_plot(ax, obj):
     ax.set_ylabel('Cone Penetration Resistance MPa')
     # ax.legend(['Compactable', 'Marginally Compactable', 'Not Compactable'])
     ax.set_title('Massarasch Chart', fontsize=10, fontweight='bold')
-    ax.scatter(obj.cpt.f_s / obj.q_t * 100, obj.cpt.q_c / 10 ** 3, color='red', marker='o', s=10)
-    ax.plot(x, y, color='blue', linewidth=2)
+    ax.scatter(obj.cpt.r_f, obj.cpt.q_c / 10 ** 3, color='red', marker='o', s=10)
+    ax.plot(x, y, color=MASSARRASCH[0], linewidth=2)
+
+
+def create_cpt_plots(sps, cpt):
+    """
+    Create q_c, f_s, r_f and u_2 plots
+    """
+    colors = ['#98e1b2', '#87ceeb', '#ff69b4', '#e6e6fa']
+    sps[0].plot(cpt.q_c/ 10**3, cpt.elevation, color = colors[0])
+    sps[0].fill_betweenx(cpt.elevation, cpt.q_c / 10**3 , color = colors[0], alpha = 0.5)
+
+
+
+    sps[1].plot(cpt.f_s/ 10**3, cpt.elevation, color = colors[1])
+    sps[1].fill_betweenx(cpt.elevation, cpt.f_s / 10**3, color = colors[1], alpha = 0.5)
+
+    sps[2].plot(cpt.r_f, cpt.elevation, color = colors[2])
+    sps[2].fill_betweenx(cpt.elevation, cpt.r_f , color = colors[2], alpha = 0.5)
+
+    sps[3].plot(cpt.u_2, cpt.elevation, color = colors[3], lw = 2.5, alpha = 1)
+    sps[3].fill_betweenx(cpt.elevation, cpt.u_2 , color = colors[3], alpha = 0.75)
+
+    legends = [r'$q_c$ (MPa)', r'$f_s$ (MPa)', r'$/frac{{f_s}}{{q_t}}$', r'$u_2$ (kPa)']
+    #Set same limits for all subplots
+
+    sps[0].set_ylabel('Elevation (m ACD)', weight = 'bold')
+    for i, sp in enumerate(sps):
+        sp.set_ylim([cpt.elevation.min(), cpt.elevation.max()])
+        sp.legend([legends[i]], loc = 'upper right')
+        sp.grid(True, linestyle=':', linewidth=0.5)
+
+    sps[0].set_xlabel('Cone Resistance (MPa)', weight = 'bold')
+    sps[0].set_xticks(np.arange(0, cpt.q_c.max()/10**3 + 5, 10))
+
+
+
+    sps[1].set_xlabel('Friction Sleeve Resistance (MPa)', weight = 'bold',)
+    sps[2].set_xlabel(r'Friction Ratio ({%})', weight = 'bold')
+
+    if cpt.r_f.max() > 5:
+        sps[2].set_xlim([0, 5])
+
+
+    sps[3].set_xlabel('Pore Water Pressure (kPa)', weight = 'bold')
+
+    x_range = max(abs(cpt.u_2.min()), abs(cpt.u_2.max()))
+    sps[3].set_xlim([-x_range, x_range])
+
+    plt.tight_layout()
+
+
+def generate_ic_legend(ax):
+
+    plt.barh([1,2,3,4,5,6], [2,2,2,2,2,2], color=COLORS_IC[::-1], height = 1, edgecolor='black')
+    ax.set_xlim(0, 6)
+    ax.set_ylim(0.5, 6.5)
+    for i, layer in enumerate(layers[::-1]):
+        ax.text(2.05, i+0.8, layer, fontsize=LEGENDFONTSIZE, color=TXTCOLOR,style = 'italic')
+    ax.set_title('Soil Type Index Legend', fontsize=LEGENDFONTSIZE, color='black', fontweight=TXTWEIGHT)
+
+    ax.tick_params(
+        axis='both',          # changes apply to the x-axis
+        which='both',      # both major and minor ticks are affected
+        bottom=False,      # ticks along the bottom edge are off
+        left = False,
+        labelbottom = False,
+        labelleft = False)         # ticks along the top edge are off
+
+
+def generate_fos_legend(ax):
+
+
+    ax.barh([1,2,3,4,5,6], [2,2,2,2,2,2], color=COLORS_FOS[::-1], height = 1, edgecolor='black', alpha = 0.5)
+
+    ax.set_xlim(0,5)
+    ax.set_ylim(0.5,6.5)
+    ax.tick_params(axis='both',  # changes apply to the x-axis
+        which='both',  # both major and minor ticks are affected
+        bottom=False,  # ticks along the bottom edge are off
+        left=False,
+        labelbottom=False,
+        labelleft=False)  # ticks along the top edge are off
+
+    for i, fos in enumerate(foses[::-1]):
+        ax.text(2.05, i+0.8, fos, fontsize=LEGENDFONTSIZE, color=TXTCOLOR, style = 'italic')
+    ax.set_title('Liquefaction Safety Factor', fontsize=LEGENDFONTSIZE, color='black', fontweight=TXTWEIGHT)
+
+
+
+def create_massarasch_and_legend_plot(sps, rw):
+
+    # fig, sps = plt.subplots(1, 3, figsize=(16, 4))
+    generate_ic_legend(sps[2])
+    generate_fos_legend(sps[1])
+    create_compactibilty_plot(sps[0], rw)
+
+
+
 
 #
-# import liquepy as lq
-# import matplotlib.pyplot as plt
+# path = ['D:/04_R&D/cptspy/output/CPT_L21d.csv','D:/04_R&D/cptspy/output/CPT_I14d.csv']
+# from loading.loading import load_mpa_cpt_file
+# from calc.liquefaction import run_rw1997
 #
-#
-# path = 'D:/04_R&D/cptspy/output/CPT_L21d.csv'
-# paths = ['D:/04_R&D/cptspy/output/CPT_L21d.csv', 'D:/04_R&D/cptspy/output/CPT_K18b.csv', 'D:/04_R&D/cptspy/output/CPT_H15c.csv']
-# pga = 0.122
-# m_w = 6
-# gwl = 1
-#
-# cpt = lq.field.load_mpa_cpt_file(path, delimiter=';')
-# # rw_1997 = run_rw1997(cpt, pga=0.122, m_w=6, gwl=0)
-# bi2014 = lq.trigger.run_bi2014(cpt, pga=0.122, m_w=6, gwl=0)
-# fig,ax = plt.subplots(1,1, figsize=(4, 4))
-# create_compactibilty_plot(ax, bi2014)
-# plt.show()
+# cpt = load_mpa_cpt_file(path[1])
+# rw = run_rw1997(cpt, pga = 0.122, m_w = 6, gwl = 1)
+
+

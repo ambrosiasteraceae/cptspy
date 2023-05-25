@@ -258,6 +258,8 @@ class CPT(object):
         self.file_name = file_name
         self.delimiter = delimiter
         self.elevation = groundlvl - depth
+        self._q_t = None
+        self._r_f = None
 
     @property
     def q_t(self):
@@ -266,11 +268,22 @@ class CPT(object):
 
         """
         # qt the cone tip resistance corrected for unequal end area effects, eq 2.3
-        return self.q_c + ((1 - self.a_ratio) * self.u_2)
 
-    @q_t.setter
-    def q_t(self, q_t):
-        self.q_c = q_t - ((1 - self.a_ratio) * self.u_2)
+        #lazy loading of q_t
+        if self._q_t is None:
+            self._q_t = self.q_c + ((1 - self.a_ratio) * self.u_2)
+        return self._q_t
+
+    @property
+    def r_f(self):
+        if self._r_f is None:
+            self._r_f = (self.f_s[1:] / self.q_t[1:]) * 100  # in percentages
+            self._r_f = np.insert(self.r_f, 0, 0)
+        return self._r_f
+
+    # @q_t.setter
+    # def q_t(self, q_t):
+    #     self.q_c = q_t - ((1 - self.a_ratio) * self.u_2)
 
 
 
