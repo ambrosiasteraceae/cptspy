@@ -18,18 +18,26 @@ northing = df['Northing'].values
 easting = df['Easting'].values
 ids = df['CPT-ID'].values
 
-colors = ['#ffe3b3', '#53d2dc', '#4f8fc0', 'gray']
+colors = ['#ffe3b3', '#53d2dc', '#4f8fc0']
 
 
 color_array = np.random.choice(colors, ids.size)
+
 
 pg.setConfigOption('background', 'w')
 
 app = QApplication(sys.argv)
 win = QMainWindow()
-plot_widget = pg.PlotWidget()
-plot_widget.plot(easting, northing, pen=None, symbol='o', symbolSize=15, symbolBrush=color_array)
-win.setCentralWidget(plot_widget)
+plt = pg.PlotWidget()
+plt.plot(easting, northing, pen=None, symbol='o', symbolSize=15, symbolBrush=color_array)
+
+plt.setAspectLocked(True)
+
+#Create a selection cursor to use with our plot
+
+
+
+win.setCentralWidget(plt)
 win.show()
 
 sys.exit(app.exec())
