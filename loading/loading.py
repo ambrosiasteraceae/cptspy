@@ -48,7 +48,7 @@ def load_cpt_header(file):
     return CPTHeader(d['Date:'], d['Assumed GWL:'], d['groundlvl'], d['Pre-Drill:'], d['Easting'], d['Northing'], name)
 
 
-def load_dataframe(out_fp):
+def load_dataframe(ffps):
     """"
 
     Iterates through the output folder, looking for all csv files
@@ -84,13 +84,13 @@ def load_dataframe(out_fp):
 
     """
 
-    ffps = glob.glob(out_fp + "*.csv")  #
+    # ffps = glob.glob(out_fp + "*.csv")  #
 
     headers = ['Date:', 'Assumed GWL:', 'groundlvl', 'Pre-Drill:', 'Easting', 'Northing',
-               'aratio', 'CPT-ID', 'Object']
+               'aratio', 'Length', 'CPT-ID', 'Object']
     limit = 24
-    hh = headers[0:-2]  # Up to but not including the 'CPT-ID' & 'Object'. T
-    dfo = pd.DataFrame(columns=[""] * 9)
+    hh = headers[0:-3]  # Up to but not including the 'CPT-ID' & 'Object'. T
+    dfo = pd.DataFrame(columns=[""] * 10)
     dfo.columns = headers
     for i, file in enumerate(ffps):
         # print(file)
@@ -112,11 +112,13 @@ def load_dataframe(out_fp):
         cpt = load_mpa_cpt_file(file, delimiter=";")
         # Create a list out of the dictionary values
         val_list = list(vals.values())
-        val_list.extend([name, cpt])  # Grow list to the size of headers
+        val_list.extend([cpt.depth.size / 100, name, cpt])  # Grow list to the size of headers
         # Append to data frame
         dfo.loc[i, :] = val_list
-
-    return dfo
+    col_order = ['CPT-ID', 'groundlvl', 'Length', 'Easting', 'Northing', 'Pre-Drill:', 'Assumed GWL:', 'aratio',
+                 'Date:', 'Object']
+    # dfo = dfo[dfo_order]
+    return dfo[col_order]
 
 
 def save_df_to_excel(df, name="00_Header&Data.xlsx"):
@@ -226,11 +228,12 @@ def load_mpa_cpt_file(ffp, scf=1, delimiter=";", a_ratio_override=None):
             q_c = q_c[indy:]
             f_s = f_s[indy:]
             u_2 = u_2[indy:]
-    return CPT(depth, q_c, f_s, u_2, gwl, groundlvl,a_ratio, folder_path=folder_path, file_name=file_name, delimiter=delimiter)
+    return CPT(depth, q_c, f_s, u_2, gwl, groundlvl, a_ratio, folder_path=folder_path, file_name=file_name,
+               delimiter=delimiter)
 
 
 class CPT(object):
-    def __init__(self, depth, q_c, f_s, u_2, gwl, groundlvl, a_ratio=None,  folder_path="<path-not-set>",
+    def __init__(self, depth, q_c, f_s, u_2, gwl, groundlvl, a_ratio=None, folder_path="<path-not-set>",
                  file_name="<name-not-set>",
                  delimiter=";"):
         """
@@ -269,7 +272,7 @@ class CPT(object):
         """
         # qt the cone tip resistance corrected for unequal end area effects, eq 2.3
 
-        #lazy loading of q_t
+        # lazy loading of q_t
         if self._q_t is None:
             self._q_t = self.q_c + ((1 - self.a_ratio) * self.u_2)
         return self._q_t
@@ -285,5 +288,13 @@ class CPT(object):
     # def q_t(self, q_t):
     #     self.q_c = q_t - ((1 - self.a_ratio) * self.u_2)
 
-
+# ffp = 'D:/04_R&D/cptspy/output/'
+# ffpdf = 'D:/04_R&D/cptspy/output/dataframe/'
+#
+# dfo = load_dataframe(ffp)
+# dfo.head()
+# import os
+# if not os.path.exists(ffpdf):
+#     os.makedirs(ffpdf)
+# dfo.to_csv(ffpdf + 'output.csv', index=False)
 

@@ -46,24 +46,24 @@ class MainWindow2(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        layout1 = QVBoxLayout()
+        layout1 = QHBoxLayout()
         layout2 = QVBoxLayout()
-        layout3 = QVBoxLayout()
+        # layout3 = QVBoxLayout()
+
+        layout1.addLayout(layout2)
+        # layout1.addLayout(layout3)
+
+        layout1.addWidget(Color('green'))
+        # layout1.addWidget(Color('blue'))
 
         layout2.addWidget(Color('red'))
         layout2.addWidget(Color('yellow'))
         layout2.addWidget(Color('purple'))
 
-        layout1.addLayout( layout2 )
 
-        layout1.addWidget(Color('green'))
+        # layout3.addWidget(Color('red'))
+        # layout3.addWidget(Color('purple'))
 
-        layout3.addWidget(Color('red'))
-        layout3.addWidget(Color('purple'))
-
-        layout1.addLayout( layout3 )
-
-        layout1.addWidget(Color('blue'))
 
         widget = QWidget()
         widget.setLayout(layout1)
@@ -179,7 +179,7 @@ class MainWindow6(QMainWindow):
 app = QApplication([])
 
 
-window = MainWindow6()
+window = MainWindow2()
 window.show()
 
 app.exec()
