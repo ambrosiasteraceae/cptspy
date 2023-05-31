@@ -1,8 +1,11 @@
+import os
+
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
+from PyQt6.QtGui import QDoubleValidator, QIntValidator, QValidator
 import sys
 import pandas as pd
-
+import json
 
 class PandasModel(QAbstractTableModel):
     def __init__(self, df = pd.DataFrame(), parent=None):
@@ -60,15 +63,13 @@ class PandasModel(QAbstractTableModel):
         self._df.sort_values(colname, ascending= order == Qt.SortOrder.AscendingOrder, inplace=True)
         self._df.reset_index(inplace=True, drop=True)
         self.layoutChanged.emit()
-
-
 class PDWidget(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=None)
         vLayout = QVBoxLayout(self)
         hLayout = QHBoxLayout()
-        self.pathLE = QLineEdit(self)
-        hLayout.addWidget(self.pathLE)
+        # self.pathLE = QLineEdit(self)
+        # hLayout.addWidget(self.pathLE)
         self.loadBtn = QPushButton("Select File", self)
         hLayout.addWidget(self.loadBtn)
         vLayout.addLayout(hLayout)
@@ -80,14 +81,14 @@ class PDWidget(QWidget):
     def loadFile(self):
         # if fileName is None:
         fileName, _ = QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv)");
-        self.pathLE.setText(fileName)
+        # self.pathLE.setText(fileName)
         # if df is None:
-        df = pd.read_csv(fileName, delimiter=',')
+        df = pd.read_csv(fileName, delimiter=';')
         model = PandasModel(df)
         self.pandasTv.setModel(model)
 
     def loadDF(self, path, df):
-        self.pathLE.setText(path)
+        # self.pathLE.setText(path)
         model = PandasModel(df)
         self.pandasTv.setModel(model)
 
@@ -107,8 +108,15 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout = QGridLayout(self.widget)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
+
+
         self.lineEdit_10 = QLineEdit(self.widget)
-        self.lineEdit_10.setObjectName(u"lineEdit_10")
+        self.lineEdit_10.setObjectName(u"m_w")
+        self.lineEdit_10.setPlaceholderText(u"Insert Magnitude of Earthquake")
+        #allow certain input
+        onlyFloat = QDoubleValidator()
+        self.lineEdit_10.setValidator(onlyFloat)
+
 
         self.gridLayout.addWidget(self.lineEdit_10, 0, 0, 1, 2)
 
@@ -117,13 +125,15 @@ class Ui_WidgetGrid(QWidget):
 
         self.gridLayout.addWidget(self.label, 0, 2, 1, 1)
 
-        self.tableWidget = QTableWidget(self.widget)
+        self.tableWidget = PDWidget(self.widget)
         self.tableWidget.setObjectName(u"tableWidget")
 
         self.gridLayout.addWidget(self.tableWidget, 0, 3, 22, 1)
 
         self.lineEdit_11 = QLineEdit(self.widget)
-        self.lineEdit_11.setObjectName(u"lineEdit_11")
+        self.lineEdit_11.setObjectName(u"pga")
+        self.lineEdit_11.setPlaceholderText(u"Insert Peak Ground Acceleration in g(m/s2)")
+        self.lineEdit_11.setValidator(onlyFloat)
 
         self.gridLayout.addWidget(self.lineEdit_11, 1, 0, 1, 2)
 
@@ -133,7 +143,8 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addWidget(self.label_2, 1, 2, 1, 1)
 
         self.lineEdit_12 = QLineEdit(self.widget)
-        self.lineEdit_12.setObjectName(u"lineEdit_12")
+        self.lineEdit_12.setObjectName(u"gwl")
+        self.lineEdit_12.setPlaceholderText(u"Insert Ground Water Level in m")
 
         self.gridLayout.addWidget(self.lineEdit_12, 2, 0, 1, 2)
 
@@ -143,7 +154,8 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addWidget(self.label_3, 2, 2, 1, 1)
 
         self.lineEdit_13 = QLineEdit(self.widget)
-        self.lineEdit_13.setObjectName(u"lineEdit_13")
+        self.lineEdit_13.setObjectName(u"scf")
+        self.lineEdit_13.setPlaceholderText(u"Insert Shell Correction Factor")
 
         self.gridLayout.addWidget(self.lineEdit_13, 3, 0, 1, 2)
 
@@ -157,7 +169,7 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addItem(self.verticalSpacer, 4, 1, 1, 1)
 
         self.lineEdit = QLineEdit(self.widget)
-        self.lineEdit.setObjectName(u"lineEdit")
+        self.lineEdit.setObjectName(u"proj_name")
 
         self.gridLayout.addWidget(self.lineEdit, 5, 0, 1, 2)
 
@@ -167,7 +179,7 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addWidget(self.label_5, 5, 2, 1, 1)
 
         self.lineEdit_2 = QLineEdit(self.widget)
-        self.lineEdit_2.setObjectName(u"lineEdit_2")
+        self.lineEdit_2.setObjectName(u"proj_num")
 
         self.gridLayout.addWidget(self.lineEdit_2, 6, 0, 1, 2)
 
@@ -177,7 +189,7 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addWidget(self.label_6, 6, 2, 1, 1)
 
         self.lineEdit_3 = QLineEdit(self.widget)
-        self.lineEdit_3.setObjectName(u"lineEdit_3")
+        self.lineEdit_3.setObjectName(u"proj_loc")
 
         self.gridLayout.addWidget(self.lineEdit_3, 7, 0, 1, 2)
 
@@ -201,7 +213,7 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addItem(self.verticalSpacer_2, 10, 1, 1, 1)
 
         self.lineEdit_4 = QLineEdit(self.widget)
-        self.lineEdit_4.setObjectName(u"lineEdit_4")
+        self.lineEdit_4.setObjectName(u"cumulative_ic")
 
         self.gridLayout.addWidget(self.lineEdit_4, 11, 0, 1, 2)
 
@@ -211,7 +223,7 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addWidget(self.label_8, 11, 2, 1, 1)
 
         self.lineEdit_5 = QLineEdit(self.widget)
-        self.lineEdit_5.setObjectName(u"lineEdit_5")
+        self.lineEdit_5.setObjectName(u"cumulative_fos")
 
         self.gridLayout.addWidget(self.lineEdit_5, 12, 0, 1, 2)
 
@@ -221,7 +233,7 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addWidget(self.label_9, 12, 2, 1, 1)
 
         self.lineEdit_6 = QLineEdit(self.widget)
-        self.lineEdit_6.setObjectName(u"lineEdit_6")
+        self.lineEdit_6.setObjectName(u"add_req1")
 
         self.gridLayout.addWidget(self.lineEdit_6, 13, 0, 1, 2)
 
@@ -240,7 +252,7 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addItem(self.verticalSpacer_3, 15, 1, 1, 1)
 
         self.lineEdit_7 = QLineEdit(self.widget)
-        self.lineEdit_7.setObjectName(u"lineEdit_7")
+        self.lineEdit_7.setObjectName(u"add_req2")
 
         self.gridLayout.addWidget(self.lineEdit_7, 16, 0, 1, 2)
 
@@ -250,7 +262,7 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addWidget(self.label_11, 16, 2, 1, 1)
 
         self.lineEdit_8 = QLineEdit(self.widget)
-        self.lineEdit_8.setObjectName(u"lineEdit_8")
+        self.lineEdit_8.setObjectName(u"add_req3")
 
         self.gridLayout.addWidget(self.lineEdit_8, 17, 0, 1, 2)
 
@@ -260,7 +272,7 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addWidget(self.label_12, 17, 2, 1, 1)
 
         self.lineEdit_9 = QLineEdit(self.widget)
-        self.lineEdit_9.setObjectName(u"lineEdit_9")
+        self.lineEdit_9.setObjectName(u"add_req4")
 
         self.gridLayout.addWidget(self.lineEdit_9, 18, 0, 1, 2)
 
@@ -269,7 +281,7 @@ class Ui_WidgetGrid(QWidget):
 
         self.gridLayout.addWidget(self.label_13, 18, 2, 1, 1)
 
-        self.radioButton_4 = QRadioButton(self.widget)
+        self.radioButton_4 = QCheckBox(self.widget)
         self.radioButton_4.setObjectName(u"radioButton_4")
 
         self.gridLayout.addWidget(self.radioButton_4, 19, 0, 1, 2)
@@ -284,7 +296,9 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addWidget(self.pushButton, 21, 0, 1, 1)
 
         self.pushButton_2 = QPushButton(self.widget)
-        self.pushButton_2.setObjectName(u"pushButton_2")
+        self.pushButton_2.setObjectName(u"Save Project Requirements")
+
+        self.pushButton_2.clicked.connect(self.save_project_requirements)
 
         self.gridLayout.addWidget(self.pushButton_2, 21, 1, 1, 2)
 
@@ -292,21 +306,56 @@ class Ui_WidgetGrid(QWidget):
 
         QMetaObject.connectSlotsByName(Widget)
 
+    def load_proj_requirements(self):
+        """
+        We will always save the proj_requirements in 
+        """
+        proj_req = json.load()
+
+    def save_project_requirements(self):
+        self.lineEdits = self.widget.findChildren(QLineEdit)
+        proj_req = {}
+
+        for lineEdit in self.lineEdits:
+            try:
+                val = int(lineEdit.text())
+            except ValueError:
+                try:
+                    val = float(lineEdit.text())
+                except ValueError:
+                    val = lineEdit.text()
+
+            proj_req[lineEdit.objectName()] = val
+        #save
+
+        ffp = os.getcwd()
+        name = '/project/project_settings/'
+        path = ffp + name
+        if not os.path.exists(path):
+            os.makedirs(path)
+        with open(path + 'requirements.json', 'w') as f:
+            json.dump(proj_req, f)
+        #Select all qline edits
+
+
+
+
+
     # setupUi
 
     def retranslateUi(self, Widget):
         Widget.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"SCF", None))
-        self.label_2.setText(QCoreApplication.translate("Dialog", u"GWL", None))
-        self.label_3.setText(QCoreApplication.translate("Dialog", u"MW", None))
-        self.label_4.setText(QCoreApplication.translate("Dialog", u"PGA", None))
-        self.label_5.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
-        self.label_6.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
-        self.label_7.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
-        self.radioButton.setText(QCoreApplication.translate("Dialog", u"RadioButton", None))
-        self.radioButton_2.setText(QCoreApplication.translate("Dialog", u"RadioButton", None))
-        self.label_8.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
-        self.label_9.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
+        self.label.setText(QCoreApplication.translate("Dialog", u"Mw", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"Pga.", None))
+        self.label_3.setText(QCoreApplication.translate("Dialog", u"Gwl", None))
+        self.label_4.setText(QCoreApplication.translate("Dialog", u"Scf", None))
+        self.label_5.setText(QCoreApplication.translate("Dialog", u"ProjName", None))
+        self.label_6.setText(QCoreApplication.translate("Dialog", u"ProjNum", None))
+        self.label_7.setText(QCoreApplication.translate("Dialog", u"ProjLoc", None))
+        self.radioButton.setText(QCoreApplication.translate("Dialog", u"Robertston&Wride1997", None))
+        self.radioButton_2.setText(QCoreApplication.translate("Dialog", u"Boulanger&Idriss2014", None))
+        self.label_8.setText(QCoreApplication.translate("Dialog", u"Cumulative IC(no.)", None))
+        self.label_9.setText(QCoreApplication.translate("Dialog", u"Cumulative FOS(no.)", None))
         self.label_10.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
         self.radioButton_3.setText(QCoreApplication.translate("Dialog", u"RadioButton", None))
         self.label_11.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
@@ -314,19 +363,19 @@ class Ui_WidgetGrid(QWidget):
         self.label_13.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
         self.radioButton_4.setText(QCoreApplication.translate("Dialog", u"RadioButton", None))
         self.pushButton.setText(QCoreApplication.translate("Dialog", u"PushButton", None))
-        self.pushButton_2.setText(QCoreApplication.translate("Dialog", u"PushButton", None))
+        self.pushButton_2.setText(QCoreApplication.translate("Dialog", u"get_proj-req", None))
     # retranslateUi
 
 
 # Create the application instance
-app = QApplication(sys.argv)
-
-# Create the widget window
-# widget = Ui_Widget()
-widget = Ui_WidgetGrid()
-
-# Show the widget window
-widget.show()
-
-# Start the event loop
-sys.exit(app.exec())
+# # app = QApplication(sys.argv)
+# #
+# # # Create the widget window
+# # # widget = Ui_Widget()
+# # widget = Ui_WidgetGrid()
+# #
+# # # Show the widget window
+# # widget.show()
+# #
+# # # Start the event loop
+# sys.exit(app.exec())
