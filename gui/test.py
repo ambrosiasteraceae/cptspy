@@ -1,4 +1,4 @@
-from loading.loading import load_dataframe
+from load.loading import load_dataframe
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow
 import pyqtgraph as pg
@@ -7,7 +7,11 @@ import numpy as np
 import shapely.geometry as shp
 import glob
 import json, os
-#
+
+
+
+
+
 # ffps = glob.glob('D:/04_R&D/cptspy/output/*.csv')
 #
 #
@@ -44,17 +48,3 @@ import json, os
 # win.show()
 #
 # sys.exit(app.exec())
-
-# ord()
-
-a = {k:ord(k) for k in 'abcdfedgh'}
-print(a)
-
-ffp = os.getcwd()
-name = '/project/project_settings/'
-path = ffp+name
-if not os.path.exists(path):
-    os.makedirs(path)
-with open(path+'requirements.json', 'w') as f:
-    json.dump(a, f)
-

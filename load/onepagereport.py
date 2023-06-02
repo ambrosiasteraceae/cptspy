@@ -39,8 +39,8 @@ for path in paths:
     fig2.savefig(cpth.name + '_compactibility.png', bbox_inches='tight')
 
 
-    logo_image_path = 'D:/04_R&D/cptspy/loading/nmdc.png'
-    cpt_file_path = 'D:/04_R&D/cptspy/loading/H15c.png'
+    logo_image_path = '/load/nmdc.png'
+    cpt_file_path = '/load/H15c.png'
 
 
     # Create a new document
@@ -67,7 +67,7 @@ for path in paths:
             \small Phone: +971 2 513 00 00  \\
         \end{tabular}
     }
-    \lhead{\raisebox{-1cm}{\includegraphics[width=2.5cm]{D:/04_R&D/cptspy/loading/nmdc.png}}}
+    \lhead{\raisebox{-1cm}{\includegraphics[width=2.5cm]{D:/04_R&D/cptspy/load/nmdc.png}}}
     \vspace{2cm}
     \vspace{2cm}
     '''
@@ -108,10 +108,10 @@ for path in paths:
 
     table2.add_hline()
 
-    mw_path = 'D:/04_R&D/cptspy/loading/mw.PNG'
-    pga_path = 'D:/04_R&D/cptspy/loading/acc.jpg'
-    gwl_path = 'D:/04_R&D/cptspy/loading/gwl.jpg'
-    scf_path = 'D:/04_R&D/cptspy/loading/seashell_logo1.PNG'
+    mw_path = '/load/mw.PNG'
+    pga_path = '/load/acc.jpg'
+    gwl_path = '/load/gwl.jpg'
+    scf_path = '/load/seashell_logo1.PNG'
 
     table3 = Tabular('lll')
     table3.add_hline()
@@ -146,8 +146,8 @@ for path in paths:
             figure.add_image(cpth.name + '.png', width='18.5cm')
 
 
-    fos_legend_path = 'D:/04_R&D/cptspy/loading/fos_legend.png'
-    index_legend_path = 'D:/04_R&D/cptspy/loading/ic_legend.png'
+    fos_legend_path = '/load/fos_legend.png'
+    index_legend_path = '/load/ic_legend.png'
     compactibility_path = cpth.name + '_compactibility.png'
 
     table4 = Tabular('l')

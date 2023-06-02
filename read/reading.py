@@ -643,4 +643,4 @@ def load_json(ffp):
 
 
 
-print(load_json('D:/04_R&D/cptspy/loading/CPT-10211-PO-AP11b4-1P.json'))
+print(load_json('D:/04_R&D/cptspy/load/CPT-10211-PO-AP11b4-1P.json'))

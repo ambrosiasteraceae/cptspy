@@ -6,7 +6,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from projectinfo import  Ui_WidgetGrid
 
-from loading.loading import load_dataframe, save_df_to_excel, convert_to_dtype
+from load.loading import load_dataframe, save_df_to_excel, convert_to_dtype
 
 
 

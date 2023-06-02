@@ -61,8 +61,8 @@ for path in paths:
     create_massarasch_and_legend_plot(axes, rw_1997)
     fig4.savefig('legends.png',bbox_inches='tight')
 
-    logo_image_path = 'D:/04_R&D/cptspy/loading/nmdc.jpg'
-    cpt_file_path = 'D:/04_R&D/cptspy/loading/H15c.png'
+    logo_image_path = 'nmdc.jpg'
+    cpt_file_path = '/load/H15c.png'
 
     path = os.path.dirname(__file__) #path of module
     # Create a new document
@@ -138,16 +138,16 @@ for path in paths:
     table2 = generate_table(cpts.latex_dict)
 
 
-    # mw_path = 'D:/04_R&D/cptspy/loading/mw.PNG'
-    # pga_path = 'D:/04_R&D/cptspy/loading/acc.jpg'
+    # mw_path = 'D:/04_R&D/cptspy/load/mw.PNG'
+    # pga_path = 'D:/04_R&D/cptspy/load/acc.jpg'
 
     mw_path = os.path.join(path + '\\mw_log.PNG').replace('\\', '/')
     pga_path = os.path.join(path + '\\acc.jpg').replace('\\', '/')
 
 
 
-    gwl_path = 'D:/04_R&D/cptspy/loading/gwl.jpg'
-    scf_path = 'D:/04_R&D/cptspy/loading/shell_logo.jpg'
+    gwl_path = 'gwl.jpg'
+    scf_path = 'shell_logo.jpg'
 
     table3 = Tabular('lll')
     table3.add_hline()

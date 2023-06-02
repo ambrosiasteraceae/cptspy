@@ -287,7 +287,7 @@ class RobertsonWride1997CPT(object):
             self.m_w = m_w
 
         unit_water_wt = self.s_g_water * 10
-        self.npts = len(cpt.depth)
+        # self.npts = len(cpt.depth)
         self.depth = cpt.depth
         self.cpt = cpt
         # self.q_c = cpt.q_c

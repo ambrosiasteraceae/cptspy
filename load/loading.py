@@ -1,5 +1,4 @@
 import datetime
-import glob
 import pandas as pd
 import numpy as np
 import ntpath
@@ -181,6 +180,7 @@ def load_mpa_cpt_file(ffp, scf=1, delimiter=";", a_ratio_override=None):
     """
     # import data from csv file
     folder_path, file_name = ntpath.split(ffp)
+    file_name = file_name.split(".")[0]
     ncols = 4
     try:
         data = np.loadtxt(ffp, skiprows=24, delimiter=delimiter, usecols=(0, 1, 2, 3))
@@ -272,7 +272,7 @@ class CPT(object):
         """
         # qt the cone tip resistance corrected for unequal end area effects, eq 2.3
 
-        # lazy loading of q_t
+        # lazy load of q_t
         if self._q_t is None:
             self._q_t = self.q_c + ((1 - self.a_ratio) * self.u_2)
         return self._q_t
@@ -287,14 +287,4 @@ class CPT(object):
     # @q_t.setter
     # def q_t(self, q_t):
     #     self.q_c = q_t - ((1 - self.a_ratio) * self.u_2)
-
-# ffp = 'D:/04_R&D/cptspy/output/'
-# ffpdf = 'D:/04_R&D/cptspy/output/dataframe/'
-#
-# dfo = load_dataframe(ffp)
-# dfo.head()
-# import os
-# if not os.path.exists(ffpdf):
-#     os.makedirs(ffpdf)
-# dfo.to_csv(ffpdf + 'output.csv', index=False)
 

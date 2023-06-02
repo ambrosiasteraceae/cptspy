@@ -17,8 +17,8 @@ paths = ['D:/04_R&D/cptspy/output/CPT_L21d.csv']
 
 
 
-logo_image_path = 'D:/04_R&D/cptspy/loading/nmdc.png'
-cpt_file_path = 'D:/04_R&D/cptspy/loading/H15c.png'
+logo_image_path = '/load/nmdc.png'
+cpt_file_path = '/load/H15c.png'
 
 path = os.path.dirname(__file__) #path of module
 print('Original Path is: ', path)

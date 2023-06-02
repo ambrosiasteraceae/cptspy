@@ -431,7 +431,7 @@ def create_massarasch_and_legend_plot(sps, rw):
 
 #
 # path = ['D:/04_R&D/cptspy/output/CPT_L21d.csv','D:/04_R&D/cptspy/output/CPT_I14d.csv']
-# from loading.loading import load_mpa_cpt_file
+# from load.load import load_mpa_cpt_file
 # from calc.liquefaction import run_rw1997
 #
 # cpt = load_mpa_cpt_file(path[1])

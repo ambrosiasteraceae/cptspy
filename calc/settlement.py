@@ -256,7 +256,7 @@ def settlement(lf, fd, load, years, verbose=True, val_limit=0.025):
         raise ValueError("Foundation width is higher than CPT depth!")
     incs = lf.depth[1] - lf.depth[0]
     delta_z = np.ones(lf.depth.size) * incs
-    lf.depth = np.round(lf.depth, 2)  # You can test this. Or you can apply this when loading from CPT's
+    lf.depth = np.round(lf.depth, 2)  # You can test this. Or you can apply this when load from CPT's
 
     # Elastic + Creep
     z_top, z_bottom, zp = calculate_peak_settlement_indexes(fd)

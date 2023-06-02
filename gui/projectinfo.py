@@ -7,6 +7,21 @@ import sys
 import pandas as pd
 import json
 
+
+def parse_proj_requirements(line_edits):
+    proj_req = {}
+    for lineEdit in line_edits:
+        try:
+            val = int(lineEdit.text())
+        except ValueError:
+            try:
+                val = float(lineEdit.text())
+            except ValueError:
+                val = lineEdit.text()
+
+        proj_req[lineEdit.objectName()] = val
+    return proj_req
+
 class PandasModel(QAbstractTableModel):
     def __init__(self, df = pd.DataFrame(), parent=None):
         QAbstractTableModel.__init__(self, parent=parent)
@@ -63,6 +78,8 @@ class PandasModel(QAbstractTableModel):
         self._df.sort_values(colname, ascending= order == Qt.SortOrder.AscendingOrder, inplace=True)
         self._df.reset_index(inplace=True, drop=True)
         self.layoutChanged.emit()
+
+
 class PDWidget(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=None)
@@ -70,12 +87,12 @@ class PDWidget(QWidget):
         hLayout = QHBoxLayout()
         # self.pathLE = QLineEdit(self)
         # hLayout.addWidget(self.pathLE)
-        self.loadBtn = QPushButton("Select File", self)
-        hLayout.addWidget(self.loadBtn)
+        # self.loadBtn = QPushButton("Select File", self)
+        # hLayout.addWidget(self.loadBtn)
         vLayout.addLayout(hLayout)
         self.pandasTv = QTableView(self)
         vLayout.addWidget(self.pandasTv)
-        self.loadBtn.clicked.connect(self.loadFile)
+        # self.loadBtn.clicked.connect(self.loadFile)
         self.pandasTv.setSortingEnabled(True)
 
     def loadFile(self):
@@ -93,9 +110,10 @@ class PDWidget(QWidget):
         self.pandasTv.setModel(model)
 
 
-class Ui_WidgetGrid(QWidget):
-    def __init__(self, parent=None):
-        super(Ui_WidgetGrid, self).__init__(parent)
+class ProjReqWidget(QWidget):
+    def __init__(self, main_window_ref,parent=None):
+        super(ProjReqWidget, self).__init__(parent)
+        self.main = main_window_ref
         self.setupUi(self)
 
     def setupUi(self, Widget):
@@ -180,6 +198,7 @@ class Ui_WidgetGrid(QWidget):
 
         self.lineEdit_2 = QLineEdit(self.widget)
         self.lineEdit_2.setObjectName(u"proj_num")
+
 
         self.gridLayout.addWidget(self.lineEdit_2, 6, 0, 1, 2)
 
@@ -291,7 +310,8 @@ class Ui_WidgetGrid(QWidget):
         self.gridLayout.addItem(self.verticalSpacer_4, 20, 1, 1, 1)
 
         self.pushButton = QPushButton(self.widget)
-        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setObjectName(u"Load Project Requirements")
+        self.pushButton.clicked.connect(self.load_proj_requirements)
 
         self.gridLayout.addWidget(self.pushButton, 21, 0, 1, 1)
 
@@ -308,25 +328,34 @@ class Ui_WidgetGrid(QWidget):
 
     def load_proj_requirements(self):
         """
-        We will always save the proj_requirements in 
+        We will always save the proj_requirements in
         """
-        proj_req = json.load()
+        ffp = os.getcwd()
+        filename, _ = QFileDialog.getOpenFileName(self, 'Open File', ffp+ '/project/project_settings', '*.json')
+        print(filename)
 
-    def save_project_requirements(self):
+        # name = '/project/project_settings/requirements.json'
+        # path = ffp + name
+        with open(filename) as f:
+            proj_req = json.load(f)
         self.lineEdits = self.widget.findChildren(QLineEdit)
-        proj_req = {}
 
         for lineEdit in self.lineEdits:
             try:
-                val = int(lineEdit.text())
-            except ValueError:
-                try:
-                    val = float(lineEdit.text())
-                except ValueError:
-                    val = lineEdit.text()
+                lineEdit.setText(str(proj_req[lineEdit.objectName()]))
+                lineEdit.setReadOnly(True)
+            except KeyError:
+                pass
 
-            proj_req[lineEdit.objectName()] = val
-        #save
+        self.main.proj_requirements = proj_req
+
+
+
+
+    def save_project_requirements(self):
+        self.lineEdits = self.widget.findChildren(QLineEdit)
+
+        proj_req = parse_proj_requirements(self.lineEdits) #Everything is saved as txt
 
         ffp = os.getcwd()
         name = '/project/project_settings/'
@@ -335,6 +364,8 @@ class Ui_WidgetGrid(QWidget):
             os.makedirs(path)
         with open(path + 'requirements.json', 'w') as f:
             json.dump(proj_req, f)
+
+        self.main.proj_requirements = proj_req
         #Select all qline edits
 
 

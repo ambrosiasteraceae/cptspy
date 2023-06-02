@@ -2,7 +2,7 @@ import numpy as np
 import liquepy as lq
 from miscellaneous import timed
 import matplotlib.pyplot as plt
-from loading import loading
+from load import loading
 
 
 def calc_qt(qc, ar, u2):
