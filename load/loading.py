@@ -86,10 +86,10 @@ def load_dataframe(ffps):
     # ffps = glob.glob(out_fp + "*.csv")  #
 
     headers = ['Date:', 'Assumed GWL:', 'groundlvl', 'Pre-Drill:', 'Easting', 'Northing',
-               'aratio', 'Length', 'CPT-ID', 'Object']
+               'aratio', 'Length', 'CPT-ID', 'Object', 'ffp']
     limit = 24
-    hh = headers[0:-3]  # Up to but not including the 'CPT-ID' & 'Object'. T
-    dfo = pd.DataFrame(columns=[""] * 10)
+    hh = headers[0:-4]  # Up to but not including the 'CPT-ID' & 'Object'. T
+    dfo = pd.DataFrame(columns=[""] * 11)
     dfo.columns = headers
     for i, file in enumerate(ffps):
         # print(file)
@@ -111,11 +111,11 @@ def load_dataframe(ffps):
         cpt = load_mpa_cpt_file(file, delimiter=";")
         # Create a list out of the dictionary values
         val_list = list(vals.values())
-        val_list.extend([cpt.depth.size / 100, name, cpt])  # Grow list to the size of headers
+        val_list.extend([cpt.depth.size / 100, name, cpt, file])  # Grow list to the size of headers
         # Append to data frame
         dfo.loc[i, :] = val_list
     col_order = ['CPT-ID', 'groundlvl', 'Length', 'Easting', 'Northing', 'Pre-Drill:', 'Assumed GWL:', 'aratio',
-                 'Date:', 'Object']
+                 'Date:', 'Object', 'ffp']
     # dfo = dfo[dfo_order]
     return dfo[col_order]
 

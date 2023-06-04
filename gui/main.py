@@ -8,7 +8,7 @@ from projectinfo import ProjReqWidget
 from loadcsv import LoadCSVWidget
 from runcalc import CalcWidget
 from home import HomeQT
-
+from convert import ConvertQT
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -20,25 +20,27 @@ class MyWindow(QMainWindow):
 
         self.tab_widget = QTabWidget()
 
-        self.tab0 = HomeQT(self)
-        self.tab1 = LoadCSVWidget(self)
-        # self.tab2 = ProjReqTab()
-        # self.tab2 = Ui_Widget()
-        self.tab2 = ProjReqWidget(self)
-        self.tab3 = CalcWidget(self)
-        # print(type(self.tab2))
+        self.home = HomeQT(self)
+        self.convert = ConvertQT(self)
+        self.loadcsv = LoadCSVWidget(self)
+        # self.proj_req = ProjReqTab()
+        # self.proj_req = Ui_Widget()
+        self.proj_req = ProjReqWidget(self)
+        self.calc = CalcWidget(self)
+        # print(type(self.proj_req))
 
         self.ffp = None #project file path
         self.df = None
         self.proj_requirements = {}
-        self.tab_widget.addTab(self.tab0, "Home")
-        self.tab_widget.addTab(self.tab1, "Load")
-        self.tab_widget.addTab(self.tab2, "Project Info")
-        self.tab_widget.addTab(self.tab3, "Run Calculations")
+        self.tab_widget.addTab(self.home, "Home")
+        self.tab_widget.addTab(self.convert, "Convert")
+        self.tab_widget.addTab(self.loadcsv, "Load")
+        self.tab_widget.addTab(self.proj_req, "Project Info")
+        self.tab_widget.addTab(self.calc, "Run Calculations")
 
         # self.df = None
         # self.tab2_layout = QGridLayout()
-        # self.tab2.setLayout(self.tab2_layout)
+        # self.proj_req.setLayout(self.tab2_layout)
 
         # self.upload_file_btn = QPushButton("Upload File")
         # self.upload_file_btn.clicked.connect(self.upload_file)

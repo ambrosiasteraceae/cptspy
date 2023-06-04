@@ -150,8 +150,11 @@ class HomeQT(QWidget):
         self.main.ffp = ProjectPaths(**paths)
 
     def load_existing_project(self):
+        #@TODO Exists the GUI if you cancel the command. This is everywhere
         #@TODO ADD a reload button in case you put items in the folder to update the tree view?
-        self.ffp = QFileDialog.getExistingDirectory(self, directory='D:/05_Example')
+        # self.ffp = QFileDialog.getExistingDirectory(self, directory='D:/05_Example')
+        self.ffp = QFileDialog.getExistingDirectory(self, directory='C:/Projects')
+
         # self.ffp = "D:/05_Example/hudayriat70"
         # print(self.ffp)
 
@@ -163,13 +166,16 @@ class HomeQT(QWidget):
         self.tree_structure_load()
         print(f"Successfully loaded {self.ffp.split('/')[-1]}  project")
 
+        self.main.loadcsv.upload_folder()
+        self.main.loadcsv.load_cpts()
+        self.main.proj_req.load_proj_requirements()
 
 
 
 
 # class ProjectPaths:
 # self.folder_types = ['.npz', '.csv','.png', '.json',  '.xlsx', '.pdf','.xlsx']
-
+#
 # import sys
 # app = QApplication(sys.argv)
 #

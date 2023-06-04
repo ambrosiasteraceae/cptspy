@@ -53,8 +53,8 @@ class MyWindow(QMainWindow):
         self.tab_widget = QTabWidget()
         self.tab0 = QWidget()
         self.tab1 = QWidget()
-        # self.tab2 = ProjReqTab()
-        # self.tab2 = Ui_Widget()
+        # self.proj_req = ProjReqTab()
+        # self.proj_req = Ui_Widget()
         self.tab2 = Ui_WidgetGrid()
         self.tab3 = QWidget()
         print(type(self.tab2))
@@ -72,7 +72,7 @@ class MyWindow(QMainWindow):
 
         # self.df = None
         # self.tab2_layout = QGridLayout()
-        # self.tab2.setLayout(self.tab2_layout)
+        # self.proj_req.setLayout(self.tab2_layout)
 
 
 
@@ -113,7 +113,7 @@ class MyWindow(QMainWindow):
             print(self.model.rowCount())
         else:
             return
-        # self.tab2.tableWidget.loadFile(fileName = item.text())
+        # self.proj_req.tableWidget.loadFile(fileName = item.text())
 
     def upload_folder(self):
         folder_name = QFileDialog.getExistingDirectory(self, 'Open Folder')

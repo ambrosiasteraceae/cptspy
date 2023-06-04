@@ -7,11 +7,14 @@ from projectinfo import PDWidget
 
 import pandas as pd
 import numpy as np
+import os
 from calc.liquefaction import run_rw1997
 from calc.summary import CPTSummary
-#@TODO when loading a folder and theres no csv, a dialog should appear
-#@TODO when loading project requiremetns, and you want to change something you cannot. you need to have an uncheck button to edit? otherwise you have to exit and start again
-#@TODO Passing the SCF Parameter
+
+
+# @TODO when loading a folder and theres no csv, a dialog should appear
+# @TODO when loading project requiremetns, and you want to change something you cannot. you need to have an uncheck button to edit? otherwise you have to exit and start again
+# @TODO Passing the SCF Parameter
 
 class CalcWidget(QWidget):
     def __init__(self, main_window_ref, parent=None):
@@ -103,7 +106,6 @@ class CalcWidget(QWidget):
 
         self.verticalLayout_7.addWidget(self.save_figures)
 
-
         self.horizontalLayout_4.addLayout(self.verticalLayout_7)
 
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
@@ -146,14 +148,12 @@ class CalcWidget(QWidget):
 
         self.horizontalLayout_2.addWidget(self.label_5)
 
-
         self.verticalLayout_5.addLayout(self.horizontalLayout_2)
 
         self.pushButton_6 = QPushButton(self.horizontalLayoutWidget_3)
         self.pushButton_6.setObjectName(u"pushButton_6")
 
         self.verticalLayout_5.addWidget(self.pushButton_6)
-
 
         self.horizontalLayout_4.addLayout(self.verticalLayout_5)
 
@@ -163,10 +163,9 @@ class CalcWidget(QWidget):
 
         QMetaObject.connectSlotsByName(Widget)
 
-
     def transferdf(self):
         # print(self.main.df.head())
-        self.tableWidget.loadDF('aa',self.main.df)
+        self.tableWidget.loadDF('aa', self.main.df)
         pass
 
     def check_states(self):
@@ -178,7 +177,10 @@ class CalcWidget(QWidget):
 
         # print(self.main.proj_requirements)
 
+
     def perform_calc(self):
+        # @TODO When loading a project and you jump straight to perform calc, it breaks
+
         """Performs the calculations based on the proj_requirements"""
         # if self.main.proj_requirements is None:
         #     print('No project requirements set')
@@ -187,7 +189,7 @@ class CalcWidget(QWidget):
         pga = self.main.proj_requirements['pga']
         gwl = self.main.proj_requirements['gwl']
         scf = self.main.proj_requirements['scf']
-        print(type(m_w), type(pga), type(gwl), type(scf))
+        # print(type(m_w), type(pga), type(gwl), type(scf))
         # cumulative_ic = self.main.proj_requirements['cumulative_ic']
         # cumulative_fos = self.main.proj_requirements['cumulative_fos']
         # liquefaction_check = self.main.proj_requirements['liquefaction_check']
@@ -196,42 +198,57 @@ class CalcWidget(QWidget):
         # save_figures = self.main.proj_requirements['save_figures']
 
         data = []
+        # print(self.main.df.head())
         # ffp_npz = 'D:/04_R&D/cptspy/gui/project/calc/'
         for i, cpt in enumerate(self.main.df['Object']):
+            # print(cpt.q_c[0:20])
+            cpt.q_c = cpt.q_c * scf  # Add SCF
+            # print(cpt.q_c[0:20])
             rw1997 = run_rw1997(cpt, gwl=gwl, pga=pga, m_w=m_w)
+            # print('liq_pass')
             summary = CPTSummary(rw1997)
             array_dict = {**cpt.__dict__, **rw1997.__dict__}
-            np.savez(self.main.ffp.calc+cpt.file_name, **array_dict)
+            # print('Arraydict_passed')
+            np.savez(self.main.ffp.calc + cpt.file_name, **array_dict)
+            # print('npz saved')
             data.append(list(summary.__dict__.values()))
-        #I will need an index for the dataframe
-            self.progressBar.setValue(i/len(self.main.df)*100)
+            # print('data appended')
+            # I will need an index for the dataframe
+            self.progressBar.setValue(int(i / len(self.main.df) * 100))
 
+        # print('did it exit?')
         calc_df = pd.DataFrame(data, columns=list(summary.__dict__.keys()))
-        main_df = self.main.df[['CPT-ID', 'groundlvl','Easting', 'Northing']]
+        # print(calc_df.head())
+        main_df = self.main.df[['CPT-ID', 'groundlvl', 'Easting', 'Northing']]
+        # print(main_df.head())
         self.calc_df = pd.concat([main_df, calc_df], axis=1)
-        self.tableWidget.loadDF('aa',self.calc_df)
+        self.tableWidget.loadDF('aa', self.calc_df)
         self.progressBar.setValue(100)
-        self.progressBar.setFormat('Calculation Complete')
+        # self.progressBar.setFormat('Calculation Complete')
         self.fill_table_values()
+
 
     def export_to_excel(self):
         """Exports the calc_df to excel"""
         self.calc_df.to_excel(self.main.ffp.summary + 'Results.xlsx')
 
-
     def get_table_values(self):
         """
         Get the overview summary
         """
+        # @TODO: Add dialog if you don't have a cumulative fos or ic implimented.
         min_fos = self.main.proj_requirements['cumulative_fos']
         min_ic = self.main.proj_requirements['cumulative_ic']
         self.ncpts = self.calc_df.shape[0]
-        s_mask =  (self.calc_df['cum_fos'] > min_fos) | (self.calc_df['cum_ic'] > min_ic)
-        self.cpts_pass = self.calc_df['cum_fos'][s_mask].shape[0]
-        self.cpts_fail = self.ncpts - self.cpts_pass
-        self.cpts_percentage = self.cpts_fail/self.ncpts * 100
+        a = self.calc_df['cum_fos'] > min_fos
+        b = self.calc_df['cum_ic'] > min_ic
+        # print('Min fos:',a,type(a))
+        # print('Min ic:',b,type(b))
 
-
+        s_mask = (self.calc_df['cum_fos'] > min_fos) | (self.calc_df['cum_ic'] > min_ic)
+        self.cpts_fail = self.calc_df['cum_fos'][s_mask].shape[0]
+        self.cpts_pass = self.ncpts - self.cpts_fail
+        self.cpts_percentage = self.cpts_pass / self.ncpts * 100
 
     def fill_table_values(self):
         """Fills the table with the values from the calc_df"""
@@ -239,21 +256,7 @@ class CalcWidget(QWidget):
         self.label_3.setText(f'CPTs: {self.ncpts}')
         self.label_2.setText(f'Passed: {self.cpts_pass}')
         self.label_4.setText(f'Failed: {self.cpts_fail}')
-        self.label_5.setText(f'Percentage: {self.cpts_percentage:.2f}%')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        self.label_5.setText(f'Percentage Passing: {self.cpts_percentage:.2f}%')
 
     def retranslateUi(self, Widget):
         Widget.setWindowTitle(QCoreApplication.translate("Widget", u"Widget", None))
@@ -273,8 +276,21 @@ class CalcWidget(QWidget):
         self.label_5.setText(QCoreApplication.translate("Widget", u"Percentage", None))
         self.pushButton_6.setText(QCoreApplication.translate("Widget", u"PushButton", None))
 
-
     # retranslateUi
+
+    def calc_load(self):
+        #first check to see if the results.xlsx in the summary folder exists
+        #if it doesn't
+
+        filepath = self.main.ffp.summary + 'Results.xlsx'
+        if os.path.exists(filepath):
+            self.handle_loaded_proj()
+            return
+        else:
+            self.perform_calc()
+
+    def handle_loaded_proj(self):
+        pass
 
 
 

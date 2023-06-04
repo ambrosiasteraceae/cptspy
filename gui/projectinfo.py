@@ -329,13 +329,15 @@ class ProjReqWidget(QWidget):
     def load_proj_requirements(self):
         """
         We will always save the proj_requirements in
+        @TODO We need to implemetent lock and unlock for editing. Itrs annyoing
+        @TODO: Project Requirements should also load check boxes, and radio buttons
         """
-        ffp = os.getcwd()
-        filename, _ = QFileDialog.getOpenFileName(self, 'Open File', ffp+ '/project/project_settings', '*.json')
-        print(filename)
+        # ffp = os.getcwd()
+        # filename, _ = QFileDialog.getOpenFileName(self, 'Open File', ffp+ '/project/project_settings', '*.json')
+        # print(filename)
 
-        # name = '/project/project_settings/requirements.json'
-        # path = ffp + name
+        filename = self.main.ffp.proj_requirements + 'requirements.json'
+
         with open(filename) as f:
             proj_req = json.load(f)
         self.lineEdits = self.widget.findChildren(QLineEdit)
@@ -343,7 +345,7 @@ class ProjReqWidget(QWidget):
         for lineEdit in self.lineEdits:
             try:
                 lineEdit.setText(str(proj_req[lineEdit.objectName()]))
-                lineEdit.setReadOnly(True)
+                # lineEdit.setReadOnly(True)
             except KeyError:
                 pass
 
@@ -357,12 +359,13 @@ class ProjReqWidget(QWidget):
 
         proj_req = parse_proj_requirements(self.lineEdits) #Everything is saved as txt
 
-        ffp = os.getcwd()
-        name = '/project/project_settings/'
-        path = ffp + name
-        if not os.path.exists(path):
-            os.makedirs(path)
-        with open(path + 'requirements.json', 'w') as f:
+        # ffp = os.getcwd()
+        # name = '/project/project_settings/'
+        # path = ffp + name
+        # if not os.path.exists(path):
+        #     os.makedirs(path)
+
+        with open(self.main.ffp.proj_requirements + 'requirements.json', 'w') as f:
             json.dump(proj_req, f)
 
         self.main.proj_requirements = proj_req
@@ -393,8 +396,8 @@ class ProjReqWidget(QWidget):
         self.label_12.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
         self.label_13.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
         self.radioButton_4.setText(QCoreApplication.translate("Dialog", u"RadioButton", None))
-        self.pushButton.setText(QCoreApplication.translate("Dialog", u"PushButton", None))
-        self.pushButton_2.setText(QCoreApplication.translate("Dialog", u"get_proj-req", None))
+        self.pushButton.setText(QCoreApplication.translate("Dialog", u"Load Requirements", None))
+        self.pushButton_2.setText(QCoreApplication.translate("Dialog", u"Save Requirements", None))
     # retranslateUi
 
 

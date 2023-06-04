@@ -48,11 +48,13 @@ class LoadCSVWidget(QWidget):
             print(self.model.rowCount())
         else:
             return
-        # self.tab2.tableWidget.loadFile(fileName = item.text())
+        # self.proj_req.tableWidget.loadFile(fileName = item.text())
 
     def upload_folder(self):
         # folder_name = QFileDialog.getExistingDirectory(self, 'Open Folder')
         # folder_name = 'D:/04_R&D/cptspy/output'
+
+        print(self.main.ffp.converted)
         folder_name = self.main.ffp.converted
         if folder_name:
             self.ffps = []
@@ -62,6 +64,7 @@ class LoadCSVWidget(QWidget):
                     item = QStandardItem(os.path.join(folder_name, file_name))
                     self.model.appendRow(item)
             self.main.df = load_dataframe(self.ffps)
+
         else:
             return
 
@@ -71,5 +74,6 @@ class LoadCSVWidget(QWidget):
 
         ffps = [self.model.item(i).text() for i in range(self.model.rowCount())]
         self.main.df = load_dataframe(ffps)
-        self.main.tab2.tableWidget.loadDF(path='TEST', df=self.main.df)
+        print('Succesfully loaded {} files'.format(len(ffps)))
+        self.main.proj_req.tableWidget.loadDF(path='TEST', df=self.main.df)
         self.main.df.to_excel(self.main.ffp.summary+'Header.xlsx')
