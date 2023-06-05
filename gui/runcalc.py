@@ -10,11 +10,16 @@ import numpy as np
 import os
 from calc.liquefaction import run_rw1997
 from calc.summary import CPTSummary
+from overview import on_radio_button_clicked
 
+#@TODO have a console log that tesll you the history of the project or just a console printing whatever is happening
+#@TODO When you create a project and you add a few csvs, the nyou calculate and you go back to load tab, and press upload fodler it will uplaod the same
+#@TODO when loading a folder and theres no csv, a dialog should appear
+#@TODO when loading project requiremetns, and you want to change something you cannot. you need to have an uncheck button to edit? otherwise you have to exit and start again
+#@TODO Passing the SCF Parameter
+#@TODO Loading a project in the main window and creating the subflder structure shouldnt be allowed. An error shoudl return
+#@TODO Run calc should not have the table widget, but the loaded csv files
 
-# @TODO when loading a folder and theres no csv, a dialog should appear
-# @TODO when loading project requiremetns, and you want to change something you cannot. you need to have an uncheck button to edit? otherwise you have to exit and start again
-# @TODO Passing the SCF Parameter
 
 class CalcWidget(QWidget):
     def __init__(self, main_window_ref, parent=None):
@@ -181,6 +186,10 @@ class CalcWidget(QWidget):
     def perform_calc(self):
         # @TODO When loading a project and you jump straight to perform calc, it breaks
 
+        if self.main.thdf.empty:
+            on_radio_button_clicked('No file has been added to compute')
+            return
+
         """Performs the calculations based on the proj_requirements"""
         # if self.main.proj_requirements is None:
         #     print('No project requirements set')
@@ -200,7 +209,7 @@ class CalcWidget(QWidget):
         data = []
         # print(self.main.df.head())
         # ffp_npz = 'D:/04_R&D/cptspy/gui/project/calc/'
-        for i, cpt in enumerate(self.main.df['Object']):
+        for i, cpt in enumerate(self.main.thdf['Object']):
             # print(cpt.q_c[0:20])
             cpt.q_c = cpt.q_c * scf  # Add SCF
             # print(cpt.q_c[0:20])
@@ -214,45 +223,50 @@ class CalcWidget(QWidget):
             data.append(list(summary.__dict__.values()))
             # print('data appended')
             # I will need an index for the dataframe
-            self.progressBar.setValue(int(i / len(self.main.df) * 100))
+            self.progressBar.setValue(int(i / len(self.main.thdf) * 100))
 
         # print('did it exit?')
         calc_df = pd.DataFrame(data, columns=list(summary.__dict__.keys()))
         # print(calc_df.head())
-        main_df = self.main.df[['CPT-ID', 'groundlvl', 'Easting', 'Northing']]
+        main_df = self.main.thdf[['CPT-ID', 'groundlvl', 'Easting', 'Northing']]
         # print(main_df.head())
-        self.calc_df = pd.concat([main_df, calc_df], axis=1)
-        self.tableWidget.loadDF('aa', self.calc_df)
+        self.main.tdf = pd.concat([main_df, calc_df], axis=1)
+        self.tableWidget.loadDF('aa', self.main.tdf)
         self.progressBar.setValue(100)
         # self.progressBar.setFormat('Calculation Complete')
-        self.fill_table_values()
+        self.fill_table_values(calc_df)
+
+        if self.main.state == 0:
+            self.main.tdf.to_excel(self.main.ffp.summary + 'Results.xlsx', index = False)
+
+
 
 
     def export_to_excel(self):
         """Exports the calc_df to excel"""
-        self.calc_df.to_excel(self.main.ffp.summary + 'Results.xlsx')
+        self.main.tdf.to_excel(self.main.ffp.summary + 'Results_temp.xlsx')
 
-    def get_table_values(self):
+    def get_table_values(self,active_df):
         """
         Get the overview summary
         """
         # @TODO: Add dialog if you don't have a cumulative fos or ic implimented.
         min_fos = self.main.proj_requirements['cumulative_fos']
         min_ic = self.main.proj_requirements['cumulative_ic']
-        self.ncpts = self.calc_df.shape[0]
-        a = self.calc_df['cum_fos'] > min_fos
-        b = self.calc_df['cum_ic'] > min_ic
+        self.ncpts = active_df.shape[0]
+        a = active_df['cum_fos'] > min_fos
+        b = active_df['cum_ic'] > min_ic
         # print('Min fos:',a,type(a))
         # print('Min ic:',b,type(b))
 
-        s_mask = (self.calc_df['cum_fos'] > min_fos) | (self.calc_df['cum_ic'] > min_ic)
-        self.cpts_fail = self.calc_df['cum_fos'][s_mask].shape[0]
+        s_mask = (active_df['cum_fos'] > min_fos) | (active_df['cum_ic'] > min_ic)
+        self.cpts_fail = active_df['cum_fos'][s_mask].shape[0]
         self.cpts_pass = self.ncpts - self.cpts_fail
         self.cpts_percentage = self.cpts_pass / self.ncpts * 100
 
-    def fill_table_values(self):
+    def fill_table_values(self, active_df):
         """Fills the table with the values from the calc_df"""
-        self.get_table_values()
+        self.get_table_values(active_df)
         self.label_3.setText(f'CPTs: {self.ncpts}')
         self.label_2.setText(f'Passed: {self.cpts_pass}')
         self.label_4.setText(f'Failed: {self.cpts_fail}')
@@ -292,6 +306,9 @@ class CalcWidget(QWidget):
     def handle_loaded_proj(self):
         pass
 
+
+    def handle_loaded_proj(self):
+        already_processed = set(self.main.hdf['ffp'])
 
 
 

@@ -16,10 +16,10 @@ from miscellaneous.figures import create_fos_and_index_plot, create_compactibilt
 #@TODO Add just plots, no need to save images
 
 paths = ['D:/04_R&D/cptspy/output/CPT_L21d.csv']
-
-# paths =['D:/04_R&D/cptspy/output/CPT_I18C.csv',
-#         'D:/04_R&D/cptspy/output/CPT_J16c.csv',
-#         'D:/04_R&D/cptspy/output/CPT_J17b.csv']
+# import glob
+# paths = glob.glob('D:/04_R&D/cptspy/read/roshna/post data/processed/' + '*.csv')
+#
+# gpath = ''
 
 
 def generate_table(_dict):
@@ -35,31 +35,35 @@ def generate_table(_dict):
 
 pga = 0.122
 m_w = 6
-gwl = 1
+GWL = 0.6
+gwl = 0.6
 scf = 1.30
-
+my_list = []
 for path in paths:
     cpt = load_mpa_cpt_file(path, scf=scf)
+    gwl = cpt.elevation[0] - GWL
+    my_list.append((path, gwl, cpt.elevation[0]))
     rw_1997 = run_rw1997(cpt, pga=pga, m_w=m_w, gwl=gwl)
     cpth = load_cpt_header(path)
     cpts = CPTSummary(rw_1997)
 
 
+
     fig, sps = plt.subplots(nrows=1, ncols=3, figsize=(16, 10))
     create_fos_and_index_plot(sps, rw_1997)
-    fig.savefig(cpth.name + '.png', bbox_inches='tight')
+    fig.savefig(gpath +cpth.name + '.png', bbox_inches='tight')
 
     fig2, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4))
     create_compactibilty_plot(ax, rw_1997)
-    fig2.savefig(cpth.name + '_compactibility.png', bbox_inches='tight')
+    fig2.savefig(gpath +cpth.name + '_compactibility.png', bbox_inches='tight')
 
     fig3, axs = plt.subplots(1, 4, figsize=(16, 12), sharey=True)
     create_cpt_plots(axs, cpt)
-    fig3.savefig(cpth.name + '_basicplot.png')
+    fig3.savefig(gpath +cpth.name + '_basicplot.png')
 
     fig4, axes = plt.subplots(1, 3, figsize=(16, 4))
     create_massarasch_and_legend_plot(axes, rw_1997)
-    fig4.savefig('legends.png',bbox_inches='tight')
+    fig4.savefig(gpath +'legends.png',bbox_inches='tight')
 
     logo_image_path = 'nmdc.jpg'
     cpt_file_path = '/load/H15c.png'
@@ -104,8 +108,8 @@ for path in paths:
 
     additional_info = {
         'Project:': 'Al Hudayriyat Island PDA Enabling Works',
-        'Project Number:': 123,
-        'Location:': 'Abu Dhabi - Al Hudayriyat',
+        'Project Number:': 167,
+        'Location:': 'Abu Dhabi - Al Hudayriyat Island',
     }
 
     #Header and Project Table
@@ -117,14 +121,14 @@ for path in paths:
     doc.append(subsection)
     subsection.append(project_table)
     subsection.append(NoEscape(r'\vspace{1cm}'))
-    subsection_2 = Subsection('CPT Header Information')
+    subsection_2 = Subsection('CPT Information')
     doc.append(subsection_2)
     subsection_2.append(table1)
 
     #Add basic plots
-    with doc.create(Subsection('Basic Plots')):
+    with doc.create(Subsection('CPT Plots')):
         with doc.create(Figure(position='h!')) as figure:
-            figure.add_image(cpth.name + '_basicplot.png', width='18.5cm')
+            figure.add_image(gpath +cpth.name + '_basicplot.png', width='18.5cm')
 
 
     #Second Page
@@ -163,7 +167,7 @@ for path in paths:
 
     table3.add_row([NoEscape(r'\includegraphics[width=0.95cm]{' + gwl_path + r'}'),
                     NoEscape(r'\raisebox{0.25cm}{G.W.L}'),
-                    NoEscape(r'\raisebox{0.25cm}{'+str(gwl)+'m'+r'}')])
+                    NoEscape(r'\raisebox{0.25cm}{'+str(GWL)+'m'+r'}')])
 
     table3.add_row([NoEscape(r'\includegraphics[width=0.65cm]{' + scf_path + r'}'),
                     NoEscape(r'\raisebox{0.25cm}{S.C.F}'),
@@ -179,20 +183,21 @@ for path in paths:
     doc.append(table3)
 
     # Add a figure below the tables
-    with doc.create(Subsection('Output Figures')):
+    with doc.create(Subsection('Figures')):
         with doc.create(Figure(position='h!')) as figure:
-            figure.add_image(cpth.name + '.png', width='18.5cm')
+            figure.add_image(gpath +cpth.name + '.png', width='18.5cm')
 
         with doc.create(Figure(position ='h!')) as figure:
-            figure.add_image('legends.png', width='18.5cm')
+            figure.add_image(gpath +'legends.png', width='18.5cm')
 
 
     # Generate PDF
     try:
-        doc.generate_pdf(cpth.name, clean_tex = False, clean = True)
+        doc.generate_pdf(gpath+cpth.name, clean_tex = True, clean = True)
     except subprocess.CalledProcessError as e:
        pass
 
+print(my_list)
 
 
-os.system(f'{cpth.name}.pdf')
+# os.system(f'{cpth.name}.pdf')

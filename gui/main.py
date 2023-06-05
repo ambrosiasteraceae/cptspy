@@ -1,6 +1,7 @@
 import sys
 import os
 
+import pandas as pd
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
@@ -9,7 +10,7 @@ from loadcsv import LoadCSVWidget
 from runcalc import CalcWidget
 from home import HomeQT
 from convert import ConvertQT
-
+from overview import OverviewQT
 class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
@@ -23,18 +24,30 @@ class MyWindow(QMainWindow):
         self.home = HomeQT(self)
         self.convert = ConvertQT(self)
         self.loadcsv = LoadCSVWidget(self)
-        # self.proj_req = ProjReqTab()
-        # self.proj_req = Ui_Widget()
         self.proj_req = ProjReqWidget(self)
         self.calc = CalcWidget(self)
-        # print(type(self.proj_req))
+        self.overview = OverviewQT(self)
+
+
 
         self.ffp = None #project file path
-        self.df = None
+
+        #Main dfs
+        self.hdf = pd.DataFrame() #project header
+        self.df = pd.DataFrame() #project df
+
+        #Temporary
+        self.thdf = pd.DataFrame() #temporary header df
+        self.tdf = pd.DataFrame() #temporary df
+
+        self.state = 0 #0 = new project, 1 = project loaded
+        self.processed = set()
+
         self.proj_requirements = {}
         self.tab_widget.addTab(self.home, "Home")
         self.tab_widget.addTab(self.convert, "Convert")
         self.tab_widget.addTab(self.loadcsv, "Load")
+        self.tab_widget.addTab(self.overview, "Overview")
         self.tab_widget.addTab(self.proj_req, "Project Info")
         self.tab_widget.addTab(self.calc, "Run Calculations")
 

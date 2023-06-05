@@ -260,6 +260,7 @@ class CPT(object):
         self.folder_path = folder_path
         self.file_name = file_name
         self.delimiter = delimiter
+        # self.groundlvl = groundlvl
         self.elevation = groundlvl - depth
         self._q_t = None
         self._r_f = None

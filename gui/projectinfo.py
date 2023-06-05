@@ -331,6 +331,7 @@ class ProjReqWidget(QWidget):
         We will always save the proj_requirements in
         @TODO We need to implemetent lock and unlock for editing. Itrs annyoing
         @TODO: Project Requirements should also load check boxes, and radio buttons
+        @TODO: If you create a new proejct and you dont define the proj requirements, you cannot load it back. Throws file not found error
         """
         # ffp = os.getcwd()
         # filename, _ = QFileDialog.getOpenFileName(self, 'Open File', ffp+ '/project/project_settings', '*.json')

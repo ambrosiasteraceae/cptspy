@@ -6,7 +6,7 @@ from calc.liquefaction import run_rw1997, run_rw1997_gi, run_rw1997_fill
 # from calc.fill_liquefaction import run_rw1997_fill
 from miscellaneous.timed import timed
 import matplotlib.pyplot as plt
-
+GWL = 0.6
 
 def pad_array(arr, max_size):
     return [np.pad(row, (0, max_size - row.size), 'constant', constant_values=(0, np.nan))
@@ -50,7 +50,7 @@ def label_x_ticks(sps, major_tick, minor_tick):
 
 @timed
 def create_cpt_9_plot(cpts):
-    bf, ax = plt.subplots(3, 3, sharey=True, figsize=(8, 36))
+    bf, ax = plt.subplots(3, 3, sharey=True, figsize=(8, 12))
 
     qcs = []
     phis = []
@@ -71,7 +71,8 @@ def create_cpt_9_plot(cpts):
     max_size = 0
 
     for i, cpt in enumerate(cpts):
-        rw = run_rw1997(cpt, pga=0.122, m_w=6, gwl=2)
+        gwl = cpt.elevation[0] - GWL
+        rw = run_rw1997(cpt, pga=0.122, m_w=6, gwl=gwl)
 
         if rw.cpt.q_c.size > max_size:
             max_size = rw.cpt.q_c.size
@@ -180,7 +181,7 @@ def create_cpt_9_plot(cpts):
 
     matplotlib.rcParams.update({'font.size': 14})
     plt.show()
-    bf.savefig('cpt_9_chart_plot.pdf', papertype='a2', bbox_inches='tight')
+    bf.savefig('cpt_9_chart_plot.pdf', papertype='a4', bbox_inches='tight')
 
 @timed
 def create_cpt_before_and_after(cpts):
@@ -307,3 +308,13 @@ def create_plots_liq_gi_fill(cpts,gi,fill_gamma,fill_height):
 
 
 
+# import glob
+# import glob
+# paths = glob.glob('D:/01_Projects/38.Al Hudayriyat/post data/processed/' + '*.csv')
+#
+# gpath = ''
+# scf = 1.3
+# from load.loading import load_mpa_cpt_file
+# cpts = [load_mpa_cpt_file(path, scf = scf) for path in paths]
+#
+# create_cpt_9_plot(cpts)

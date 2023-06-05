@@ -89,6 +89,7 @@ def convert_folder(in_fp, out_fp, verbose=0):
     results = []
     ffps = glob.glob(in_fp + "*.xls*")  # Does not handle .csv and .txt
     ffps.sort()
+    print(ffps)
 
     if not os.path.exists(out_fp):
         os.makedirs(out_fp)
@@ -200,6 +201,9 @@ def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
 
     elif "PTA" in ffp:
         cpt_num = ffp.split("PTA-")[-1]
+
+    elif "CPT" in ffp:
+        cpt_num = ffp.split("CPT-")[-1]
 
     else:
         cpt_num = ffp.split("HUD-")[-1]
@@ -634,13 +638,7 @@ def convert_cs_to_csv_02(ffp, out_fp, verbose=0):
     df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
     return 1
 
-import json
-import numpy as np
-def load_json(ffp):
-    with open(ffp) as f:
-        data = json.load(f)
-    return data
-
-
-
-print(load_json('D:/04_R&D/cptspy/load/CPT-10211-PO-AP11b4-1P.json'))
+#
+# in_fp = 'roshna/pre data/'
+# out_fp = in_fp +'processed/'
+# convert_folder(in_fp, out_fp, verbose=1)

@@ -3,6 +3,40 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import QRect, QCoreApplication, QMetaObject, QAbstractTableModel, Qt
 import os
 import glob
+import pandas as pd
+#qt6-tools designer
+
+class CustomTreeWidget():
+
+
+def tree_structure_load(tree, ffp):
+    """
+    Loads the tree folder structure of the project
+    """
+    tree.clear()
+    folders = os.listdir(ffp)
+
+    dirs = {}
+
+    for folder in folders:
+        dirs[folder] = os.listdir(os.path.join(ffp, folder))
+
+    # @TODO add a check if there are other files in the tree structure window
+    # Check if it is a directory
+    # for folder in folders:
+    # folder_path = os.path.join(self.ffp, folder)
+    # if os.path.isdir(folder_path):
+    #     dirs[folder] = os.listdir(folder_path)
+    items = []
+
+    for key, values in dirs.items():
+        item = QTreeWidgetItem([key])
+        for file in values:
+            ext = file.split(".")[-1].upper()
+            child = QTreeWidgetItem([file, ext])
+            item.addChild(child)
+        items.append(item)
+    tree.insertTopLevelItems(0, items)
 
 
 class ProjectPaths():
@@ -76,12 +110,13 @@ class HomeQT(QWidget):
 
         self.tree.setColumnCount(2)
         self.tree.setHeaderLabels(['Name', 'Type'])
-
         self.tree.SelectionMode(True)
-
         self.tree.doubleClicked.connect(self.print_selection)
 
     def print_selection(self):
+        """
+        Opens the file from the tree structure when you double click on it
+        """
         # TODO Throws error when you double click on an empty folder
         items = self.tree.selectedItems()
         tree_item = items[0]
@@ -110,6 +145,12 @@ class HomeQT(QWidget):
         for folder in folders:
             dirs[folder] = os.listdir(os.path.join(self.ffp, folder))
 
+        #@TODO add a check if there are other files in the tree structure window
+        # Check if it is a directory
+        # for folder in folders:
+            # folder_path = os.path.join(self.ffp, folder)
+            # if os.path.isdir(folder_path):
+            #     dirs[folder] = os.listdir(folder_path)
         items = []
 
         for key, values in dirs.items():
@@ -149,11 +190,24 @@ class HomeQT(QWidget):
         # Assign all paths to the main attribute
         self.main.ffp = ProjectPaths(**paths)
 
+    def load_dfs(self):
+        """
+        Loads the dataframes from the summary folder
+        """
+        if os.listdir(self.main.ffp.summary):
+            self.main.df = pd.read_excel(self.main.ffp.summary + 'Results.xlsx')
+            self.main.hdf = pd.read_excel(self.main.ffp.summary + 'Header.xlsx')
+
+
+
+
     def load_existing_project(self):
         #@TODO Exists the GUI if you cancel the command. This is everywhere
         #@TODO ADD a reload button in case you put items in the folder to update the tree view?
         # self.ffp = QFileDialog.getExistingDirectory(self, directory='D:/05_Example')
-        self.ffp = QFileDialog.getExistingDirectory(self, directory='C:/Projects')
+
+        self.main.state = 1
+        self.ffp = QFileDialog.getExistingDirectory(self, directory='D:/05_Example')
 
         # self.ffp = "D:/05_Example/hudayriat70"
         # print(self.ffp)
@@ -165,10 +219,17 @@ class HomeQT(QWidget):
 
         self.tree_structure_load()
         print(f"Successfully loaded {self.ffp.split('/')[-1]}  project")
-
+        self.load_dfs()
         self.main.loadcsv.upload_folder()
         self.main.loadcsv.load_cpts()
         self.main.proj_req.load_proj_requirements()
+
+
+
+
+        # self.main.overview.view_main_header()
+
+        # self.main.overview.load_df()
 
 
 

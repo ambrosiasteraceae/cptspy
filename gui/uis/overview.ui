@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>Widget</class>
+ <widget class="QWidget" name="Widget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -82,7 +82,7 @@
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>RadioButton</string>
+         <string>Header</string>
         </property>
        </widget>
       </item>
@@ -92,14 +92,14 @@
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>RadioButton</string>
+         <string>Results</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="merge_dfs">
         <property name="text">
-         <string>PushButton</string>
+         <string>Merge with current DF</string>
         </property>
        </widget>
       </item>
@@ -141,7 +141,7 @@
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>Input Details</string>
+         <string>Header</string>
         </property>
        </widget>
       </item>
@@ -172,11 +172,25 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Project Structure</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="toolButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset theme="sync-synchronizing"/>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QTreeWidget" name="treeWidget">
@@ -200,12 +214,37 @@
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>TextLabel</string>
+         <string>Summary</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QTableWidget" name="tableWidget"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>label_no_files</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>

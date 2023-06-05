@@ -4,19 +4,6 @@ from PyQt6.QtCore import QRect, QCoreApplication, QMetaObject, QAbstractTableMod
 import os
 import glob
 
-# 
-# from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-#     QMetaObject, QObject, QPoint, QRect,
-#     QSize, QTime, QUrl, Qt)
-# from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-#     QFont, QFontDatabase, QGradient, QIcon,
-#     QImage, QKeySequence, QLinearGradient, QPainter,
-#     QPalette, QPixmap, QRadialGradient, QTransWidget)
-# from PySide6.QtWidgets import (QApplication, QCommandLinkButton, QHBoxLayout, QHeaderView,
-#     QLabel, QLayout, QListView, QListWidget,
-#     QListWidgetItem, QProgressBar, QPushButton, QSizePolicy.Policy.Policy,
-#     QSpacerItem, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
-#     QWidget)
 
 class ConvertQT(QWidget):
     def __init__(self, main_window_ref):
