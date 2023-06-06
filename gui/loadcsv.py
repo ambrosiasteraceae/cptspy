@@ -6,6 +6,9 @@ from miscellaneous.timed import timed
 #@TODO Add refresh button
 #@TODO If you start a new proejct it will throw error if nothing is computed. Due to reading output.csv files
 #@TODO What happens if you delete the summary files? Should we check for that as well?
+#@Todo If you upload folder more than once it doubles the items. We can implement a set
+#@TODO When you create a new project and you haven't calculated anyhting, and you exit. The progress is there but theres no DF to read so will throw an erorr
+
 class LoadCSVWidget(QWidget):
     def __init__(self, mainwindow_ref):
         super().__init__()
@@ -25,6 +28,7 @@ class LoadCSVWidget(QWidget):
         self.list_view = QListView()
         self.model = QStandardItemModel(self.list_view)
         self.list_view.setModel(self.model)
+
         self.list_view.setDragEnabled(True)
         self.list_view.setAcceptDrops(True)
         self.list_view.setDragEnabled(True)
@@ -32,6 +36,7 @@ class LoadCSVWidget(QWidget):
         self.layout.addWidget(self.upload_file_btn)
         self.layout.addWidget(self.upload_folder_btn)
         self.layout.addWidget(self.list_view)
+        self.fsets = set()
 
         # self.setCentralWidget(self.tab_widget)
 
@@ -47,13 +52,13 @@ class LoadCSVWidget(QWidget):
             item = QStandardItem(file_name)
             self.model.appendRow(item)
             # self.df = load_dataframe(file_name)
-            print('Item added: ', item.text())
+            # print('Item added: ', item.text())
             print(self.model.rowCount())
         else:
             return
         # self.proj_req.tableWidget.loadFile(fileName = item.text())
 
-    def upload_folder_new(self):
+    def upload_folder_new_proj(self):
         # folder_name = QFileDialog.getExistingDirectory(self, 'Open Folder')
         # folder_name = 'D:/04_R&D/cptspy/output'
 
@@ -63,18 +68,25 @@ class LoadCSVWidget(QWidget):
 
 
     def process_files(self,folder_lists):
+
         folder_name = self.main.ffp.converted
         self.ffps = []
+
         for file_name in folder_lists:
             if file_name.endswith('.csv'):
                 self.ffps.append(os.path.join(folder_name, file_name))
                 item = QStandardItem(os.path.join(folder_name, file_name))
-                self.model.appendRow(item)
+                #This is to prevent from duplicating elements when pressing the button
+
+                if file_name not in self.fsets:
+                    self.model.appendRow(item)
+                    self.fsets.add(file_name)
+
         self.main.thdf = load_dataframe(self.ffps)
-        print('Here is df',self.main.thdf.head())
+        # print('Here is df',self.main.thdf.head())
 
     # @timed
-    def upload_folder_old(self):
+    def upload_folder_load_proj(self):
 
         #@TODO self.processed should be self.main.processed
         #@TODO I think that when we calculate and merge pdfs, the list widget will still show since the main.hdf still hold a reference to the first excel, and not the overwritten excel
@@ -92,11 +104,11 @@ class LoadCSVWidget(QWidget):
 
     def upload_folder(self):
         if self.main.state == 0:
-            print('csv-returning-new')
-            return self.upload_folder_new()
+            # print('csv-returning-new')
+            return self.upload_folder_new_proj()
         else:
-            print('csv-returning-old')
-            return self.upload_folder_old()
+            # print('csv-returning-old')
+            return self.upload_folder_load_proj()
 
 
 
@@ -106,11 +118,11 @@ class LoadCSVWidget(QWidget):
 
         self.main.thdf = load_dataframe(ffps)
 
-        print('Succesfully loaded {} files'.format(len(ffps)))
+        # print('Succesfully loaded {} files'.format(len(ffps)))
 
-        print(f"CPTs are:{[ffp.split('//')[-1] for ffp in ffps]}")
+        # print(f"CPTs are:{[ffp.split('//')[-1] for ffp in ffps]}")
         self.main.proj_req.tableWidget.loadDF(path='TEST', df=self.main.thdf)
-        print('State of Project', self.main.state)
+        # print('State of Project', self.main.state)
 
         #Save the header file if the project is new
         if self.main.state == 0:

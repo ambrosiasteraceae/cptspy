@@ -176,12 +176,147 @@ def create_cpt_9_plot(cpts):
     generate_plot(ax[1, 2], uws, max_size)
 
     generate_plot(ax[2, 0], foss, max_size)
-    # generate_plot(ax[2,1],sus_26,max_size)
-    generate_plot(ax[2, 2], kks, max_size)
+    generate_plot(ax[2,1],sus_26,max_size)
+    # generate_plot(ax[2, 2], kks, max_size)
 
     matplotlib.rcParams.update({'font.size': 14})
     plt.show()
     bf.savefig('cpt_9_chart_plot.pdf', papertype='a4', bbox_inches='tight')
+
+
+
+
+
+
+def create_cpt_9_colored(cpts):
+    import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
+
+    # Define the colors for each CPT
+    cpt_colors = ['red', 'blue', 'green', 'orange', 'purple', 'cyan', 'magenta', 'yellow', 'black']
+
+    bf, ax = plt.subplots(3, 3, sharey=True, figsize=(20, 40))
+
+    qcs = []
+    phis = []
+    fss = []
+    u2s = []
+    ems = []
+    ics = []
+
+    uws = []
+    foss = []
+    kks = []
+    sus = []
+    depths = []
+
+    depths_26 = []
+    sus_26 = []
+
+    max_size = 0
+
+    for i, x in enumerate(dfs['Object']):
+        rw = run_rw1997(x, pga=0.122, m_w=6, gwl=round(float(dfs['groundlvl'][i]) - GWL, 2))  # GL - 0.5m WL
+
+        if rw.cpt.q_c.size > max_size:
+            max_size = rw.cpt.q_c.size
+
+        qcs.append(rw.cpt.q_c / 10 ** 3)  # MPa
+        fss.append(rw.cpt.f_s)
+        u2s.append(rw.cpt.u_2)
+        ems.append(rw.elastic_modulus / 10 ** 3)  # MPa
+        ics.append(rw.i_c)
+        phis.append(rw.phi)
+        depths.append(rw.depth)
+
+        rw.depth = rw.depth - float(max(dfs['groundlvl']))
+
+        uws.append(rw.unit_wt)
+        foss.append(rw.factor_of_safety)
+        kks.append(rw.permeability)
+        sus.append(rw.s_u)
+
+        depths_26.append(rw.depth[rw.i_c > 2.6])
+        sus_26.append(rw.s_u[rw.i_c > 2.6])
+
+        ax[0, 0].plot(rw.cpt.q_c / 10 ** 3, -rw.depth, color=cpt_colors[i % len(cpt_colors)], alpha=0.5)
+        ax[0, 1].plot(rw.cpt.f_s, -rw.depth, color=cpt_colors[i % len(cpt_colors)], alpha=0.5)
+        ax[0, 2].plot(rw.i_c, -rw.depth, color=cpt_colors[i % len(cpt_colors)], alpha=0.5)
+        ax[1, 0].plot(rw.elastic_modulus / 10 ** 3, -rw.depth, color=cpt_colors[i % len(cpt_colors)], alpha=0.5)
+        ax[1, 1].plot(rw.phi, -rw.depth, color=cpt_colors[i % len(cpt_colors)], alpha=0.5)
+        ax[1, 2].plot(rw.unit_wt, -rw.depth, color=cpt_colors[i % len(cpt_colors)], alpha=0.5)
+        ax[2, 0].plot(rw.factor_of_safety, -rw.depth, color=cpt_colors[i % len(cpt_colors)], alpha=0.5)
+        ax[2, 2].plot(rw.permeability, -rw.depth, color=cpt_colors[i % len(cpt_colors)], alpha=0.5)
+
+    # Remove min, max, and mean labels
+    ax[0, 1].legend([], [], frameon=False)
+    ax[0, 1].set_title('')
+
+    # Create a custom legend with CPT colors
+    custom_lines = [Line2D([0], [0], color=color, lw=2) for color in cpt_colors]
+    ax[0, 1].legend(custom_lines, [f'CPT {i + 1}' for i in range(len(dfs['Object']))], loc='lower right')
+
+    # Set grid and axis labels for each subplot
+    ax[0, 0].grid(True, alpha=0.5)
+    ax[0, 0].set_xlim(0, 30)
+    ax[0, 0].set_xlabel('Cone resistance qc (MPa)')
+    ax[0, 0].set_ylabel('Elevation (m NADD)')
+
+    ax[0, 1].grid(True, alpha=0.5)
+    ax[0, 1].set_xlabel('Skin friction resistance fs (kPa)')
+
+    ax[0, 2].grid(True, alpha=0.5)
+    ax[0, 2].set_xlim([0, 3])
+    ax[0, 2].set_xlabel('SBT type index')
+    IC_LIMITS = [0, 1.3, 1.8, 2.1, 2.6, 4]
+    ax[0, 2].set_xticks(IC_LIMITS)
+
+    ax[1, 0].grid(True, alpha=0.5)
+    ax[1, 0].set_xlim(0, 55)
+    ax[1, 0].set_xlabel('Elastic Modulus (MPa)')
+    ax[1, 0].set_ylabel('Elevation (m NADD)')
+
+    ax[1, 1].grid(True, alpha=0.5)
+    ax[1, 1].set_xlim(27, 45)
+    ax[1, 1].set_xlabel('Friction Angle (degrees)')
+
+    ax[1, 2].grid(True, alpha=0.5)
+    ax[1, 2].set_xlabel('Unit Weights (kN/m3)')
+
+    ax[2, 0].grid(True, alpha=0.5)
+    ax[2, 0].set_xlabel('FoS - Liquefaction')
+    ax[2, 0].axvline(x=1.25, c='black', ls='--', lw=2.5)
+    ax[2, 0].set_xlim(0.5, 2.25)
+    ax[2, 0].set_ylabel('Elevation (m NADD)')
+
+    ax[2, 1].grid(True, alpha=0.5)
+    ax[2, 1].set_xlabel('Undrained Shear Strength su (kPa)')
+    ax[2, 1].set_xlim(0, 100)
+
+    ax[2, 2].grid(True)
+    ax[2, 2].set_xlabel('Permeability m/s')
+    ax[2, 2].set_xscale('log')
+    ax[2, 2].set_xticks([10 ** i for i in range(-9, 1, 2)])
+
+    depth = calc_max_depth(max_size)
+
+    generate_plot(ax[0, 0], qcs, max_size)
+    generate_plot(ax[0, 1], fss, max_size)
+    generate_plot(ax[0, 2], ics, max_size)
+    generate_plot(ax[1, 0], ems, max_size)
+    generate_plot(ax[1, 1], phis, max_size)
+    generate_plot(ax[1, 2], uws, max_size)
+
+    generate_plot(ax[2, 0], foss, max_size)
+    generate_plot(ax[2, 2], kks, max_size)
+
+    matplotlib.rcParams.update({'font.size': 14})
+
+    bf.savefig(folder_path + 'pre_charts.pdf', papertype='a3', bbox_inches='tight')
+
+    pass
+
+
 
 @timed
 def create_cpt_before_and_after(cpts):

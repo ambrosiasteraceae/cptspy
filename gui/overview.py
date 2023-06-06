@@ -6,6 +6,7 @@ from projectinfo import PDWidget
 from home import HomeQT
 import pandas as pd
 import os
+from home import TreeView
 
 def on_radio_button_clicked(msg):
     message_box = QMessageBox()
@@ -115,20 +116,28 @@ class OverviewQT(QWidget):
 
         self.horizontalLayout_3.addWidget(self.label_4)
 
-        self.toolButton = QToolButton(self.horizontalLayoutWidget)
-        self.toolButton.setObjectName(u"toolButton")
-        icon = QIcon(QIcon.fromTheme(u"sync-synchronizing"))
-        self.toolButton.setIcon(icon)
 
-        self.horizontalLayout_3.addWidget(self.toolButton)
+
+
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
 
-        self.tree = QTreeWidget(self.horizontalLayoutWidget)
-        __qtreewidgetitem = QTreeWidgetItem()
-        __qtreewidgetitem.setText(0, u"1");
-        self.tree.setHeaderItem(__qtreewidgetitem)
-        self.tree.setObjectName(u"tree")
+        self.tree = TreeView()
+        # self.tree = QTreeWidget(self.horizontalLayoutWidget)
+        # __qtreewidgetitem = QTreeWidgetItem()
+        # __qtreewidgetitem.setText(0, u"1");
+        # self.tree.setHeaderItem(__qtreewidgetitem)
+        # self.tree.setObjectName(u"tree")
+
+
+        self.toolButton = QToolButton(self.horizontalLayoutWidget)
+        self.toolButton.clicked.connect(self.tree.refresh)
+        self.toolButton.setObjectName(u"toolButton")
+        icon = QIcon(QIcon.fromTheme(u"sync-synchronizing"))
+        self.toolButton.setIcon(icon)
+        self.horizontalLayout_3.addWidget(self.toolButton)
+
+
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

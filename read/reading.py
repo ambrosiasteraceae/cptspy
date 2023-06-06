@@ -3,6 +3,7 @@ import glob
 import pandas as pd
 import inspect
 from miscellaneous import timed
+
 # Globals
 D_STR = "Depth (m)"
 QC_STR = "qc (MPa)"
@@ -55,7 +56,7 @@ def convert_file(ffp, out_fp, verbose=0):
     None
     """
 
-    fns = [convert_nmdc_to_csv_00,convert_cs_to_csv_01, convert_cs_to_csv_02]
+    fns = [convert_nmdc_to_csv_00, convert_nmdc_to_csv_01, convert_cs_to_csv_01, convert_cs_to_csv_02]
     for i, fn in enumerate(fns):
         if verbose:
             print(fn.__name__)
@@ -150,6 +151,7 @@ def trim_missing_at_end_data_df(df_data, neg_lim=None):
             df_data = df_data[:neg_indexes[0]]
 
     return df_data
+
 
 def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
     """
@@ -292,6 +294,7 @@ def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
     df_new = pd.concat([df_top, df_z, df_headers, df_data])
     df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
     return 1
+
 
 def convert_nmdc_to_csv_01(ffp, out_fp, verbose=0):
     """
@@ -638,7 +641,8 @@ def convert_cs_to_csv_02(ffp, out_fp, verbose=0):
     df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
     return 1
 
-#
+
+
 # in_fp = 'roshna/pre data/'
 # out_fp = in_fp +'processed/'
 # convert_folder(in_fp, out_fp, verbose=1)
