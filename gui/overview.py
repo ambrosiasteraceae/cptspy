@@ -256,18 +256,18 @@ class OverviewQT(QWidget):
     def merge_dataframes(self):
 
         #Can be applied multiple times - ERROR
-        if self.main.state == 1:
-            if self.main.tdf.empty or self.main.thdf.empty:
-                on_radio_button_clicked(f"{'No new files have been loaded' if self.main.thdf.empty else 'Results have not been computed'}")
-                return
+        # if self.main.state == 1:
+        if self.main.tdf.empty or self.main.thdf.empty:
+            on_radio_button_clicked(f"{'No new files have been loaded' if self.main.thdf.empty else 'Results have not been computed'}")
+            return
 
-            self.main.df = pd.concat([self.main.df, self.main.tdf], ignore_index=True)
-            self.main.hdf = pd.concat([self.main.hdf, self.main.thdf], ignore_index=True)
+        self.main.df = pd.concat([self.main.df, self.main.tdf], ignore_index=True)
+        self.main.hdf = pd.concat([self.main.hdf, self.main.thdf], ignore_index=True)
 
-            #save to excel
-            self.main.df.to_excel(self.main.ffp.summary + 'Results.xlsx', index=False)
-            self.main.hdf.to_excel(self.main.ffp.summary + 'Header.xlsx', index=False)
-            self.merge_dfs.setEnabled(False)
+        #save to excel
+        self.main.df.to_excel(self.main.ffp.summary + 'Results.xlsx', index=False)
+        self.main.hdf.to_excel(self.main.ffp.summary + 'Header.xlsx', index=False)
+        self.merge_dfs.setEnabled(False)
 
         print('Newly Added CPTS has been succesfully merged with the current tables')
         return

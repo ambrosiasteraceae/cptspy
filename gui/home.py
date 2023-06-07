@@ -5,6 +5,7 @@ import os
 import pandas as pd
 #@TODO Set number to the tree widget to se the number of files.
 #@TODO Also if possible have the tree widget show only 10 items if there are a lot of elements
+#@TODO Summary array, trhows Value Error when we have an empty array np.max([depth[i_c > 2.6]])
 
 
 class TreeWidgetManager:
@@ -14,9 +15,9 @@ class TreeWidgetManager:
     @classmethod
     def get_tree_widget(cls):
         if not cls._tree_widget_instance:
-            print('initial call')
+
             cls._tree_widget_instance = CustomTreeWidget()
-        print('second call')
+
         print(cls._tree_widget_instance.path)
         return cls._tree_widget_instance
 
@@ -73,7 +74,7 @@ class CustomTreeWidget(QTreeWidget):
 
         dirs = {}
 
-        print('Path is:', self.path)
+
         # for folder in folders:
         #     dirs[folder] = os.listdir(os.path.join(self.path, folder))
 
@@ -95,12 +96,12 @@ class CustomTreeWidget(QTreeWidget):
             items.append(item)
         self.insertTopLevelItems(0, items)
 
-    # def update_tree_view(self):
-    #     """
-    #     Updates the tree view
-    #     """
-    #     self.clear()
-    #     self.tree_structure_load()
+    def update_tree_view(self):
+        """
+        Updates the tree view
+        """
+        self.clear()
+        self.tree_structure_load()
 
 
 class ProjectPaths:
@@ -265,8 +266,9 @@ class HomeQT(QWidget):
         """
         Loads the dataframes from the summary folder
         """
-        if os.listdir(self.main.ffp.summary):
+        if os.path.exists(self.main.ffp.summary + 'Results.xlsx'):
             self.main.df = pd.read_excel(self.main.ffp.summary + 'Results.xlsx')
+        if os.path.exists(self.main.ffp.summary + 'Header.xlsx'):
             self.main.hdf = pd.read_excel(self.main.ffp.summary + 'Header.xlsx')
 
 
@@ -277,7 +279,7 @@ class HomeQT(QWidget):
         #@TODO ADD a reload button in case you put items in the folder to update the tree view?
 
 
-        self.main.state = 1
+
         self.ffp = QFileDialog.getExistingDirectory(self, directory='D:/05_Example')
 
 
@@ -297,6 +299,7 @@ class HomeQT(QWidget):
         print(f"Successfully loaded {self.ffp.split('/')[-1]}  project")
 
         if os.listdir(self.main.ffp.summary):
+            self.main.state = 1
             self.load_dfs()
             self.main.loadcsv.upload_folder()
             self.main.loadcsv.load_cpts()

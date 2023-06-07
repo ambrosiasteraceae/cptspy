@@ -36,22 +36,28 @@ def calc_min_elev_ic(i_c, depth):
     Returns the minimum elevation of Ic > 2.6
     """
     # a = np.min([depth[1:][i_c[1:]>2.6]])
-    a = np.min([depth[i_c > 2.6]])
-    return np.round(a, 2)
-
+    try:
+        a = np.min([depth[i_c > 2.6]])
+        a = np.round(a, 2)
+    except ValueError:
+        return None
+    return a
 
 def calc_max_elev_ic(i_c, depth):
     """
     Returns the maximum elevation of Ic > 2.6
     """
-    a = np.max([depth[i_c > 2.6]])
-
-    return np.round(a, 2)
+    try:
+        a = np.max([depth[i_c > 2.6]])
+        a = np.round(a, 2)
+    except ValueError:
+        return None
+    return a
 
 
 def calc_cumulative_fos(fos):
     """
-    Returns the cumulative thickness of FOS < 1
+    Returns the cumulative thickness of FOS < 1.25
     """
     mask = np.where(fos < 1.25)
     mm = np.diff(mask).flatten()
@@ -62,7 +68,7 @@ def calc_cumulative_fos(fos):
 
 def calc_min_fos(fos, depth):
     """
-    Returns the minimum FOS
+    Returns the minimum elevation where FOS <1.25
     """
     try:
         d = np.min(depth[fos < 1.25])
@@ -74,7 +80,7 @@ def calc_min_fos(fos, depth):
 
 def calc_max_fos(fos, depth):
     """
-    Returns the maximum FOS
+    Returns the maximum elevation where FOS < 1.25
     """
     try:
         d = np.max(depth[fos < 1.25])

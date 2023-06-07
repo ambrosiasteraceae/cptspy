@@ -19,8 +19,9 @@ from overview import on_radio_button_clicked
 #@TODO Passing the SCF Parameter
 #@TODO Loading a project in the main window and creating the subflder structure shouldnt be allowed. An error shoudl return
 #@TODO Run calc should not have the table widget, but the loaded csv files
-
-
+#@TODO We will need to filter what we save in .npz format. Files are getting big!
+#@TODO SAVE ONLY CPT ID as a name in the datafraames not the entirefffp
+#TODO: Since cpt objects are loaded into memory everytime you run the program with scf  = 1.3 you multiply the everytime you run it.
 class CalcWidget(QWidget):
     def __init__(self, main_window_ref, parent=None):
         super(CalcWidget, self).__init__(parent)
@@ -186,18 +187,21 @@ class CalcWidget(QWidget):
     def perform_calc(self):
         # @TODO When loading a project and you jump straight to perform calc, it breaks
 
+        if not self.commandLinkButton.isEnabled():
+            pass
+
         if self.main.thdf.empty:
             on_radio_button_clicked('No file has been added to compute')
             return
 
         """Performs the calculations based on the proj_requirements"""
-        # if self.main.proj_requirements is None:
-        #     print('No project requirements set')
-        #     return
+
         m_w = self.main.proj_requirements['m_w']
         pga = self.main.proj_requirements['pga']
         gwl = self.main.proj_requirements['gwl']
         scf = self.main.proj_requirements['scf']
+        print(f'SCF IS {scf}')
+
         # print(type(m_w), type(pga), type(gwl), type(scf))
         # cumulative_ic = self.main.proj_requirements['cumulative_ic']
         # cumulative_fos = self.main.proj_requirements['cumulative_fos']
@@ -210,34 +214,37 @@ class CalcWidget(QWidget):
         # print(self.main.df.head())
         # ffp_npz = 'D:/04_R&D/cptspy/gui/project/calc/'
         for i, cpt in enumerate(self.main.thdf['Object']):
-            # print(cpt.q_c[0:20])
+
             cpt.q_c = cpt.q_c * scf  # Add SCF
-            # print(cpt.q_c[0:20])
+
             rw1997 = run_rw1997(cpt, gwl=gwl, pga=pga, m_w=m_w)
-            # print('liq_pass')
+
+
             summary = CPTSummary(rw1997)
             array_dict = {**cpt.__dict__, **rw1997.__dict__}
-            # print('Arraydict_passed')
+
             np.savez(self.main.ffp.calc + cpt.file_name, **array_dict)
-            # print('npz saved')
+
             data.append(list(summary.__dict__.values()))
-            # print('data appended')
-            # I will need an index for the dataframe
+
             self.progressBar.setValue(int(i / len(self.main.thdf) * 100))
 
-        # print('did it exit?')
+
         calc_df = pd.DataFrame(data, columns=list(summary.__dict__.keys()))
-        # print(calc_df.head())
+
         main_df = self.main.thdf[['CPT-ID', 'groundlvl', 'Easting', 'Northing']]
-        # print(main_df.head())
+
         self.main.tdf = pd.concat([main_df, calc_df], axis=1)
         self.tableWidget.loadDF('aa', self.main.tdf)
         self.progressBar.setValue(100)
-        # self.progressBar.setFormat('Calculation Complete')
+
         self.fill_table_values(calc_df)
 
         if self.main.state == 0:
             self.main.tdf.to_excel(self.main.ffp.summary + 'Results.xlsx', index = False)
+
+        self.commandLinkButton.setEnabled(False)
+
 
 
 

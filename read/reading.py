@@ -153,7 +153,7 @@ def trim_missing_at_end_data_df(df_data, neg_lim=None):
     return df_data
 
 
-def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
+def convert_nmdc_to_csv_00(ffp, out_fp=None, verbose=0):
     """
     Converts NMDC CPT excel file type to liquepy format.
     Function works by first trying to see if the format
@@ -292,11 +292,11 @@ def convert_nmdc_to_csv_00(ffp, out_fp, verbose=0):
     df_data.columns = list(df_top)
     df_top.iloc[0, -1] = inspect.stack()[0][3]
     df_new = pd.concat([df_top, df_z, df_headers, df_data])
-    df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
-    return 1
+    # df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
+    return df_new
 
 
-def convert_nmdc_to_csv_01(ffp, out_fp, verbose=0):
+def convert_nmdc_to_csv_01(ffp, out_fp=None, verbose=0):
     """
     Converts NMDC CPT excel file type to liquepy format.
     Function works by first trying to see if the format
@@ -345,6 +345,8 @@ def convert_nmdc_to_csv_01(ffp, out_fp, verbose=0):
         cpt_num = ffp.split("BTA-")[-1]
     elif "PTA" in ffp:
         cpt_num = ffp.split("PTA-")[-1]
+    else:
+        return 0
     cpt_num = cpt_num.split(".xlsx")[0]
 
     print(cpt_num)
@@ -427,11 +429,11 @@ def convert_nmdc_to_csv_01(ffp, out_fp, verbose=0):
     df_data.columns = list(df_top)
     df_top.iloc[0, -1] = inspect.stack()[0][3]
     df_new = pd.concat([df_top, df_z, df_headers, df_data])
-    df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
-    return 1
+    # df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
+    return df_new
 
 
-def convert_cs_to_csv_01(ffp, out_fp, verbose=0):
+def convert_cs_to_csv_01(ffp, out_fp=None, verbose=0):
     """
 
     Converts Capital Survey excel file format.
@@ -533,11 +535,11 @@ def convert_cs_to_csv_01(ffp, out_fp, verbose=0):
     df_data.columns = list(df_top)
     df_top.iloc[0, -1] = inspect.stack()[0][3]
     df_new = pd.concat([df_top, df_z, df_headers, df_data])
-    df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
-    return 1
+    # df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
+    return df_new
 
 
-def convert_cs_to_csv_02(ffp, out_fp, verbose=0):
+def convert_cs_to_csv_02(ffp, out_fp=None, verbose=0):
     """
 
     Converts Capital Survey excel file format.
@@ -638,8 +640,8 @@ def convert_cs_to_csv_02(ffp, out_fp, verbose=0):
     df_data.columns = list(df_top)
     df_top.iloc[0, -1] = inspect.stack()[0][3]
     df_new = pd.concat([df_top, df_z, df_headers, df_data])
-    df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
-    return 1
+    # df_new.to_csv(out_fp + "CPT_{0}.csv".format(cpt_num), index=False, sep=';')
+    return df_new
 
 
 

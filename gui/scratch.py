@@ -40,3 +40,40 @@ concatdf = pd.concat([summary_df, summary], axis=1)
 #             cpt = df['Object'][i]
 #             rw=run_rw1997(cpt, pga = 0.12, m_w = 6, gwl = 2)
 #             CPTSummary(rw)
+
+
+def upload_file(self):
+    file_name, _ = QFileDialog.getOpenFileName(self, 'Open file', '', "CSV (*.csv)")
+    if file_name:
+        if file_name not in self.uploaded_files:
+            self.uploaded_files.add(file_name)
+            self.model.appendRow(QStandardItem(file_name))
+        else:
+            QMessageBox.warning(self, "Duplicate File", "This file has already been uploaded.")
+    else:
+        return
+
+
+
+def upload_folder(self):
+    folder_path = QFileDialog.getExistingDirectory(self, "Open Folder")
+    if folder_path:
+        folder_files = [
+            os.path.join(folder_path, file_name) for file_name in os.listdir(folder_path) if file_name.endswith(".csv")
+        ]
+        new_files = set(folder_files) - self.uploaded_files
+        if new_files:
+            self.uploaded_files.update(new_files)
+            self.model.appendRows([QStandardItem(file_name) for file_name in new_files])
+        else:
+            QMessageBox.information(self, "No New Files", "There are no new CSV files in the selected folder.")
+    else:
+        return
+
+
+def load_cpts(self):
+    ffps = [self.model.item(i).text() for i in range(self.model.rowCount())]
+
+    if not ffps:
+        QMessageBox.warning(self, "No Files", "Please upload CSV files before loading CPTs.")
+        return

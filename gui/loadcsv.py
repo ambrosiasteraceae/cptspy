@@ -8,6 +8,7 @@ from miscellaneous.timed import timed
 #@TODO What happens if you delete the summary files? Should we check for that as well?
 #@Todo If you upload folder more than once it doubles the items. We can implement a set
 #@TODO When you create a new project and you haven't calculated anyhting, and you exit. The progress is there but theres no DF to read so will throw an erorr
+#@TODO Remove loadcsv widget. We should look to add it in another tab.
 
 class LoadCSVWidget(QWidget):
     def __init__(self, mainwindow_ref):
@@ -93,7 +94,9 @@ class LoadCSVWidget(QWidget):
 
 
         self.processed = set(self.main.hdf['ffp'])
+
         #Maybe this is slow
+
         all_files = set(self.main.ffp.converted + file_name for file_name in os.listdir(self.main.ffp.converted))
         folder_lists = all_files - self.processed
 
@@ -116,6 +119,10 @@ class LoadCSVWidget(QWidget):
 
         ffps = [self.model.item(i).text() for i in range(self.model.rowCount())]
 
+        # if not ffps:
+        #     QMessageBox.warning(self, "No Files", "Please upload CSV files before loading CPTs.")
+        #     return
+
         self.main.thdf = load_dataframe(ffps)
 
         # print('Succesfully loaded {} files'.format(len(ffps)))
@@ -125,5 +132,6 @@ class LoadCSVWidget(QWidget):
         # print('State of Project', self.main.state)
 
         #Save the header file if the project is new
-        if self.main.state == 0:
+
+        if not os.path.exists(self.main.ffp.summary+'Header.xlsx'):
             self.main.thdf.to_excel(self.main.ffp.summary+'Header.xlsx', index = False)

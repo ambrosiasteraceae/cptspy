@@ -351,6 +351,7 @@ class ProjReqWidget(QWidget):
                 pass
 
         self.main.proj_requirements = proj_req
+        print(proj_req)
 
 
 

@@ -1,4 +1,6 @@
 import datetime
+import os.path
+
 import pandas as pd
 import numpy as np
 import ntpath
@@ -93,7 +95,7 @@ def load_dataframe(ffps):
     dfo.columns = headers
     for i, file in enumerate(ffps):
         # print(file)
-        name = file.split('CPT_')[-1].split('.csv')[0]
+        name = os.path.basename(file).split('.')[0] #
         df = pd.read_csv(file, sep=';')
 
         new_df = df.iloc[:limit, 0:2]

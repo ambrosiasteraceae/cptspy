@@ -12,6 +12,11 @@ from home import HomeQT
 from convert import ConvertQT
 from overview import OverviewQT
 
+
+#@TODO Whenever you load / create and press cancel the program crashes
+#@TODO YOU created a new project. You added some files, deleted others. You run and calc for converted files. You exit. You want to open project again, but header.xlsx is not saved.
+#TODO: @IDEA Maybe have a single instance of self.file_saved in the main window. It doesn't sotre the file extension but just the basename path. We use this to check if the file is saved.
+
 class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
@@ -92,5 +97,8 @@ if __name__ == '__main__':
 
     main = MyWindow()
     main.show()
+    with open("style.qss", "r") as f:
+        _style = f.read()
+        app.setStyleSheet(_style)
 
     sys.exit(app.exec())
