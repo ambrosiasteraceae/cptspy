@@ -9,6 +9,7 @@ import pandas as pd
 # @TODO Also if possible have the tree widget show only 10 items if there are a lot of elements
 # @TODO Summary array, trhows Value Error when we have an empty array np.max([depth[i_c > 2.6]])
 # TODO: App crahses when you create a new project and you try to convert.uplooad.folder. Self.path is not initialized in create proj func.
+#TODO: Urls images should be part of resources or?
 
 class TreeWidgetManager:
     """ A similar lazy loading behaviour but for class instances"""
@@ -24,15 +25,12 @@ class TreeWidgetManager:
 
 
 class TreeView(QTreeView):
-    def __init__(self):
-        super(TreeView, self).__init__()
+    def __init__(self, parent=None):
+        super(TreeView, self).__init__(parent)
         self.tree_widget = TreeWidgetManager.get_tree_widget()
         self.setSelectionMode(QTreeView.SelectionMode.ExtendedSelection)
         self.setModel(self.tree_widget.model())
         self.setRootIndex(self.tree_widget.rootIndex())
-
-
-
 
 
     def refresh(self):

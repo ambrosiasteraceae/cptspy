@@ -11,12 +11,12 @@ from runcalc import CalcWidget
 from home import HomeQT
 from convert import ConvertQT
 from overview import OverviewQT
-
+from test import SomethingQT
 
 #@TODO Whenever you load / create and press cancel the program crashes
 #@TODO YOU created a new project. You added some files, deleted others. You run and calc for converted files. You exit. You want to open project again, but header.xlsx is not saved.
 #TODO: @IDEA Maybe have a single instance of self.file_saved in the main window. It doesn't sotre the file extension but just the basename path. We use this to check if the file is saved.
-
+#TODO when you load a folder not containing folder files, throw warning
 class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
@@ -35,6 +35,8 @@ class MyWindow(QMainWindow):
         self.proj_req = ProjReqWidget(self)
         self.calc = CalcWidget(self)
         self.overview = OverviewQT(self)
+
+        self.something = SomethingQT(self)
 
 
 
@@ -59,6 +61,7 @@ class MyWindow(QMainWindow):
         self.tab_widget.addTab(self.overview, "Overview")
         self.tab_widget.addTab(self.proj_req, "Requirements")
         self.tab_widget.addTab(self.calc, "Analysis")
+        self.tab_widget.addTab(self.something, "Something")
 
         self.tab_widget.setTabPosition(QTabWidget.TabPosition.West)
 

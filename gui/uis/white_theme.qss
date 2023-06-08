@@ -7,7 +7,7 @@ color: red;
 }
 
 QWidget {
-  background-color: #fff;
+  background-color: #f6f6f6;
 }
 QLabel {
   color: #464d55;
@@ -100,6 +100,14 @@ QCheckBox::indicator:checked {
  height:16px;
  }
 
+
+ QRadioButton {
+ 	spacing: 5px;
+	 background-color: transparent;
+	 color: gray;
+
+ }
+
 QTreeView {
     alternate-background-color: yellow;
 }
@@ -132,4 +140,11 @@ QTreeView::item:selected:active{
 
 QTreeView::item:selected:!active {
     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6b9be8, stop: 1 #0d6efd);
+}
+
+QGroupBox {
+    background-color: white;
+    border: 2px solid gray;
+    border-radius: 10px;
+    margin-top: 1ex; /* leave space at the top for the title */
 }

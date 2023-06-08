@@ -2,13 +2,29 @@
 import sys
 from PyQt6.QtWidgets import *
 from PyQt6.uic import loadUi
+from home import TreeView
+from projectinfo import PDWidget
+from home import TreeView
 
-class Someting(QWidget):
-    def __init__(self):
-        super(Someting, self).__init__()
-        loadUi('uis/overview.ui', self)
 
+
+
+class SomethingQT(QWidget):
+    def __init__(self, main_window_ref, parent = None):
+        super(SomethingQT, self).__init__(parent)
+        loadUi('uis/overview_2play.ui', self)
+
+        self.main = main_window_ref
         labels = self.findChildren(QLabel)
+
+
+
+        # self.treeview = TreeView()
+        # self.tableWidget = PDWidget()
+        self.merge_dfs.clicked.connect(self.load_fucking_tv)
+        self.merge_dfs.setText('Mthfcker')
+        self.label_4.setText('Mthfcker')
+
         print(labels[0].setText('AAASS'))
 
         self.setCentralWidget()
@@ -16,16 +32,20 @@ class Someting(QWidget):
     def setCentralWidget(self):
         pass
 
+    def load_fucking_tv(self):
+        print('button has been pressed')
+        self.tableWidget.loadDF('123', self.main.hdf)
+        print(self.main.hdf.head())
 
-app = QApplication(sys.argv)
-main = Someting()
-
-with open("uis/white_theme.qss", "r") as f:
-    _style = f.read()
-    app.setStyleSheet(_style)
-
-
-main.show()
-sys.exit(app.exec())
-
+# app = QApplication(sys.argv)
+# main = SomethingQT(123)
+#
+# with open("uis/white_theme.qss", "r") as f:
+#     _style = f.read()
+#     app.setStyleSheet(_style)
+#
+#
+# main.show()
+# sys.exit(app.exec())
+# #
 

@@ -218,6 +218,7 @@ class OverviewQT(QWidget):
     def view_main_header(self):
         if not self.main.hdf.empty:
             self.table.loadDF('123', self.main.hdf)
+            self.main.something.tableWidget.loadDF('123', self.main.hdf)
             return
         on_radio_button_clicked('No Project Header was Added nor Created')
         # self.radioButton_3.setChecked(False)
