@@ -1,0 +1,135 @@
+
+
+
+QHBoxLayout {
+background-color: red;
+color: red;
+}
+
+QWidget {
+  background-color: #fff;
+}
+QLabel {
+  color: #464d55;
+  font-weight: 600;
+}
+QLabel#heading {
+  color: #0f1925;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+QLabel#subheading {
+  color: #0f1925;
+  font-size: 14px;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+QLineEdit {
+  border-radius: 8px;
+  border: 1px solid #e0e4e7;
+  padding: 5px 15px;
+}
+
+QLineEdit:focus {
+  border: 1px solid #d0e3ff;
+}
+
+
+QWarning {
+  color: red;
+}
+
+QPushButton {
+  background-color: #0d6efd;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 1px solid #0d6efd;
+  padding: 5px 15px;
+  margin-top: 10px;
+  outline: 0px;
+}
+QPushButton:hover,
+QPushButton:focus {
+  background-color: #0b5ed7;
+  border: 3px solid #9ac3fe;
+}
+
+
+
+
+QTabWidget::item:selected{
+    background-color: #0d6efd;
+
+}
+
+QTabBar::tab {
+    background-color: white;
+    color: black;
+    padding: 14px 16px;
+    margin-right: 10px;
+    font-size: 17px;
+    border-right: 1px solid gray;
+}
+
+QTabBar::tab:selected, QTabBar::tab:selected {
+    background-color: #0d6efd;
+        font-weight: bold;
+        color: white;
+}
+
+QCommandLinkButton {
+    background-color: #FFFFFF;
+    color: #000000;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+QMessageBox{
+    background-color: #fcdbe1;
+    color: #d86f85;
+    font-weight: bold;
+    font-size: 15px;
+
+}
+
+QCheckBox::indicator:checked {
+ image : url('D:/04_R&D/cptspy/gui/uis/images/checkmark.jpg');
+ width : 16px;
+ height:16px;
+ }
+
+QTreeView {
+    alternate-background-color: yellow;
+}
+QTreeWidget {
+    alternate-background-color: yellow;
+}
+
+QTreeView {
+    show-decoration-selected: 1;
+}
+
+QTreeView::item {
+     border: 1px solid #d9d9d9;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+}
+
+QTreeView::item:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);
+    border: 1px solid #bfcde4;
+}
+
+QTreeView::item:selected {
+    border: 1px solid #567dbc;
+}
+
+QTreeView::item:selected:active{
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #0d6efd);
+}
+
+QTreeView::item:selected:!active {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6b9be8, stop: 1 #0d6efd);
+}

@@ -3,10 +3,12 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import QRect, QCoreApplication, QMetaObject, QAbstractTableModel, Qt
 import os
 import pandas as pd
-#@TODO Set number to the tree widget to se the number of files.
-#@TODO Also if possible have the tree widget show only 10 items if there are a lot of elements
-#@TODO Summary array, trhows Value Error when we have an empty array np.max([depth[i_c > 2.6]])
 
+
+# @TODO Set number to the tree widget to se the number of files.
+# @TODO Also if possible have the tree widget show only 10 items if there are a lot of elements
+# @TODO Summary array, trhows Value Error when we have an empty array np.max([depth[i_c > 2.6]])
+# TODO: App crahses when you create a new project and you try to convert.uplooad.folder. Self.path is not initialized in create proj func.
 
 class TreeWidgetManager:
     """ A similar lazy loading behaviour but for class instances"""
@@ -15,12 +17,10 @@ class TreeWidgetManager:
     @classmethod
     def get_tree_widget(cls):
         if not cls._tree_widget_instance:
-
             cls._tree_widget_instance = CustomTreeWidget()
 
         print(cls._tree_widget_instance.path)
         return cls._tree_widget_instance
-
 
 
 class TreeView(QTreeView):
@@ -31,14 +31,21 @@ class TreeView(QTreeView):
         self.setModel(self.tree_widget.model())
         self.setRootIndex(self.tree_widget.rootIndex())
 
+
+
+
+
     def refresh(self):
         return self.tree_widget.update_tree_view()
+# Create a delegate to customize the appearance
 
+
+# Set the delegate on the QTreeView
 
 
 class CustomTreeWidget(QTreeWidget):
     def __init__(self):
-        super(CustomTreeWidget,self).__init__()
+        super(CustomTreeWidget, self).__init__()
         self.path = None
         __qtreewidgetitem = QTreeWidgetItem()
         __qtreewidgetitem.setText(0, u"1")
@@ -54,7 +61,7 @@ class CustomTreeWidget(QTreeWidget):
         """
         Opens the file from the tree structure when you double click on it
         """
-        #TODO Throws error when you double click on an empty folder
+        # TODO Throws error when you double click on an empty folder
         items = self.selectedItems()
         tree_item = items[0]
         if tree_item.childCount() == 0:
@@ -74,13 +81,14 @@ class CustomTreeWidget(QTreeWidget):
 
         dirs = {}
 
-
         # for folder in folders:
         #     dirs[folder] = os.listdir(os.path.join(self.path, folder))
 
         # @TODO add a check if there are other files in the tree structure window
         # Check if it is a directory
         for folder in folders:
+            print(f"Folder: {folder}")
+            print(f"Path: {self.path}")
             folder_path = os.path.join(self.path, folder)
             if os.path.isdir(folder_path):
                 dirs[folder] = os.listdir(folder_path)
@@ -181,57 +189,56 @@ class HomeQT(QWidget):
         self.pushButton_2.clicked.connect(self.create_new_project)
         # self.pushButton_2.clicked.connect(self.tree.update_tree_view)
 
-
     def retranslateUi(self, Widget):
 
         Widget.setWindowTitle(QCoreApplication.translate("Widget", u"Widget", None))
         self.pushButton_2.setText(QCoreApplication.translate("Widget", u"Create a new project", None))
         self.pushButton.setText(QCoreApplication.translate("Widget", u"Load a new project", None))
 
-    def print_selection(self):
-        """
-        Opens the file from the tree structure when you double click on it
-        """
-        # TODO Throws error when you double click on an empty folder
-        items = self.tree.selectedItems()
-        tree_item = items[0]
-        if tree_item.childCount() == 0:
-            tree_item_selected = tree_item.text(0)
-            parent_item = tree_item.parent().text(0)
-            print(tree_item_selected, parent_item, self.ffp)
-            path = os.path.join(self.ffp, parent_item, tree_item_selected)
-            print(path)
-            os.system(path)
+    # def print_selection(self):
+    #     """
+    #     Opens the file from the tree structure when you double click on it
+    #     """
+    #     # TODO Throws error when you double click on an empty folder
+    #     items = self.tree.selectedItems()
+    #     tree_item = items[0]
+    #     if tree_item.childCount() == 0:
+    #         tree_item_selected = tree_item.text(0)
+    #         parent_item = tree_item.parent().text(0)
+    #         print(tree_item_selected, parent_item, self.ffp)
+    #         path = os.path.join(self.ffp, parent_item, tree_item_selected)
+    #         print(path)
+    #         os.system(path)
+    #
+    # def tree_structure_load(self):
+    #     """
+    #     Loads the tree folder structure of the project
+    #     """
+    #     self.tree.clear()
+    #     folders = os.listdir(self.ffp)
+    #
+    #     dirs = {}
+    #
+    #     for folder in folders:
+    #         dirs[folder] = os.listdir(os.path.join(self.ffp, folder))
+    #
+    #     # @TODO add a check if there are other files in the tree structure window
+    #     # Check if it is a directory
+    #     # for folder in folders:
+    #     # folder_path = os.path.join(self.ffp, folder)
+    #     # if os.path.isdir(folder_path):
+    #     #     dirs[folder] = os.listdir(folder_path)
+    #     items = []
+    #
+    #     for key, values in dirs.items():
+    #         item = QTreeWidgetItem([key])
+    #         for file in values:
+    #             ext = file.split(".")[-1].upper()
+    #             child = QTreeWidgetItem([file, ext])
+    #             item.addChild(child)
+    #         items.append(item)
+    #     self.tree.insertTopLevelItems(0, items)
 
-
-    def tree_structure_load(self):
-        """
-        Loads the tree folder structure of the project
-        """
-        self.tree.clear()
-        folders = os.listdir(self.ffp)
-
-        dirs = {}
-
-        for folder in folders:
-            dirs[folder] = os.listdir(os.path.join(self.ffp, folder))
-
-        #@TODO add a check if there are other files in the tree structure window
-        # Check if it is a directory
-        # for folder in folders:
-            # folder_path = os.path.join(self.ffp, folder)
-            # if os.path.isdir(folder_path):
-            #     dirs[folder] = os.listdir(folder_path)
-        items = []
-
-        for key, values in dirs.items():
-            item = QTreeWidgetItem([key])
-            for file in values:
-                ext = file.split(".")[-1].upper()
-                child = QTreeWidgetItem([file, ext])
-                item.addChild(child)
-            items.append(item)
-        self.tree.insertTopLevelItems(0, items)
 
     @staticmethod
     def define_folder():
@@ -244,23 +251,24 @@ class HomeQT(QWidget):
             '/reports',
             '/summary']
 
-
     def create_new_project(self):
         # @TODO Load the treestrucutre in the mainwindow, so it can be used in the other classes
         self.ffp = QFileDialog.getExistingDirectory(self, directory='D:/05_Example')
-        # self.main.pfp = self.ffp
-        for folder in self.folders:
-            os.makedirs(self.ffp + folder)
-        print(f"Project {self.ffp.split('//')[-1]} created succesfuly")
 
-        # create the paths for the folders
-        paths = create_folder_paths(self.ffp, self.folders)
-        # Assign all paths to the main attribute
-        self.main.ffp = ProjectPaths(**paths)
-        # Load the tree structure
-        self.tree_structure_load()
+        if self.ffp:
+            for folder in self.folders:
+                os.makedirs(self.ffp + folder)
+            print(f"Project {self.ffp.split('//')[-1]} created successfully")
 
+            # create the paths for the folders
+            paths = create_folder_paths(self.ffp, self.folders)
+            # Assign all paths to the main attribute
+            self.main.ffp = ProjectPaths(**paths)
 
+            self.tree.path = self.ffp
+            # Load the tree structure
+            self.tree.tree_structure_load()
+        return
 
     def load_dfs(self):
         """
@@ -271,59 +279,36 @@ class HomeQT(QWidget):
         if os.path.exists(self.main.ffp.summary + 'Header.xlsx'):
             self.main.hdf = pd.read_excel(self.main.ffp.summary + 'Header.xlsx')
 
-
-
-
     def load_existing_project(self):
-        #@TODO Exists the GUI if you cancel the command. This is everywhere
-        #@TODO ADD a reload button in case you put items in the folder to update the tree view?
-
-
+        # @TODO Exists the GUI if you cancel the command. This is everywhere
+        # @TODO ADD a reload button in case you put items in the folder to update the tree view?
 
         self.ffp = QFileDialog.getExistingDirectory(self, directory='D:/05_Example')
 
+        if self.ffp:
+            paths = create_folder_paths(self.ffp, self.folders)
+            self.main.ffp = ProjectPaths(**paths)
 
-        paths = create_folder_paths(self.ffp, self.folders)
-        self.main.ffp = ProjectPaths(**paths)
+            self.tree.path = self.ffp
+            self.tree.tree_structure_load()
+            print('MY tree is now gone: ', self.tree)
 
-        self.tree.path = self.ffp
-        self.tree.tree_structure_load()
-        print('MY tree is now gone: ', self.tree)
+            # We need to initialize the list_view in the convert tab
+            # @TODO Maybe a dialog box saying that pending items have been found.Would you like to convert them?
+            self.main.convert.update_list_view()
 
-        #We need to initialize the list_view in the convert tab
-        #@TODO Maybe a dialog box saying that pending items have been found.Would you like to convert them?
-        self.main.convert.update_list_view()
+            # self.tree_structure_load()
+            print(f"Successfully loaded {self.ffp.split('/')[-1]}  project")
 
+            #Need to change this condition
+            #@TODO Finalize the state of the software and what loads.
+            #I think it would be a better condition if we check to see what to upload. If there are files in the header but not in the results we can add those...
 
-        # self.tree_structure_load()
-        print(f"Successfully loaded {self.ffp.split('/')[-1]}  project")
+            if len(os.listdir(self.main.ffp.summary)) >1:
+                self.main.state = 1
+                self.load_dfs()
+                self.main.loadcsv.upload_folder()
+                self.main.loadcsv.load_cpts()
+                self.main.proj_req.load_proj_requirements()
+        return
 
-        if os.listdir(self.main.ffp.summary):
-            self.main.state = 1
-            self.load_dfs()
-            self.main.loadcsv.upload_folder()
-            self.main.loadcsv.load_cpts()
-            self.main.proj_req.load_proj_requirements()
-
-
-
-
-        # self.main.overview.view_main_header()
-
-        # self.main.overview.load_df()
-
-
-
-
-# import sys
-# app = QApplication(sys.argv)
-#
-# # Create the widget window
-#
-# widget = HomeQT(123)
-#
-# # Show the widget window
-# widget.show()
-#
-# # Start the event loop
-# sys.exit(app.exec())

@@ -1,5 +1,5 @@
 import sys
-import os
+
 
 import pandas as pd
 from PyQt6.QtCore import *
@@ -27,6 +27,8 @@ class MyWindow(QMainWindow):
 
         self.tab_widget = QTabWidget()
 
+
+
         self.home = HomeQT(self)
         self.convert = ConvertQT(self)
         self.loadcsv = LoadCSVWidget(self)
@@ -50,55 +52,31 @@ class MyWindow(QMainWindow):
         self.processed = set()
 
         self.proj_requirements = {}
+
         self.tab_widget.addTab(self.home, "Home")
         self.tab_widget.addTab(self.convert, "Convert")
         self.tab_widget.addTab(self.loadcsv, "Load")
         self.tab_widget.addTab(self.overview, "Overview")
-        self.tab_widget.addTab(self.proj_req, "Project Info")
-        self.tab_widget.addTab(self.calc, "Run Calculations")
+        self.tab_widget.addTab(self.proj_req, "Requirements")
+        self.tab_widget.addTab(self.calc, "Analysis")
 
-        # self.df = None
-        # self.tab2_layout = QGridLayout()
-        # self.proj_req.setLayout(self.tab2_layout)
+        self.tab_widget.setTabPosition(QTabWidget.TabPosition.West)
 
-        # self.upload_file_btn = QPushButton("Upload File")
-        # self.upload_file_btn.clicked.connect(self.upload_file)
-        #
-        # self.upload_folder_btn = QPushButton("Upload Folder")
-        # self.upload_folder_btn.clicked.connect(self.upload_folder)
-        #
-        # self.list_view = QListView()
-        # self.model = QStandardItemModel(self.list_view)
-        # self.list_view.setModel(self.model)
-        # self.list_view.setDragEnabled(True)
-        # self.list_view.setAcceptDrops(True)
-        # self.list_view.setDragEnabled(True)
-        #
-        # self.tab1_layout.addWidget(self.upload_file_btn)
-        # self.tab1_layout.addWidget(self.upload_folder_btn)
-        # self.tab1_layout.addWidget(self.list_view)
+
 
         self.setCentralWidget(self.tab_widget)
-
-        # self.load_cpts_btn = QPushButton("Load CPts")
-        # self.load_cpts_btn.clicked.connect(self.load_cpts)
-        # self.tab1_layout.addWidget(self.load_cpts_btn)
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-
+    my_font = QFont("Source Sans Pro", 9)
+    app.setFont(my_font)
     main = MyWindow()
     main.show()
-    with open("style.qss", "r") as f:
+    with open("uis/white_theme.qss", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
+
+#add app font
 
     sys.exit(app.exec())

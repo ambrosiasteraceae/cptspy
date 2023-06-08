@@ -6,7 +6,8 @@ from PyQt6.QtGui import QDoubleValidator, QIntValidator, QValidator
 import sys
 import pandas as pd
 import json
-
+from PyQt6.QtGui import *
+#TODO Lood btn throws error when trying to load a file that doesnt exist
 
 def parse_proj_requirements(line_edits):
     proj_req = {}
@@ -94,6 +95,21 @@ class PDWidget(QWidget):
         vLayout.addWidget(self.pandasTv)
         # self.loadBtn.clicked.connect(self.loadFile)
         self.pandasTv.setSortingEnabled(True)
+
+
+        class CustomDelegate(QStyledItemDelegate):
+            def paint(self, painter, option, index):
+                # Custom painting code here
+                if index.row() % 2 == 0:
+                    painter.fillRect(option.rect, QColor(220,220,220))  # Alternate row color 1
+                else:
+                    painter.fillRect(option.rect, QColor(255,255,255))  # Alternate row color 2
+
+                # Call the base class paint() method to handle other painting tasks
+                super().paint(painter, option, index)
+
+        delegate = CustomDelegate(self)
+        self.pandasTv.setItemDelegate(delegate)
 
     def loadFile(self):
         # if fileName is None:
@@ -338,6 +354,9 @@ class ProjReqWidget(QWidget):
         # print(filename)
 
         filename = self.main.ffp.proj_requirements + 'requirements.json'
+
+        if not os.path.exists(filename):
+            return
 
         with open(filename) as f:
             proj_req = json.load(f)

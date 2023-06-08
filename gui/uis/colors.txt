@@ -1,0 +1,10 @@
+background: #FFFFFF
+pushbutton: #5064f6
+QWarningBackground: #fcdbe1
+QwarningText:#d86f85
+
+
+QCheckColor: #2ab95f
+
+QTextGray: #b6b6b6
+QLabelText: #f6f6f6

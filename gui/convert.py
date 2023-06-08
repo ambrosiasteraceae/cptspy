@@ -9,6 +9,36 @@ from read.reading import *
 import shutil
 
 
+class CustomMessageBox(QMessageBox):
+    def __init__(self, msg):
+        super(CustomMessageBox, self).__init__()
+        self.setText(msg)
+        # Apply styles using style sheets
+        self.setStyleSheet("""
+            QMessageBox {
+                background-color: #fcdbe1;
+            }
+            QLabel {
+                color: #d86f85;
+                font-weight: bold;
+                font-size: 15px;
+            }
+            QPushButton {
+                background-color: #fcdbe1;
+                color: #d86f85;
+                font-weight: bold;
+                font-size: 15px;
+            }
+        """)
+        self.exec()
+
+
+
+
+
+
+
+
 def escape(string):
     extensions = ['PO', 'PRE']
     for ext in extensions:
@@ -197,9 +227,11 @@ class ConvertQT(QWidget):
             self.move_files_to_directory(files_to_copy)
             self.update_list_view()
         elif not folder_files:
-            QMessageBox.warning(self, 'Warning', 'No .xlsx files in the folder')
+            CustomMessageBox('No .xlsx files in the folder')
+            # CustomMessageBox('No .xlsx files in the folder')
         else:
-            QMessageBox.warning(self, 'Warning', 'You are trying to insert files that have already been uploaded')
+            # CustomMessageBox.warning(self, 'Warning', 'You are trying to insert files that have already been uploaded')
+            CustomMessageBox('You are trying to insert files that have already been uploaded')
 
 
     def move_files_to_directory(self, file_list):

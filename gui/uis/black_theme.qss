@@ -1,0 +1,91 @@
+QListWidget {
+    color: #292929;
+    background-color: #33373B;
+}
+
+
+QTabWidget::pane {
+    border: 1px solid #2ABf9E;
+    background-color: #33373B;
+}
+
+QTreeWidget{
+    color:  #717171;
+    background-color: #33373B;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+QTreeView{
+    color: #292929;
+    background-color: #33373B;
+}
+
+QRadioButton {
+    color: #717171;
+    background-color: #33373B;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+QTreeView::item {
+    height: 12px;
+    color:  #717171;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+
+QTabWidget::item:selected{
+    background-color: #292929;
+
+}
+
+QTabBar::tab {
+    background-color: #33373B;
+    color: white;
+    padding: 8px 16px;
+    margin-right: 4px;
+    font-size: 17px;
+}
+
+QTabBar::tab:selected, QTabBar::tab:selected {
+    background-color: #2ABf9E;
+}
+
+QListView {
+    color: #FFFFFF;
+    background-color: #33373B;
+}
+
+QListWidget::item {
+    height: 50px;
+}
+
+QListWidget::item:selected {
+    background-color: #2ABf9E;
+}
+
+QLabel {
+
+    qproperty-alignment: AlignCenter;
+    color: #717171;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: #515151;
+}
+
+QLineEdit {
+    background-color: #515151;
+    color: #717171;
+    font-size: 15px;
+    font-weight: bold;
+}
+QPushButton {
+    background-color: #515151;
+    padding: 10px;
+    font-size: 15px;
+    color: #EDECEF;
+    font-weight: bold;
+}
