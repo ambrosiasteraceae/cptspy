@@ -12,7 +12,7 @@ from home import HomeQT
 from convert import ConvertQT
 from overview import OverviewQT
 from test import SomethingQT
-
+from newinterfaces import HomeQT2
 #@TODO Whenever you load / create and press cancel the program crashes
 #@TODO YOU created a new project. You added some files, deleted others. You run and calc for converted files. You exit. You want to open project again, but header.xlsx is not saved.
 #TODO: @IDEA Maybe have a single instance of self.file_saved in the main window. It doesn't sotre the file extension but just the basename path. We use this to check if the file is saved.
@@ -37,6 +37,7 @@ class MyWindow(QMainWindow):
         self.overview = OverviewQT(self)
 
         self.something = SomethingQT(self)
+        self.home2 = HomeQT2(self)
 
 
 
@@ -62,6 +63,7 @@ class MyWindow(QMainWindow):
         self.tab_widget.addTab(self.proj_req, "Requirements")
         self.tab_widget.addTab(self.calc, "Analysis")
         self.tab_widget.addTab(self.something, "Something")
+        self.tab_widget.addTab(self.home2, "Convert2")
 
         self.tab_widget.setTabPosition(QTabWidget.TabPosition.West)
 
@@ -83,3 +85,15 @@ if __name__ == '__main__':
 #add app font
 
     sys.exit(app.exec())
+
+
+# QPushButton {
+#   background-color: #0d6efd;
+#   color: #fff;
+#   font-weight: bold;
+#   border-radius: 8px;
+#   border: 1px solid #0d6efd;
+#   padding: 5px 15px;
+#   margin-top: 10px;
+#   outline: 0px;
+# }

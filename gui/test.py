@@ -12,7 +12,7 @@ from home import TreeView
 class SomethingQT(QWidget):
     def __init__(self, main_window_ref, parent = None):
         super(SomethingQT, self).__init__(parent)
-        loadUi('uis/overview_2play.ui', self)
+        loadUi('uis/overview.ui', self)
 
         self.main = main_window_ref
         labels = self.findChildren(QLabel)
@@ -47,5 +47,5 @@ class SomethingQT(QWidget):
 #
 # main.show()
 # sys.exit(app.exec())
-# #
+#
 
