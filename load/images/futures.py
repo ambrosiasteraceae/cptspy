@@ -29,17 +29,17 @@
 
 
 #TEMPLATE IDEAS
-from jinja2 import Template IDEAS
-template = Template(r"""
-\section{Input}
-\subsection{Project Info}
-{{ project_info_table }}
-\subsection{CPT Header Information}
-{{ header_info_table }}
-\subsection{Basic Plots}
-\includegraphics[width=18.5cm]{{ basic_plot_path }}
-""")
-
+# from jinja2 import Template IDEAS
+# template = Template(r"""
+# \section{Input}
+# \subsection{Project Info}
+# {{ project_info_table }}
+# \subsection{CPT Header Information}
+# {{ header_info_table }}
+# \subsection{Basic Plots}
+# \includegraphics[width=18.5cm]{{ basic_plot_path }}
+# """)
+paths = []
 for path in paths:
     # ... (perform the calculations and plot generation)
 

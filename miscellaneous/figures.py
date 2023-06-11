@@ -428,13 +428,20 @@ def create_massarasch_and_legend_plot(sps, rw):
 
 
 
-
 #
-# path = ['D:/04_R&D/cptspy/output/CPT_L21d.csv','D:/04_R&D/cptspy/output/CPT_I14d.csv']
-# from load.load import load_mpa_cpt_file
+# import glob
+#
+# paths = glob.glob('C:/Users/dragos/Documents/GitHub/cptspy/output' + '/*.csv')
+# # path = ['D:/04_R&D/cptspy/output/CPT_L21d.csv','D:/04_R&D/cptspy/output/CPT_I14d.csv']
+# from load.loading import load_mpa_cpt_file
 # from calc.liquefaction import run_rw1997
 #
-# cpt = load_mpa_cpt_file(path[1])
+# cpt = load_mpa_cpt_file(paths[1])
 # rw = run_rw1997(cpt, pga = 0.122, m_w = 6, gwl = 1)
-
+#
+# # plt.figure()
+# fig, sps = plt.subplots(nrows=1, ncols=3, figsize=(16, 10))
+# create_fos_and_index_plot(sps, rw)
+# # plt.show()
+# fig.savefig('abc.png', bbox_inches='tight')
 

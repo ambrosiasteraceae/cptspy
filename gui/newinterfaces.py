@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.uic import loadUi
 import sys
 
-
+from home import TreeView
 
 class HomeQT2(QDialog):
     def __init__(self, main_window_ref, parent = None):
@@ -13,20 +13,11 @@ class HomeQT2(QDialog):
 
         # loadUi('uis/load2.ui', self)
         loadUi('uis/calculations2.ui', self)
+        # loadUi('uis/overview2.ui', self)
 
         self.main = main_window_ref
         labels = self.findChildren(QLabel)
 
-
-
-        # self.treeview = TreeView()
-        # self.tableWidget = PDWidget()
-
-
-        # self.setCentralWidget()
-
-
-#
 # app = QApplication(sys.argv)
 # main = HomeQT2(123)
 #

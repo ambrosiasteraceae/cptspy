@@ -152,7 +152,7 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
-             <widget class="QLineEdit" name="input_magnitude">
+             <widget class="QLineEdit" name="m_w">
               <property name="placeholderText">
                <string>Insert Magnitude </string>
               </property>
@@ -166,7 +166,7 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLineEdit" name="input_pga">
+             <widget class="QLineEdit" name="pga">
               <property name="placeholderText">
                <string>Insert Peak Ground Acceleration (g)</string>
               </property>
@@ -180,14 +180,14 @@
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLineEdit" name="input_gwl">
+             <widget class="QLineEdit" name="gwl">
               <property name="placeholderText">
                <string>Insert Ground water level (m ACD)</string>
               </property>
              </widget>
             </item>
             <item row="4" column="0">
-             <widget class="QLineEdit" name="input_scf">
+             <widget class="QLineEdit" name="scf">
               <property name="placeholderText">
                <string>Insert Shell Correction Factor </string>
               </property>
@@ -658,7 +658,7 @@
             <string>Foundations</string>
            </property>
           </widget>
-          <widget class="QGroupBox" name="">
+          <widget class="QGroupBox" name="groupBox">
            <property name="geometry">
             <rect>
              <x>90</x>
@@ -890,14 +890,14 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_11">
             <item row="0" column="0">
-             <widget class="QLineEdit" name="input_cumulative_ic">
+             <widget class="QLineEdit" name="cumulative_ic">
               <property name="placeholderText">
                <string>Insert number of max. cumulative layers  (int)</string>
               </property>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLineEdit" name="input_cumulative_fos">
+             <widget class="QLineEdit" name="cumulative_fos">
               <property name="placeholderText">
                <string>Insert number of max. cumulative layers  (int)</string>
               </property>
@@ -918,7 +918,7 @@
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLineEdit" name="input_placeholder">
+             <widget class="QLineEdit" name="placeholder">
               <property name="placeholderText">
                <string>Insert placeholder text here</string>
               </property>
@@ -1023,7 +1023,7 @@
             <string>Save Settings</string>
            </property>
           </widget>
-          <widget class="QTreeView" name="treeView">
+          <widget class="QTreeView" name="proj_tree">
            <property name="geometry">
             <rect>
              <x>40</x>

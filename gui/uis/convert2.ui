@@ -69,7 +69,7 @@
         <property name="title">
          <string/>
         </property>
-        <widget class="QPushButton" name="load_single_xlsx">
+        <widget class="QPushButton" name="load_single_btn">
          <property name="geometry">
           <rect>
            <x>80</x>
@@ -82,7 +82,7 @@
           <string>Upload File</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="load_folder_xlsx">
+        <widget class="QPushButton" name="load_folder_btn">
          <property name="geometry">
           <rect>
            <x>80</x>
@@ -118,7 +118,7 @@
         <property name="title">
          <string/>
         </property>
-        <widget class="QListWidget" name="listWidget">
+        <widget class="QListView" name="list_view_convert">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -159,7 +159,7 @@
           <string>Uploaded files:</string>
          </property>
         </widget>
-        <widget class="QLabel" name="loaded_list_widget">
+        <widget class="QLabel" name="loaded_files_label">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -291,7 +291,7 @@
         <property name="title">
          <string/>
         </property>
-        <widget class="QListView" name="listView">
+        <widget class="QListView" name="list_view_log">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -415,7 +415,7 @@
         <property name="title">
          <string/>
         </property>
-        <widget class="QTreeWidget" name="treeWidget">
+        <widget class="TreeView" name="treeView">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -436,11 +436,6 @@
            <height>1255</height>
           </size>
          </property>
-         <column>
-          <property name="text">
-           <string notr="true">1</string>
-          </property>
-         </column>
         </widget>
         <widget class="QLabel" name="project_structure_tree">
          <property name="geometry">
@@ -481,6 +476,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TreeView</class>
+   <extends>QTreeView</extends>
+   <header location="global">convert</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

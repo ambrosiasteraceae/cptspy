@@ -41,7 +41,7 @@ class MainWindow2(QMainWindow):
         toolbar = QToolBar("My main toolbar")
         self.addToolBar(toolbar)
 
-        button_action = QAction(QIcon('magnet.png'),"KA", self)
+        button_action = QAction(QIcon('magnet.png'), "KA", self)
 
         button_action.setStatusTip("This is your button")
         button_action.triggered.connect(self.onMyToolBarButtonClick)

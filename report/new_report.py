@@ -6,23 +6,21 @@ from pylatex import Document, Section, Subsection, Command,\
     LargeText, PageStyle, MediumText, LineBreak, SmallText
 from pylatex.utils import NoEscape, bold
 
-from loading import load_cpt_header, load_mpa_cpt_file #CREATE cpt_file module
+from load.loading import load_cpt_header, load_mpa_cpt_file #CREATE cpt_file module
 from calc.liquefaction import run_rw1997
 from calc.summary import CPTSummary
 from miscellaneous.figures import create_fos_and_index_plot, create_compactibilty_plot, \
     create_cpt_plots, create_massarasch_and_legend_plot
 
-#@TODO load_mpa_cpt_file (return both CPT and Header Classes)
-#@TODO Add just plots, no need to save images
+import io
 
-paths = ['C:/Users/dragos/Documents/GitHub/cptspy/output/CPT_L21d.csv']
-# import glob
-# paths = glob.glob('D:/04_R&D/cptspy/read/roshna/post data/processed/' + '*.csv')
-#
-gpath = 'C:/Users/dragos/Documents/GitHub/cptspy/load/pdfs/'
-if not os.path.exists(gpath):
-    os.makedirs(gpath)
+
+import glob
+paths = glob.glob('C:/Users/dragos/Documents/GitHub/cptspy/output/' + '*.csv')
 gpath = ''
+
+
+
 
 def generate_table(_dict):
     table = Tabular('ll')
@@ -41,7 +39,9 @@ GWL = 0.6
 gwl = 0.6
 scf = 1.30
 my_list = []
-for path in paths:
+
+
+def generate_report(path):
     cpt = load_mpa_cpt_file(path, scf=scf)
     gwl = cpt.elevation[0] - GWL
     my_list.append((path, gwl, cpt.elevation[0]))
@@ -53,19 +53,20 @@ for path in paths:
     #
     fig, sps = plt.subplots(nrows=1, ncols=3, figsize=(16, 10))
     create_fos_and_index_plot(sps, rw_1997)
-    fig.savefig(cpth.name + '.png', bbox_inches='tight')
+    fig.savefig(gpath+cpth.name + '.png', bbox_inches='tight')
 
-    fig2, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4))
-    create_compactibilty_plot(ax, rw_1997)
-    fig2.savefig(cpth.name + '_compactibility.png', bbox_inches='tight')
 
     fig3, axs = plt.subplots(1, 4, figsize=(16, 12), sharey=True)
     create_cpt_plots(axs, cpt)
-    fig3.savefig(cpth.name + '_basicplot.png')
+    fig3.savefig(gpath+cpth.name + '_basicplot.png')
+
+    figfile = io.BytesIO()
+    plt.savefig(figfile, format='png')
+    figfile.seek(0)  # rewind to beginning of file
 
     fig4, axes = plt.subplots(1, 3, figsize=(16, 4))
     create_massarasch_and_legend_plot(axes, rw_1997)
-    fig4.savefig('legends.png',bbox_inches='tight')
+    fig4.savefig(gpath+'legends.png',bbox_inches='tight')
 
     logo_image_path = 'nmdc.jpg'
     cpt_file_path = '/load/H15c.png'
@@ -130,7 +131,7 @@ for path in paths:
     #Add basic plots
     with doc.create(Subsection('CPT Plots')):
         with doc.create(Figure(position='h!')) as figure:
-            figure.add_image(cpth.name + '_basicplot.png', width='18.5cm')
+            figure.add_image(gpath+cpth.name + '_basicplot.png', width='18.5cm')
 
 
     #Second Page
@@ -139,7 +140,7 @@ for path in paths:
     doc.append(section2)
 
 
-    subsection_output1 = Subsection(f'CPT-{cpth.name} Summary')
+    subsection_output1 = Subsection(f'CPT-{gpath+cpth.name} Summary')
     doc.append(subsection_output1)
     table2 = generate_table(cpts.latex_dict)
 
@@ -187,19 +188,51 @@ for path in paths:
     # Add a figure below the tables
     with doc.create(Subsection('Figures')):
         with doc.create(Figure(position='h!')) as figure:
-            figure.add_image(cpth.name + '.png', width='18.5cm')
+            figure.add_image(gpath+cpth.name + '.png', width='18.5cm')
+            # figure.add
 
         with doc.create(Figure(position ='h!')) as figure:
-            figure.add_image('legends.png', width='18.5cm')
+            figure.add_image(gpath+'legends.png', width='18.5cm')
 
 
     # Generate PDF
     try:
-        doc.generate_pdf(gpath+cpth.name, clean_tex = True, clean = True)
+        doc.generate_pdf(gpath+cpth.name, clean_tex = False, clean = True)
     except subprocess.CalledProcessError as e:
        pass
 
-print(my_list)
+from multiprocessing import Pool, cpu_count
+import time
+start_time = time.time()
+if __name__ == '__main__':
 
-
+    num_processors = cpu_count()
+  # list of your paths
+    with Pool(processes=num_processors) as pool:  # adjust based on your CPU
+        pool.map(generate_report, paths)
+    end_time = time.time()
+    time_elapsed = end_time - start_time
+    print("Time elapsed: ", time_elapsed, "seconds")
 # os.system(f'{cpth.name}.pdf')
+
+# Time elapsed:  9.348626136779785 seconds
+
+
+def clean_folder():
+    """removes .aux, .log, .png"""
+    path = 'C:/Users/dragos/Documents/GitHub/cptspy/report/'
+
+    my_files= set(['acc.jpg',
+     'fos_legend.png',
+     'gwl.jpg',
+     'mw_log.PNG',
+     'new_report.py',
+     'nmdc.jpg',
+     'old_report.py',
+     'shell_logo.jpg',
+     'test.py'])
+
+    all_files = set(os.listdir(path))
+    to_delete = all_files - my_files
+    for f in to_delete:
+        os.remove(path+f)

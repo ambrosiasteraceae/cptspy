@@ -6,20 +6,20 @@ from pylatex import Document, Section, Subsection, Command,\
     LargeText, PageStyle, MediumText, LineBreak, SmallText
 from pylatex.utils import NoEscape, bold
 
-from loading import load_cpt_header, load_mpa_cpt_file #CREATE cpt_file module
+from load.loading import load_cpt_header, load_mpa_cpt_file #CREATE cpt_file module
 from calc.liquefaction import run_rw1997
 from calc.summary import CPTSummary
 from miscellaneous.figures import create_fos_and_index_plot, create_compactibilty_plot, \
     create_cpt_plots, create_massarasch_and_legend_plot
 
-#@TODO load_mpa_cpt_file (return both CPT and Header Classes)
-#@TODO Add just plots, no need to save images
+import io
 
 paths = ['C:/Users/dragos/Documents/GitHub/cptspy/output/CPT_L21d.csv']
 # import glob
 # paths = glob.glob('D:/04_R&D/cptspy/read/roshna/post data/processed/' + '*.csv')
 #
-gpath = 'C:/Users/dragos/Documents/GitHub/cptspy/load/pdfs/'
+
+gpath = 'C:/Users/dragos/Documents/GitHub/cptspy/report/pdfs/'
 if not os.path.exists(gpath):
     os.makedirs(gpath)
 gpath = ''
@@ -53,19 +53,19 @@ for path in paths:
     #
     fig, sps = plt.subplots(nrows=1, ncols=3, figsize=(16, 10))
     create_fos_and_index_plot(sps, rw_1997)
-    fig.savefig(cpth.name + '.png', bbox_inches='tight')
+    fig.savefig(gpath+cpth.name + '.png', bbox_inches='tight')
 
     fig2, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4))
     create_compactibilty_plot(ax, rw_1997)
-    fig2.savefig(cpth.name + '_compactibility.png', bbox_inches='tight')
+    fig2.savefig(gpath+cpth.name + '_compactibility.png', bbox_inches='tight')
 
     fig3, axs = plt.subplots(1, 4, figsize=(16, 12), sharey=True)
     create_cpt_plots(axs, cpt)
-    fig3.savefig(cpth.name + '_basicplot.png')
+    fig3.savefig(gpath+cpth.name + '_basicplot.png')
 
     fig4, axes = plt.subplots(1, 3, figsize=(16, 4))
     create_massarasch_and_legend_plot(axes, rw_1997)
-    fig4.savefig('legends.png',bbox_inches='tight')
+    fig4.savefig(gpath+'legends.png',bbox_inches='tight')
 
     logo_image_path = 'nmdc.jpg'
     cpt_file_path = '/load/H15c.png'
@@ -130,7 +130,7 @@ for path in paths:
     #Add basic plots
     with doc.create(Subsection('CPT Plots')):
         with doc.create(Figure(position='h!')) as figure:
-            figure.add_image(cpth.name + '_basicplot.png', width='18.5cm')
+            figure.add_image(gpath+cpth.name + '_basicplot.png', width='18.5cm')
 
 
     #Second Page
@@ -139,7 +139,7 @@ for path in paths:
     doc.append(section2)
 
 
-    subsection_output1 = Subsection(f'CPT-{cpth.name} Summary')
+    subsection_output1 = Subsection(f'CPT-{gpath+cpth.name} Summary')
     doc.append(subsection_output1)
     table2 = generate_table(cpts.latex_dict)
 
@@ -187,15 +187,16 @@ for path in paths:
     # Add a figure below the tables
     with doc.create(Subsection('Figures')):
         with doc.create(Figure(position='h!')) as figure:
-            figure.add_image(cpth.name + '.png', width='18.5cm')
+            figure.add_image(gpath+cpth.name + '.png', width='18.5cm')
+            # figure.add
 
         with doc.create(Figure(position ='h!')) as figure:
-            figure.add_image('legends.png', width='18.5cm')
+            figure.add_image(gpath+'legends.png', width='18.5cm')
 
 
     # Generate PDF
     try:
-        doc.generate_pdf(gpath+cpth.name, clean_tex = True, clean = True)
+        doc.generate_pdf(gpath+cpth.name, clean_tex = False, clean = True)
     except subprocess.CalledProcessError as e:
        pass
 

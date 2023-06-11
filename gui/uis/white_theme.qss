@@ -20,6 +20,7 @@ QWidget {
 QLabel {
   color: #464d55;
   font-weight: 600;
+  background-color: transparent;
 }
 QLabel#heading {
   color: #0f1925;
@@ -65,7 +66,9 @@ QPushButton:hover{
 }
 
 
-
+QPushButton:disabled{
+background-color:#0f1925;
+}
 
 QTabWidget::item:selected{
     background-color: #0d6efd;
@@ -125,6 +128,7 @@ QTreeWidget {
 
 QTreeView {
     show-decoration-selected: 1;
+    background-color: white;
 }
 
 QTreeView::item {

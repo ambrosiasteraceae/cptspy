@@ -1,113 +1,9 @@
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import QRect, QCoreApplication, QMetaObject, QAbstractTableModel, Qt
 import os
 import pandas as pd
+from PyQt6.QtWidgets import *
+from PyQt6.uic import loadUi
 
-
-# @TODO Set number to the tree widget to se the number of files.
-# @TODO Also if possible have the tree widget show only 10 items if there are a lot of elements
-# @TODO Summary array, trhows Value Error when we have an empty array np.max([depth[i_c > 2.6]])
-# TODO: App crahses when you create a new project and you try to convert.uplooad.folder. Self.path is not initialized in create proj func.
-#TODO: Urls images should be part of resources or?
-
-class TreeWidgetManager:
-    """ A similar lazy loading behaviour but for class instances"""
-    _tree_widget_instance = None
-
-    @classmethod
-    def get_tree_widget(cls):
-        if not cls._tree_widget_instance:
-            cls._tree_widget_instance = CustomTreeWidget()
-
-        print(cls._tree_widget_instance.path)
-        return cls._tree_widget_instance
-
-
-class TreeView(QTreeView):
-    def __init__(self, parent=None):
-        super(TreeView, self).__init__(parent)
-        self.tree_widget = TreeWidgetManager.get_tree_widget()
-        self.setSelectionMode(QTreeView.SelectionMode.ExtendedSelection)
-        self.setModel(self.tree_widget.model())
-        self.setRootIndex(self.tree_widget.rootIndex())
-
-
-    def refresh(self):
-        return self.tree_widget.update_tree_view()
-# Create a delegate to customize the appearance
-
-
-# Set the delegate on the QTreeView
-
-
-class CustomTreeWidget(QTreeWidget):
-    def __init__(self):
-        super(CustomTreeWidget, self).__init__()
-        self.path = None
-        __qtreewidgetitem = QTreeWidgetItem()
-        __qtreewidgetitem.setText(0, u"1")
-        self.setHeaderItem(__qtreewidgetitem)
-        self.setObjectName(u"tree")
-
-        self.setColumnCount(2)
-        self.setHeaderLabels(['Name', 'Type'])
-        self.SelectionMode(True)
-        self.doubleClicked.connect(self.print_selection)
-
-    def print_selection(self):
-        """
-        Opens the file from the tree structure when you double click on it
-        """
-        # TODO Throws error when you double click on an empty folder
-        items = self.selectedItems()
-        tree_item = items[0]
-        if tree_item.childCount() == 0:
-            tree_item_selected = tree_item.text(0)
-            parent_item = tree_item.parent().text(0)
-            print(tree_item_selected, parent_item, self.path)
-            path = os.path.join(self.path, parent_item, tree_item_selected)
-            print(path)
-            os.system(path)
-
-    def tree_structure_load(self):
-        """
-        Loads the tree folder structure of the project
-        """
-        self.clear()
-        folders = os.listdir(self.path)
-
-        dirs = {}
-
-        # for folder in folders:
-        #     dirs[folder] = os.listdir(os.path.join(self.path, folder))
-
-        # @TODO add a check if there are other files in the tree structure window
-        # Check if it is a directory
-        for folder in folders:
-            print(f"Folder: {folder}")
-            print(f"Path: {self.path}")
-            folder_path = os.path.join(self.path, folder)
-            if os.path.isdir(folder_path):
-                dirs[folder] = os.listdir(folder_path)
-
-        items = []
-
-        for key, values in dirs.items():
-            item = QTreeWidgetItem([key])
-            for file in values:
-                ext = file.split(".")[-1].upper()
-                child = QTreeWidgetItem([file, ext])
-                item.addChild(child)
-            items.append(item)
-        self.insertTopLevelItems(0, items)
-
-    def update_tree_view(self):
-        """
-        Updates the tree view
-        """
-        self.clear()
-        self.tree_structure_load()
+from extras import TreeView, GreenMessageBox
 
 
 class ProjectPaths:
@@ -133,121 +29,27 @@ def create_folder_paths(main_path, folder_list):
     return paths
 
 
+def define_folder():
+    return [
+        '/calc',
+        '/converted',
+        '/figures',
+        '/proj_requirements',
+        '/raw',
+        '/reports',
+        '/summary']
+
+
 class HomeQT(QWidget):
     def __init__(self, main_window_ref):
         super(HomeQT, self).__init__()
         self.main = main_window_ref
-        self.setupUi(self)
+        loadUi('uis/home2.ui', self)
 
-    def setupUi(self, Widget):
-        if not Widget.objectName():
-            Widget.setObjectName(u"Widget")
-
-        self.verticalLayoutWidget = QWidget(Widget)
-        self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        # Set layout widget in the center
-
-        self.verticalLayoutWidget.setGeometry(QRect(0, 10, 261, 581))
-        self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.pushButton_2 = QPushButton(self.verticalLayoutWidget)
-        self.pushButton_2.setObjectName(u"pushButton_2")
-
-        self.verticalLayout.addWidget(self.pushButton_2)
-
-        self.pushButton = QPushButton(self.verticalLayoutWidget)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.clicked.connect(self.load_existing_project)
-
-        self.verticalLayout.addWidget(self.pushButton)
-
-        # self.tree = QTreeWidget(self.verticalLayoutWidget)
-        # __qtreewidgetitem = QTreeWidgetItem()
-        # __qtreewidgetitem.setText(0, u"1");
-        # self.tree.setHeaderItem(__qtreewidgetitem)
-        # self.tree.setObjectName(u"tree")
-        # self.tree.setColumnCount(2)
-        # self.tree.setHeaderLabels(['Name', 'Type'])
-        # self.tree.SelectionMode(True)
-        # self.tree.doubleClicked.connect(self.print_selection)
-
-        # self.tree = CustomTreeWidget()
-        self.tree = TreeWidgetManager().get_tree_widget()
-        # print(self.tree)
-        self.verticalLayout.addWidget(self.tree)
-
-        self.retranslateUi(Widget)
-
-        QMetaObject.connectSlotsByName(Widget)
-
-        self.folders = self.define_folder()
-
-        self.pushButton_2.clicked.connect(self.create_new_project)
-        # self.pushButton_2.clicked.connect(self.tree.update_tree_view)
-
-    def retranslateUi(self, Widget):
-
-        Widget.setWindowTitle(QCoreApplication.translate("Widget", u"Widget", None))
-        self.pushButton_2.setText(QCoreApplication.translate("Widget", u"Create a new project", None))
-        self.pushButton.setText(QCoreApplication.translate("Widget", u"Load a new project", None))
-
-    # def print_selection(self):
-    #     """
-    #     Opens the file from the tree structure when you double click on it
-    #     """
-    #     # TODO Throws error when you double click on an empty folder
-    #     items = self.tree.selectedItems()
-    #     tree_item = items[0]
-    #     if tree_item.childCount() == 0:
-    #         tree_item_selected = tree_item.text(0)
-    #         parent_item = tree_item.parent().text(0)
-    #         print(tree_item_selected, parent_item, self.ffp)
-    #         path = os.path.join(self.ffp, parent_item, tree_item_selected)
-    #         print(path)
-    #         os.system(path)
-    #
-    # def tree_structure_load(self):
-    #     """
-    #     Loads the tree folder structure of the project
-    #     """
-    #     self.tree.clear()
-    #     folders = os.listdir(self.ffp)
-    #
-    #     dirs = {}
-    #
-    #     for folder in folders:
-    #         dirs[folder] = os.listdir(os.path.join(self.ffp, folder))
-    #
-    #     # @TODO add a check if there are other files in the tree structure window
-    #     # Check if it is a directory
-    #     # for folder in folders:
-    #     # folder_path = os.path.join(self.ffp, folder)
-    #     # if os.path.isdir(folder_path):
-    #     #     dirs[folder] = os.listdir(folder_path)
-    #     items = []
-    #
-    #     for key, values in dirs.items():
-    #         item = QTreeWidgetItem([key])
-    #         for file in values:
-    #             ext = file.split(".")[-1].upper()
-    #             child = QTreeWidgetItem([file, ext])
-    #             item.addChild(child)
-    #         items.append(item)
-    #     self.tree.insertTopLevelItems(0, items)
-
-
-    @staticmethod
-    def define_folder():
-        return [
-            '/calc',
-            '/converted',
-            '/figures',
-            '/proj_requirements',
-            '/raw',
-            '/reports',
-            '/summary']
+        self.folders = define_folder()  # Should be outside the class
+        self.treeView.setVisible(False)
+        self.load_proj_btn.clicked.connect(self.load_existing_project)
+        self.create_proj_btn.clicked.connect(self.create_new_project)
 
     def create_new_project(self):
         # @TODO Load the treestrucutre in the mainwindow, so it can be used in the other classes
@@ -256,6 +58,7 @@ class HomeQT(QWidget):
         if self.ffp:
             for folder in self.folders:
                 os.makedirs(self.ffp + folder)
+
             print(f"Project {self.ffp.split('//')[-1]} created successfully")
 
             # create the paths for the folders
@@ -263,9 +66,10 @@ class HomeQT(QWidget):
             # Assign all paths to the main attribute
             self.main.ffp = ProjectPaths(**paths)
 
-            self.tree.path = self.ffp
+            self.treeView.tree_widget.path = self.ffp
             # Load the tree structure
-            self.tree.tree_structure_load()
+            self.treeView.setVisible(True)
+            self.treeView.tree_widget.tree_structure_load()
         return
 
     def load_dfs(self):
@@ -286,27 +90,152 @@ class HomeQT(QWidget):
         if self.ffp:
             paths = create_folder_paths(self.ffp, self.folders)
             self.main.ffp = ProjectPaths(**paths)
+            self.load_case_manager()
 
-            self.tree.path = self.ffp
-            self.tree.tree_structure_load()
-            print('MY tree is now gone: ', self.tree)
+            #
+            # self.treeView.tree_widget.path = self.ffp
+            # self.treeView.tree_widget.tree_structure_load()
+            # self.main.convert.update_list_view()
+            #
+            # print(f"Successfully loaded {self.ffp.split('/')[-1]}  project")
+            # self.treeView.setVisible(True)
+            # # if len(os.listdir(self.main.ffp.summary)) > 1:
+            # self.load_dfs()
+            #
+            # self.main.loadcsv.upload_folder()
+            # self.main.loadcsv.load_cpts()
+            # self.main.proj_req.load_proj_requirements()
 
-            # We need to initialize the list_view in the convert tab
-            # @TODO Maybe a dialog box saying that pending items have been found.Would you like to convert them?
-            self.main.convert.update_list_view()
-
-            # self.tree_structure_load()
-            print(f"Successfully loaded {self.ffp.split('/')[-1]}  project")
-
-            #Need to change this condition
-            #@TODO Finalize the state of the software and what loads.
-            #I think it would be a better condition if we check to see what to upload. If there are files in the header but not in the results we can add those...
-
-            if len(os.listdir(self.main.ffp.summary)) >1:
-                self.main.state = 1
-                self.load_dfs()
-                self.main.loadcsv.upload_folder()
-                self.main.loadcsv.load_cpts()
-                self.main.proj_req.load_proj_requirements()
         return
+
+    def load_header(self):
+        #Load header
+        self.main.hdf = pd.read_excel(self.main.ffp.summary + 'Header.xlsx')
+
+    def load_results(self):
+        #Load results
+        self.main.df = pd.read_excel(self.main.ffp.summary + 'Results.xlsx')
+
+    def load_tree(self):
+        self.treeView.tree_widget.path = self.ffp
+        self.treeView.tree_widget.tree_structure_load()
+        self.treeView.setVisible(True)
+
+    def load_case_manager(self):
+        # 1 summary is empty
+        # 1.1 Check in the raw files.
+        #   1.1.1 -> check if pending raw files
+        #       1.1.1.1 -> No pending raw files
+        #       1.1.1.2 -> Pending raw files
+
+        # 2 summary is full
+        #   2.1 differences in sizes? (via ID) check
+        #       yes
+        #       2.1.1 -> Message Box (You have remaining files to convert. Would you like to process them now?)
+        #       2.1.2 -> Proess them
+        #        No
+        #          2.1.3 -> Message Box (Success)
+        # 3 summary only contains header
+        #   3.1 -> You have remaining files to calculate. Would you like to add more or convert them?
+
+        #   4 summary only contains results
+
+        case = self.check_summary()
+        cases = {
+            1: self.load_case_1,
+            2: self.load_case_2,
+            3: self.load_case_3,
+            # 4: self.load_case_4,
+        }
+
+        return cases[case]()
+
+
+    def check_summary(self):
+        summary_files = os.listdir(self.main.ffp.summary)
+
+        if not summary_files:
+            return 1
+        if 'Results.xlsx' in summary_files and 'Header.xlsx' in summary_files:
+            return 2
+        elif 'Header.xlsx' in summary_files and not 'Results.xlsx' in summary_files:
+            return 3
+        else:
+            return 4
+
+    def load_case_1(self):
+        """
+        See load case manager docstrings.
+        """
+        self.load_tree()
+        self.main.proj_req.load_proj_requirements()
+
+        raw_files = os.listdir(self.main.ffp.raw)
+        converted_files = os.listdir(self.main.ffp.converted)
+
+        if converted_files:
+            # self.main.loadcsv.upload_folder_new_proj()
+            GreenMessageBox(f'Project {os.path.basename(self.ffp)} loaded succesfully. \n'
+                            f'Converted files are pending to be processed.')
+        else:
+            if raw_files:
+                self.main.convert.update_list_view()
+                GreenMessageBox(f'Project {os.path.basename(self.ffp)} loaded succesfully. \n'
+                                f'Raw files are pending to be converted.')
+            else:
+                GreenMessageBox(f'Project {os.path.basename(self.ffp)} loaded succesfully. \n'
+                                f'No pending files.')
+
+        # print(f"Successfully loaded {self.ffp.split('/')[-1]}  project")
+
+
+    def load_case_2(self):
+        """
+        See load case manager docstrings.
+        """
+
+        self.load_header()
+        self.load_results()
+
+        header_cpts = set(self.main.hdf['CPT-ID'].unique())
+        results_cpts = set(self.main.df['CPT-ID'].unique())
+
+        diff1 = header_cpts - results_cpts
+        #get the
+        directory_files = set([fname.split('.')[0] for fname in os.listdir(self.main.ffp.converted)])
+        diff2 = directory_files - results_cpts
+        difference = diff1.union(diff2)
+
+        # difference = header_cpts - results_cpts
+        print(difference)
+        if len(difference) == 0:
+            GreenMessageBox(f'Project {os.path.basename(self.ffp)} loaded succesfully. \n'
+                            f'No pending files.')
+        else:
+            GreenMessageBox(f'Project {os.path.basename(self.ffp)} loaded succesfully. \n'
+                            f'There are {len(difference)} CPTs not yet processed.')
+            #we have some cpts not in the results
+            remaining = [self.main.ffp.converted + cpt + '.csv' for cpt in difference]
+            # self.main.loadcsv.process_files(remaining)
+            #Put a condition for the proess_files to not create a new header.xlsx
+
+        self.load_tree()
+        self.main.proj_req.load_proj_requirements()
+        return
+
+    def load_case_3(self):
+
+        self.load_header()
+        GreenMessageBox(f'Project {os.path.basename(self.ffp)} loaded succesfully. \n'
+                        f'There are  {len(os.listdir(self.main.ffp.converted))} pending for processing.')
+
+        self.main.loadcsv.upload_folder_new_proj()
+        self.load_tree()
+        self.main.proj_req.load_proj_requirements()
+
+
+
+
+
+
 

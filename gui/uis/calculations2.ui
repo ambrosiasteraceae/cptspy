@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1147</width>
-    <height>1022</height>
+    <width>1600</width>
+    <height>1165</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>130</x>
      <y>100</y>
-     <width>1051</width>
-     <height>871</height>
+     <width>1401</width>
+     <height>941</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -49,26 +49,7 @@
       <property name="title">
        <string/>
       </property>
-      <widget class="QLabel" name="label_6">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>430</y>
-         <width>211</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="text">
-        <string>Select to include in calculations</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-      <widget class="QCommandLinkButton" name="commandLinkButton">
+      <widget class="QCommandLinkButton" name="run_calc_cmd">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -78,39 +59,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Run Current</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="checkBox_2">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>460</y>
-         <width>172</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string>Liquefaction Triggering</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="checkBox_3">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>520</y>
-         <width>172</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string>Bearing Capacity</string>
+        <string>                   Run </string>
        </property>
       </widget>
       <widget class="QProgressBar" name="progressBar">
@@ -123,10 +72,10 @@
         </rect>
        </property>
        <property name="value">
-        <number>24</number>
+        <number>0</number>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="extra_btn">
        <property name="geometry">
         <rect>
          <x>40</x>
@@ -157,49 +106,7 @@
         <string>Extra Button</string>
        </property>
       </widget>
-      <widget class="QCheckBox" name="checkBox">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>490</y>
-         <width>211</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string>Settlement Analysis</string>
-       </property>
-      </widget>
-      <widget class="QCommandLinkButton" name="commandLinkButton_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>710</y>
-         <width>211</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Generate Reports</string>
-       </property>
-      </widget>
-      <widget class="QProgressBar" name="progressBar_2">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>770</y>
-         <width>211</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="value">
-        <number>24</number>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="export_excel_btn">
        <property name="geometry">
         <rect>
          <x>40</x>
@@ -227,20 +134,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Export Current to Excel</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="checkBox_4">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>670</y>
-         <width>211</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Save figures </string>
+        <string>Export Current </string>
        </property>
       </widget>
       <widget class="QLabel" name="title_calc">
@@ -263,78 +157,11 @@
         <string>Calculations</string>
        </property>
       </widget>
-      <widget class="QLabel" name="title_reporting">
-       <property name="geometry">
-        <rect>
-         <x>70</x>
-         <y>380</y>
-         <width>151</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>13</pointsize>
-         <italic>true</italic>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Reporting </string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButton_4">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>610</y>
-         <width>180</width>
-         <height>45</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>180</width>
-         <height>45</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>1444</width>
-         <height>1444</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Generate Random Sample</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="checkBox_5">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>550</y>
-         <width>151</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string> Pile Bearing Capacity</string>
-       </property>
-      </widget>
       <widget class="Line" name="line">
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>350</y>
+         <y>420</y>
          <width>251</width>
          <height>20</height>
         </rect>
@@ -362,79 +189,265 @@
      </spacer>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupBox_2">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="leftMargin">
+       <number>25</number>
+      </property>
+      <property name="rightMargin">
+       <number>25</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+          <italic>true</italic>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Analysis Summary</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="PDWidget" name="tableWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>700</width>
+          <height>700</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>150</height>
+         </size>
+        </property>
+        <property name="title">
+         <string/>
+        </property>
+        <widget class="QLabel" name="cpts_fail_label">
+         <property name="geometry">
+          <rect>
+           <x>350</x>
+           <y>20</y>
+           <width>151</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Failed</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>80</y>
+           <width>151</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>111</width>
+           <height>41</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>1444</width>
+           <height>1444</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Extra Button 2</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="cpts_pass_label">
+         <property name="geometry">
+          <rect>
+           <x>200</x>
+           <y>20</y>
+           <width>141</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Passed</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="ncpts_label">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>20</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>CPTs</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_6">
+         <property name="geometry">
+          <rect>
+           <x>580</x>
+           <y>70</y>
+           <width>111</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Next</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="cpts_percentage_label">
+         <property name="geometry">
+          <rect>
+           <x>550</x>
+           <y>20</y>
+           <width>197</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Percentage</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_5">
+         <property name="geometry">
+          <rect>
+           <x>450</x>
+           <y>70</y>
+           <width>111</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Previous</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_3">
       <property name="title">
        <string/>
       </property>
-      <widget class="QLabel" name="label_4">
-       <property name="geometry">
-        <rect>
-         <x>380</x>
-         <y>720</y>
-         <width>151</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Failed</string>
-       </property>
-      </widget>
-      <widget class="QTableWidget" name="tableWidget">
+      <widget class="QProgressBar" name="progressBar_2">
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>60</y>
-         <width>691</width>
-         <height>651</height>
+         <y>540</y>
+         <width>211</width>
+         <height>24</height>
         </rect>
        </property>
+       <property name="value">
+        <number>0</number>
+       </property>
       </widget>
-      <widget class="QLabel" name="label_5">
+      <widget class="QCheckBox" name="checkBox_3">
        <property name="geometry">
         <rect>
-         <x>560</x>
-         <y>720</y>
-         <width>197</width>
-         <height>16</height>
+         <x>20</x>
+         <y>200</y>
+         <width>172</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Bearing Capacity</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBox_5">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>230</y>
+         <width>151</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string> Pile Bearing Capacity</string>
+       </property>
+      </widget>
+      <widget class="QCommandLinkButton" name="generate_report_cmd">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>470</y>
+         <width>211</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="text">
-        <string>Percentage</string>
+        <string>             Generate Reports</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_3">
+      <widget class="QPushButton" name="random_sample_btn">
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>720</y>
-         <width>71</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CPTs</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_2">
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>720</y>
-         <width>141</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Passed</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButton_3">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>760</y>
-         <width>151</width>
-         <height>41</height>
+         <y>290</y>
+         <width>180</width>
+         <height>45</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -445,8 +458,8 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>111</width>
-         <height>41</height>
+         <width>180</width>
+         <height>45</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -456,46 +469,104 @@
         </size>
        </property>
        <property name="text">
-        <string>Extra Button 2</string>
+        <string>Random Sample</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_6">
        <property name="geometry">
         <rect>
-         <x>10</x>
+         <x>20</x>
+         <y>110</y>
+         <width>211</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Select to include in calculations</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="title_reporting">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
          <y>30</y>
-         <width>121</width>
-         <height>16</height>
+         <width>151</width>
+         <height>31</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+         <italic>true</italic>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
-        <string>Analysis Summary</string>
+        <string>Reporting </string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_5">
+      <widget class="QCheckBox" name="checkBox_2">
        <property name="geometry">
         <rect>
-         <x>460</x>
-         <y>770</y>
-         <width>111</width>
-         <height>41</height>
+         <x>20</x>
+         <y>140</y>
+         <width>172</width>
+         <height>20</height>
         </rect>
        </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
        <property name="text">
-        <string>Previous</string>
+        <string>Liquefaction Triggering</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_6">
+      <widget class="QCheckBox" name="checkBox_4">
        <property name="geometry">
         <rect>
-         <x>580</x>
-         <y>770</y>
-         <width>111</width>
-         <height>41</height>
+         <x>20</x>
+         <y>420</y>
+         <width>211</width>
+         <height>20</height>
         </rect>
        </property>
        <property name="text">
-        <string>Next</string>
+        <string>Save figures </string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBox">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>170</y>
+         <width>211</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Settlement Analysis</string>
+       </property>
+      </widget>
+      <widget class="Line" name="line_2">
+       <property name="geometry">
+        <rect>
+         <x>7</x>
+         <y>630</y>
+         <width>291</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </widget>
@@ -504,6 +575,13 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="9"/>
+ <customwidgets>
+  <customwidget>
+   <class>PDWidget</class>
+   <extends>QTableWidget</extends>
+   <header location="global">overview</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
  <designerdata>
