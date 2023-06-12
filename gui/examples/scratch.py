@@ -1,46 +1,52 @@
-import pandas as pd
-import glob
-from calc.liquefaction import run_rw1997
-from calc.summary import CPTSummary
-from load.loading import load_dataframe, load_mpa_cpt_file
-from miscellaneous.timed import timed
-from tqdm import tqdm
-
-a = '123'
-print(int(a))
-
-ffps = glob.glob('D:/04_R&D/cptspy/output/' + '*.csv')
-df = load_dataframe(ffps)
-
-summary_df = df[['CPT-ID', 'groundlvl','Easting', 'Northing']]
-
-@timed
-def generate_df():
-    data = []
-    for j in range(len(df)):
-        cpt = df['Object'][j]
-        rw = run_rw1997(cpt, pga=0.12, m_w=6, gwl=2)
-        cpt_summary = CPTSummary(rw).__dict__
-        data.append(list(cpt_summary.values()))
-    newdf = pd.DataFrame(data, columns=cpt_summary.keys())
-    return newdf
+import sys
+from PyQt6.QtWidgets import QApplication, QWidget,  QFormLayout, QGridLayout, QTabWidget, QLineEdit, QDateEdit, QPushButton
+from PyQt6.QtCore import Qt
 
 
+class MainWindow(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-summary = generate_df()
-print(summary.head())
+        self.setWindowTitle('PyQt QTabWidget')
 
+        main_layout = QGridLayout(self)
+        self.setLayout(main_layout)
 
-concatdf = pd.concat([summary_df, summary], axis=1)
+        # create a tab widget
+        tab = QTabWidget(self)
 
+        # personal page
+        personal_page = QWidget(self)
+        layout = QFormLayout()
+        personal_page.setLayout(layout)
+        layout.addRow('First Name:', QLineEdit(self))
+        layout.addRow('Last Name:', QLineEdit(self))
+        layout.addRow('DOB:', QDateEdit(self))
 
+        # contact pane
+        contact_page = QWidget(self)
+        layout = QFormLayout()
+        contact_page.setLayout(layout)
+        layout.addRow('Phone Number:', QLineEdit(self))
+        layout.addRow('Email Address:', QLineEdit(self))
 
+        # add pane to the tab widget
+        tab.addTab(personal_page, 'Personal Info')
+        tab.addTab(contact_page, 'Contact Info')
 
-# @timed
-# def run():
-#     for j in range(10):
-#         for i in tqdm(range(len(df))):
-#             cpt = df['Object'][i]
-#             rw=run_rw1997(cpt, pga = 0.12, m_w = 6, gwl = 2)
-#             CPTSummary(rw)
+        main_layout.addWidget(tab, 0, 0, 2, 1)
+        main_layout.addWidget(QPushButton('Save'), 2, 0,
+                              alignment=Qt.AlignmentFlag.AlignLeft)
+        main_layout.addWidget(QPushButton('Cancel'), 2, 0,
+                              alignment=Qt.AlignmentFlag.AlignRight)
 
+        self.show()
+        print(self.findChildren(QTabWidget))
+        print(tab.count())
+
+    def get_tab_type(self):
+        print(type(self))
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    sys.exit(app.exec())

@@ -22,6 +22,9 @@ class CalcWidget(QDialog):
         self.export_excel_btn.clicked.connect(self.export_to_excel)
         self.run_calc_cmd.clicked.connect(self.perform_calc)
 
+        self.previous_btn.clicked.connect(self.main.tab_widget.previous)
+        self.next_btn.clicked.connect(self.main.tab_widget.next)
+
 
     def transferdf(self):
         # print(self.main.df.head())

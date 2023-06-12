@@ -10,7 +10,7 @@ from runcalc import CalcWidget
 from home import HomeQT
 from convert import ConvertQT
 from overview import OverviewQT
-
+from extras import TabWidgetManager
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -20,8 +20,12 @@ class MyWindow(QMainWindow):
         self.setGeometry(100, 100, 600, 400)
         self.resize(1280, 1024)
 
-        self.tab_widget = QTabWidget()
+        # self.tab_widget = QTabWidget()
 
+        self.tab_widget = TabWidgetManager()
+
+
+        # self.tab_manager = TabManager(self.tab_widget)
 
 
         self.home = HomeQT(self)
@@ -59,6 +63,15 @@ class MyWindow(QMainWindow):
         self.tab_widget.setTabPosition(QTabWidget.TabPosition.West)
         self.setCentralWidget(self.tab_widget)
 
+        # print(self.tab_widget.currentChanged.connect(self.tab_event))
+        # # self.tab_widget.setCurrentIndex(7)
+        # print(self.tab_widget.count())
+        # print(self.tab_widget.currentIndex())
+
+
+
+    # def tab_event(self):
+    #     print(self.tab_widget.currentIndex())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

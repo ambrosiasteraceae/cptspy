@@ -30,6 +30,9 @@ class OverviewQT(QWidget):
         self.radioButton_3.clicked.connect(self.view_main_header)
         self.radioButton_4.clicked.connect(self.view_main_results)
 
+        self.previous_btn.clicked.connect(self.main.tab_widget.previous)
+        self.next_btn.clicked.connect(self.main.tab_widget.next)
+
     def view_main_header(self):
         if not self.main.hdf.empty:
             self.table.loadDF('123', self.main.hdf)

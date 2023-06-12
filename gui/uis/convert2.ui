@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1235</width>
-    <height>1021</height>
+    <height>1106</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,8 +27,8 @@
     <rect>
      <x>60</x>
      <y>40</y>
-     <width>1011</width>
-     <height>921</height>
+     <width>1071</width>
+     <height>1031</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,1">
@@ -178,46 +178,11 @@
           <string>Loaded FIles </string>
          </property>
         </widget>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox_4">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>1990</width>
-          <height>100</height>
-         </size>
-        </property>
-        <property name="title">
-         <string/>
-        </property>
         <widget class="QProgressBar" name="progressBar">
          <property name="geometry">
           <rect>
-           <x>180</x>
-           <y>60</y>
+           <x>160</x>
+           <y>720</y>
            <width>211</width>
            <height>24</height>
           </rect>
@@ -229,8 +194,8 @@
         <widget class="QCommandLinkButton" name="convert">
          <property name="geometry">
           <rect>
-           <x>190</x>
-           <y>10</y>
+           <x>170</x>
+           <y>670</y>
            <width>181</width>
            <height>41</height>
           </rect>
@@ -251,6 +216,25 @@
           <bool>false</bool>
          </property>
         </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>1990</width>
+          <height>100</height>
+         </size>
+        </property>
+        <property name="title">
+         <string/>
+        </property>
        </widget>
       </item>
      </layout>
@@ -469,6 +453,38 @@
           <string>Refresh</string>
          </property>
         </widget>
+        <widget class="QPushButton" name="next_btn">
+         <property name="geometry">
+          <rect>
+           <x>310</x>
+           <y>400</y>
+           <width>101</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Next</string>
+         </property>
+         <property name="shortcut">
+          <string>D</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="previous_btn">
+         <property name="geometry">
+          <rect>
+           <x>190</x>
+           <y>400</y>
+           <width>101</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Previous</string>
+         </property>
+         <property name="shortcut">
+          <string>A</string>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -480,7 +496,7 @@
   <customwidget>
    <class>TreeView</class>
    <extends>QTreeView</extends>
-   <header location="global">convert</header>
+   <header location="global">newinterfaces</header>
   </customwidget>
  </customwidgets>
  <resources/>

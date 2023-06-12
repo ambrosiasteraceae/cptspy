@@ -30,6 +30,9 @@ class ConvertQT(QWidget):
         self.load_folder_btn.clicked.connect(self.upload_folder)
         self.uploaded_files = set()
 
+        self.previous_btn.clicked.connect(self.main.tab_widget.previous)
+        self.next_btn.clicked.connect(self.main.tab_widget.next)
+
 
     def get_all_pass_and_fail_files(self):
         dirs = ['pass/', 'fail/']

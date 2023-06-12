@@ -6,6 +6,8 @@ from miscellaneous.timed import timed
 from PyQt6.uic import loadUi
 import pandas as pd
 from extras import GreenMessageBox, RedMessageBox
+
+
 class LoadQT(QWidget):
     def __init__(self, mainwindow_ref):
         super().__init__()
@@ -20,7 +22,8 @@ class LoadQT(QWidget):
         self.upload_folder_btn.clicked.connect(self.upload_folder_load_proj)
         self.upload_everything_btn.clicked.connect(self.upload_folder_new_proj)
 
-
+        self.previous_btn.clicked.connect(self.main.tab_widget.previous)
+        self.next_btn.clicked.connect(self.main.tab_widget.next)
 
     def upload_folder_load_proj(self):
         """

@@ -252,20 +252,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>840</x>
-     <y>690</y>
-     <width>121</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>PushButton</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="next_btn">
    <property name="geometry">
     <rect>
      <x>1000</x>
@@ -275,7 +262,10 @@
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>Next</string>
+   </property>
+   <property name="shortcut">
+    <string>D</string>
    </property>
   </widget>
  </widget>

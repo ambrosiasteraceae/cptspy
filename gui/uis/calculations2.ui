@@ -319,7 +319,7 @@
           <string>CPTs</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_6">
+        <widget class="QPushButton" name="next_btn">
          <property name="geometry">
           <rect>
            <x>580</x>
@@ -330,6 +330,9 @@
          </property>
          <property name="text">
           <string>Next</string>
+         </property>
+         <property name="shortcut">
+          <string>D</string>
          </property>
         </widget>
         <widget class="QLabel" name="cpts_percentage_label">
@@ -345,7 +348,7 @@
           <string>Percentage</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_5">
+        <widget class="QPushButton" name="previous_btn">
          <property name="geometry">
           <rect>
            <x>450</x>
@@ -356,6 +359,9 @@
          </property>
          <property name="text">
           <string>Previous</string>
+         </property>
+         <property name="shortcut">
+          <string>A</string>
          </property>
         </widget>
        </widget>

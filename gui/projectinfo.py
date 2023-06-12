@@ -59,6 +59,9 @@ class ProjReqWidget(QDialog):
         self.load_settings_btn.clicked.connect(self.load_proj_requirements)
         self.refresh_json_btn.clicked.connect(self.refresh_action)
 
+        self.previous_btn.clicked.connect(self.main.tab_widget.previous)
+        self.next_btn.clicked.connect(self.main.tab_widget.next)
+
         onlyFloat = QDoubleValidator()
 
 

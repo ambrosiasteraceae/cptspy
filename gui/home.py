@@ -3,7 +3,7 @@ import pandas as pd
 from PyQt6.QtWidgets import *
 from PyQt6.uic import loadUi
 
-from extras import TreeView, GreenMessageBox
+from extras import TreeView, GreenMessageBox, RedMessageBox
 
 
 class ProjectPaths:
@@ -51,6 +51,9 @@ class HomeQT(QWidget):
         self.load_proj_btn.clicked.connect(self.load_existing_project)
         self.create_proj_btn.clicked.connect(self.create_new_project)
 
+        # self.previous_btn.clicked.connect(self.main.tab_manager.previous)
+        self.next_btn.clicked.connect(self.main.tab_widget.next)
+
     def create_new_project(self):
         # @TODO Load the treestrucutre in the mainwindow, so it can be used in the other classes
         self.ffp = QFileDialog.getExistingDirectory(self, directory='D:/05_Example')
@@ -70,6 +73,7 @@ class HomeQT(QWidget):
             # Load the tree structure
             self.treeView.setVisible(True)
             self.treeView.tree_widget.tree_structure_load()
+            GreenMessageBox(f" New project '{os.path.basename(self.ffp)}' was successfully created.")
         return
 
     def load_dfs(self):
@@ -139,8 +143,13 @@ class HomeQT(QWidget):
         #   3.1 -> You have remaining files to calculate. Would you like to add more or convert them?
 
         #   4 summary only contains results
+        try:
 
-        case = self.check_summary()
+            case = self.check_summary()
+        except FileNotFoundError:
+            RedMessageBox('Project wasnt initialized. There is no folder structure in the selected folder \n'
+                          'Create a new project!')
+            return
         cases = {
             1: self.load_case_1,
             2: self.load_case_2,

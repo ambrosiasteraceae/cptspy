@@ -1083,6 +1083,50 @@
             <string>Settings</string>
            </property>
           </widget>
+          <widget class="QPushButton" name="previous_btn">
+           <property name="geometry">
+            <rect>
+             <x>220</x>
+             <y>890</y>
+             <width>125</width>
+             <height>40</height>
+            </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Previous</string>
+           </property>
+           <property name="shortcut">
+            <string>A</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="next_btn">
+           <property name="geometry">
+            <rect>
+             <x>350</x>
+             <y>890</y>
+             <width>125</width>
+             <height>40</height>
+            </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Next </string>
+           </property>
+           <property name="shortcut">
+            <string>D</string>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
