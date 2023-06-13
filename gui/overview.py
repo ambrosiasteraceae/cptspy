@@ -104,6 +104,9 @@ class OverviewQT(QWidget):
 
     def sort_and_arrange(self):
         # Maybe sort and arrange
+        #Throws error if you sort or arrange empty dataframe
+        if self.main.df.empty and self.main.hdf.empty:
+            return
         self.main.df.dropna(inplace=True, how='all')
         self.main.hdf.dropna(inplace=True, how='all')
         self.main.hdf.drop_duplicates(inplace=True, subset=['CPT-ID'])

@@ -273,7 +273,7 @@
   <customwidget>
    <class>TreeView</class>
    <extends>QTreeView</extends>
-   <header location="global">newinterfaces</header>
+   <header location="global">home</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import QDoubleValidator
 from PyQt6.QtGui import *
 from PyQt6.uic import loadUi
-from extras import GreenMessageBox
+from extras import GreenMessageBox, RedMessageBox
 
 def build_tree_model(data):
     def add_items(parent_item, data):
@@ -69,7 +69,11 @@ class ProjReqWidget(QDialog):
 
 
     def refresh_action(self):
-        self.data = load_json_file(self.main.ffp.proj_requirements + 'requirements.json')
+        try:
+            self.data = load_json_file(self.main.ffp.proj_requirements + 'requirements.json')
+        except FileNotFoundError:
+            RedMessageBox('No requirements.json file found! Maybe you forgot to save the file?')
+            return
         model = build_tree_model(self.data)
         self.proj_tree.setModel(model)
         self.proj_tree.expandAll()
