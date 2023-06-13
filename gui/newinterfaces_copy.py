@@ -6,8 +6,8 @@ import pandas as pd
 import pyqtgraph as pg
 import numpy as np
 from shapely import Polygon
-path = 'C:/Users/dragos/Documents/GitHub/cptspy/gui/hudayriyat/summary/Results.xlsx'
-from PyQt6.QtCore import QRectF
+path = 'D:/05_Example/Hudayriyat/summary/Results.xlsx'
+
 
 class HomeQT2(QDialog):
     def __init__(self, main_window_ref, parent=None):
@@ -18,7 +18,7 @@ class HomeQT2(QDialog):
 
         # loadUi('uis/load2.ui', self)
         # loadUi('uis/calculations2.ui', self)
-        # loadUi('uis/overv iew2.ui', self)
+        # loadUi('uis/overview2.ui', self)
         loadUi('uis/graph2.ui', self)
 
         self.main = main_window_ref
@@ -60,33 +60,16 @@ class HomeQT2(QDialog):
         width = 20
         data_points =  list(zip(easting, northing))
         rectangles = [Polygon([(x, y), (x + width, y), (x + width, y + width), (x, y + width)]) for x, y in data_points]
-        print(rectangles[0].exterior.coords.xy)
 
-        #example polyong
-        # [(232975.34, 2702282.48),
-        #  (233000.34, 2702282.48),
-        #  (233000.34, 2702307.48),
-        #  (232975.34, 2702307.48),
-        #  (232975.34, 2702282.48)]
+        poly = rectangles[0]
 
-        grid_polygons = []
+        coords_x = np.array([x[0] for x in poly.exterior.coords])
+        coords_y =  np.array([x[1] for x in poly.exterior.coords])
 
-        def gen_polygon(x, y, l):
-            l = l / 2
-            return Polygon([(x - l, y - l), (x - l, y + l), (x + l, y + l), (x + l, y - l)])
+        z = np.random.normal(size=(len(coords_x), len(coords_y)))
 
-        def get_list_coors(poly):
-            return list(zip(poly.exterior.coords.xy[1], poly.exterior.coords.xy[0]))
-
-        for point in data_points:
-            poly = gen_polygon(*point, 25)
-            grid_polygons.append(get_list_coors(poly))
-
-        for grid_polygon in grid_polygons:  # Replace grid_polygons with your grid polygons
-            item = pg.PlotDataItem()
-            item.setData(pos=grid_polygon, pen=pg.mkPen('k', width=2), brush=pg.mkBrush(12, 50, 120, 0))
-            plot_item.addItem(item)
-        plot_item.update()
+        s2 = pg.PColorMeshItem(coords_x, coords_y,z)
+        plot_item.addItem(s2)
 
 
     def clicked(self, plot, points):
