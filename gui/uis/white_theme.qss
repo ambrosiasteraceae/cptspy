@@ -1,5 +1,9 @@
 
+QTableView {
+    alternate-background-color: yellow;
+    background-color: white;
 
+}
 
 QHBoxLayout {
 background-color: red;
@@ -67,7 +71,7 @@ QPushButton:hover{
 
 
 QPushButton:disabled{
-background-color:#0f1925;
+background-color:#fcdbe1;
 }
 
 QTabWidget::item:selected{

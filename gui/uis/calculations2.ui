@@ -157,19 +157,6 @@
         <string>Calculations</string>
        </property>
       </widget>
-      <widget class="Line" name="line">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>420</y>
-         <width>251</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
      </widget>
     </item>
     <item>
@@ -560,19 +547,6 @@
        </property>
        <property name="text">
         <string>Settlement Analysis</string>
-       </property>
-      </widget>
-      <widget class="Line" name="line_2">
-       <property name="geometry">
-        <rect>
-         <x>7</x>
-         <y>630</y>
-         <width>291</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </widget>

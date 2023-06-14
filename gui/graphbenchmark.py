@@ -9,20 +9,11 @@ import numpy as np
 from shapely import Polygon
 from PyQt6.QtCore import QPointF
 from PyQt6.QtGui import QPolygonF
+from time import perf_counter
 
 
-# TODO: Radio button for waht you want to select CPT | Grid
-
-
-def generate_coords(path):
-    df = pd.read_excel(path)
-    df['Northing'] = df['Northing'].astype(float)
-    df['Easting'] = df['Easting'].astype(float)
-    northing = df['Northing'].values
-    easting = df['Easting'].values
-    ids = df['CPT-ID'].values
-    return easting, northing, ids
-
+import cProfile
+import pstats
 
 def gen_polygon(x, y, l):
     # do this the numpy way
@@ -58,6 +49,8 @@ class CustomPolygonItem(QGraphicsPolygonItem):
         super().mousePressEvent(event)
 
 
+
+
 class GraphQT(QDialog):
     def __init__(self, main_window_ref, parent=None):
         super(GraphQT, self).__init__(parent)
@@ -74,8 +67,13 @@ class GraphQT(QDialog):
 
         self.container = []
 
-        path = 'D:/05_Example/Hudayriyat/summary/Results.xlsx'
-        easting, northing, ids = generate_coords(path)
+        # path = 'D:/05_Example/Hudayriyat/summary/Results.xlsx'
+        # easting, northing, ids = generate_coords(path)
+        start = perf_counter()
+        print('Start Time: ', start)
+        easting, northing = np.random.random_sample((2,1000))*10000
+        ids = np.arange(easting.size)
+
 
         colors = ['#ffe3b3', '#53d2dc', '#4f8fc0']
         color_array = np.random.choice(colors, ids.size)
@@ -97,28 +95,33 @@ class GraphQT(QDialog):
 
         self.plot.addItem(cpts)
         self.plot.setAspectLocked(True)
+
         points = list(zip(easting, northing))
 
         qpoints = [QPointF(*point) for point in points]
+        print('QPoints: ', start - perf_counter())
 
         qpoints_xvals = [point.x() for point in qpoints]
         qpoints_yvals = [point.y() for point in qpoints]
 
         spots = [{'pos': [qpoints_xvals[i], qpoints_yvals[i]], 'data': ids[i], 'brush': color_array[i]} for i in
                  range(ids.size)]
+
         cpts.addPoints(spots)
+        print('Spots: ', start - perf_counter())
+        self.grid_polygons = [gen_polygon(*point, 25) for point in points]
+        print('Grid Polygons: ', start - perf_counter())
 
-        grid_polygons = [gen_polygon(*point, 25) for point in points]
-
-        for polygon in grid_polygons:
-            poly = np.array(polygon.exterior.coords.xy).T
-            qpoly = QPolygonF([QPointF(*p) for p in poly])
-            grid = CustomPolygonItem(qpoly, graph_ref=self)
-            grid.setPen(pg.mkPen('black', width=0.5, ))
-            self.plot.addItem(grid)
-
+        self.graph_bottleneck()
+        print('Qpolygonf: ', start - perf_counter())
+        end = perf_counter()
+        print('Final',end - start)
         self.plot.update()
         # self.plot.addItem(QPointF(*points[0]))
+        children = self.plot.scene().items()
+        print(len([child for child in children if isinstance(child, CustomPolygonItem)]))
+
+
 
     def clicked(self, plot, points):
         for p in self.lastClicked:
@@ -142,13 +145,24 @@ class GraphQT(QDialog):
             print(p.data())
         self.self.plot.update()  # Update the plot to reflect the changes
 
+    def graph_bottleneck(self):
+        for polygon in self.grid_polygons:
+            poly = np.array(polygon.exterior.coords.xy).T
+            qpoly = QPolygonF([QPointF(*p) for p in poly])
+            grid = CustomPolygonItem(qpoly, graph_ref=self)
+            grid.setPen(pg.mkPen('black', width=0.5, ))
+            self.plot.addItem(grid)
 
-# app = QApplication(sys.argv)
-# main = GraphQT(123)
-#
-# with open("uis/white_theme.qss", "r") as f:
-#     _style = f.read()
-#     app.setStyleSheet(_style)
-#
-# main.show()
-# sys.exit(app.exec())
+app = QApplication(sys.argv)
+main = GraphQT(123)
+
+with open("uis/white_theme.qss", "r") as f:
+    _style = f.read()
+    app.setStyleSheet(_style)
+
+cProfile.run('main.graph_bottleneck()', 'outputfile')
+p = pstats.Stats('outputfile')
+p.sort_stats('cumulative').print_stats(10)
+
+main.show()
+sys.exit(app.exec())
