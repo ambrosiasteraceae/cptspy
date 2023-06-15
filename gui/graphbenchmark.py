@@ -10,7 +10,7 @@ from shapely import Polygon
 from PyQt6.QtCore import QPointF
 from PyQt6.QtGui import QPolygonF
 from time import perf_counter
-
+from rtree import index
 
 import cProfile
 import pstats
@@ -71,7 +71,7 @@ class GraphQT(QDialog):
         # easting, northing, ids = generate_coords(path)
         start = perf_counter()
         print('Start Time: ', start)
-        easting, northing = np.random.random_sample((2,1000))*10000
+        easting, northing = np.random.random_sample((2,500))*10000
         ids = np.arange(easting.size)
 
 
@@ -146,12 +146,19 @@ class GraphQT(QDialog):
         self.self.plot.update()  # Update the plot to reflect the changes
 
     def graph_bottleneck(self):
+        all_grids = []
         for polygon in self.grid_polygons:
             poly = np.array(polygon.exterior.coords.xy).T
             qpoly = QPolygonF([QPointF(*p) for p in poly])
             grid = CustomPolygonItem(qpoly, graph_ref=self)
             grid.setPen(pg.mkPen('black', width=0.5, ))
             self.plot.addItem(grid)
+        #     all_grids.append(grid)
+        # self_grid_group = QGraphicsItemGroup()
+        # [self_grid_group.addToGroup(grid) for grid in all_grids]
+        # self.plot.addItem(self_grid_group)
+
+
 
 app = QApplication(sys.argv)
 main = GraphQT(123)

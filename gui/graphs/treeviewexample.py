@@ -55,49 +55,49 @@ grid.insert(cpt2)
 
 
 
-# class GridItem():
-#     def __init__(self, obj):
-#         super().__init__()
-#         self.grid = QStandardItem(obj.name)
-#
-#         for k,v in grid.__dict__.items():
-#             if isinstance(v, list):
-#                 self.parent = QStandardItem('Tests')
-#                 self.grid.appendRow(self.parent)
-#                 for test in v:
-#                     self.test = QStandardItem(test.name)
-#                     for test_k, test_v in test.__dict__.items():
-#                         if isinstance(test_v, object):
-#                             self.test.appendRow([QStandardItem(test_k),QStandardItem(str(test_v))])
-#                         else:
-#                             self.test.appendRow([QStandardItem(test_k),QStandardItem(str(test_v))])
-#
-#                     self.parent.appendRow(self.test)
-#             else:
-#                 # print(k,v)
-#                 self.grid.appendRow([QStandardItem(k),QStandardItem(str(v))])
-
-class GridItem():
+class TreeGridItem():
     def __init__(self, obj):
+        super().__init__()
         self.grid = QStandardItem(obj.name)
-        self.add_attributes(obj)
-        self.add_tests(obj)
 
-    def add_attributes(self, obj):
-        attributes = [(k, v) for k, v in obj.__dict__.items() if k != "tests"]
-        self.add_items(self.grid, attributes)
+        for k,v in grid.__dict__.items():
+            if isinstance(v, list):
+                self.parent = QStandardItem('Tests')
+                self.grid.appendRow(self.parent)
+                for test in v:
+                    self.test = QStandardItem(test.name)
+                    for test_k, test_v in test.__dict__.items():
+                        if isinstance(test_v, object):
+                            self.test.appendRow([QStandardItem(test_k),QStandardItem(str(test_v))])
+                        else:
+                            self.test.appendRow([QStandardItem(test_k),QStandardItem(str(test_v))])
 
-    def add_tests(self, obj):
-        tests = obj.tests
-        for test in tests:
-            test_item = QStandardItem(test.name)
-            test_attributes = [(k, v) for k, v in test.__dict__.items()]
-            self.add_items(test_item, test_attributes)
-            self.grid.appendRow(test_item)
+                    self.parent.appendRow(self.test)
+            else:
+                # print(k,v)
+                self.grid.appendRow([QStandardItem(k),QStandardItem(str(v))])
 
-    def add_items(self, parent, items):
-        for key, value in items:
-            parent.appendRow([QStandardItem(str(key)), QStandardItem(str(value))])
+# class TreeGridItem():
+#     def __init__(self, obj):
+#         self.parent = QStandardItem(obj.name)
+#         self.add_attributes(obj)
+#         self.add_tests(obj)
+#
+#     def add_attributes(self, obj):
+#         attributes = [(k, v) for k, v in obj.__dict__.items() if k != "tests"]
+#         self.add_items(self.parent, attributes)
+#
+#     def add_tests(self, obj):
+#         tests = obj.tests
+#         for test in tests:
+#             test_item = QStandardItem(test.name)
+#             test_attributes = [(k, v) for k, v in test.__dict__.items()]
+#             self.add_items(test_item, test_attributes)
+#             self.parent.appendRow(test_item)
+#
+#     def add_items(self, parent, items):
+#         for key, value in items:
+#             parent.appendRow([QStandardItem(str(key)), QStandardItem(str(value))])
 
 
 class AppDemo(QWidget):
@@ -112,11 +112,11 @@ class AppDemo(QWidget):
         self.button.clicked.connect(self.add_grid)
 
         self.treemodel.setHorizontalHeaderLabels(['Name', 'Value'])
-        
-        grid_item = GridItem(grid)
-        self.treemodel.appendRow(grid_item.grid)
         treeView.setModel(self.treemodel)
-        
+
+        grid_item = TreeGridItem(grid)
+        self.treemodel.appendRow(grid_item.grid)
+
         #define a vertical layout with the treeView and button
         layout = QVBoxLayout()
         layout.addWidget(treeView)
@@ -127,7 +127,7 @@ class AppDemo(QWidget):
         
 
     def add_grid(self):
-         self.treemodel.appendRow(GridItem(grid2).grid)
+         self.treemodel.appendRow(TreeGridItem(grid2).grid)
          
         
         

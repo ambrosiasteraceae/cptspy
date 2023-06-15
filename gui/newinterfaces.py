@@ -110,12 +110,15 @@ class GraphQT(QDialog):
 
         grid_polygons = [gen_polygon(*point, 25) for point in points]
 
+        all_grids = []
         for polygon in grid_polygons:
             poly = np.array(polygon.exterior.coords.xy).T
             qpoly = QPolygonF([QPointF(*p) for p in poly])
             grid = CustomPolygonItem(qpoly, graph_ref=self)
             grid.setPen(pg.mkPen('black', width=0.5, ))
-            self.plot.addItem(grid)
+            all_grids.append(grid)
+        grouped_grids
+        [self.plot.addItem(grid) for grid in all_grids]
 
         self.plot.update()
         # self.plot.addItem(QPointF(*points[0]))
@@ -142,7 +145,7 @@ class GraphQT(QDialog):
             print(p.data())
         self.self.plot.update()  # Update the plot to reflect the changes
 
-
+# #
 # app = QApplication(sys.argv)
 # main = GraphQT(123)
 #
