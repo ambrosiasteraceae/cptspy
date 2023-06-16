@@ -187,6 +187,32 @@
           <string>PushButton</string>
          </property>
         </widget>
+        <widget class="QPushButton" name="grid_passing_btn">
+         <property name="geometry">
+          <rect>
+           <x>1040</x>
+           <y>10</y>
+           <width>101</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Shpw Passing</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_4">
+         <property name="geometry">
+          <rect>
+           <x>970</x>
+           <y>20</y>
+           <width>49</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -248,30 +274,134 @@
           </size>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_7">
+        <widget class="QPushButton" name="plot_btn">
          <property name="geometry">
           <rect>
-           <x>50</x>
-           <y>600</y>
+           <x>170</x>
+           <y>630</y>
            <width>111</width>
            <height>41</height>
           </rect>
          </property>
          <property name="text">
-          <string>PushButton</string>
+          <string>Plot</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_8">
+        <widget class="QPushButton" name="color_grids_btn">
          <property name="geometry">
           <rect>
-           <x>50</x>
-           <y>680</y>
+           <x>170</x>
+           <y>690</y>
            <width>111</width>
            <height>41</height>
           </rect>
          </property>
          <property name="text">
-          <string>PushButton</string>
+          <string>Colorgrids</string>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="radioButton_2">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>800</y>
+           <width>171</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string> Enable Grid Selection</string>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="radioButton_3">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>840</y>
+           <width>141</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string> Enable Test Selection</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>540</y>
+           <width>49</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_2">
+         <property name="geometry">
+          <rect>
+           <x>230</x>
+           <y>540</y>
+           <width>49</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_3">
+         <property name="geometry">
+          <rect>
+           <x>120</x>
+           <y>540</y>
+           <width>49</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="refresh_grid_color_btn">
+         <property name="geometry">
+          <rect>
+           <x>170</x>
+           <y>740</y>
+           <width>111</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>RefreshGridColor</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="grid_btn">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>600</y>
+           <width>76</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Grids</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="test_btn">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>640</y>
+           <width>76</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Tests</string>
          </property>
         </widget>
        </widget>

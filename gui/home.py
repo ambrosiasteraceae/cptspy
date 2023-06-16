@@ -206,8 +206,8 @@ class HomeQT(QWidget):
         self.load_header()
         self.load_results()
 
-        header_cpts = set(self.main.hdf['CPT-ID'].unique())
-        results_cpts = set(self.main.df['CPT-ID'].unique())
+        header_cpts = set(self.main.hdf['Name'].unique())
+        results_cpts = set(self.main.df['Name'].unique())
 
         diff1 = header_cpts - results_cpts
         #get the

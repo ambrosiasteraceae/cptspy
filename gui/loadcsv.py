@@ -42,7 +42,7 @@ class LoadQT(QWidget):
 
         #A better way
         if os.path.exists(self.main.ffp.summary + 'Results.xlsx'):
-            self.processed = set(self.main.df['CPT-ID'] + '.csv') #what was processed
+            self.processed = set(self.main.df['Name'] + '.csv') #what was processed
         else:
             self.processed = set()
 
@@ -87,7 +87,7 @@ class LoadQT(QWidget):
         else:
             extra_df = load_dataframe(self.ffps)
             self.main.thdf = pd.concat([self.main.thdf, extra_df], ignore_index=True)
-            self.main.thdf.drop_duplicates(subset = ['CPT-ID'], inplace = True)
+            self.main.thdf.drop_duplicates(subset = ['Name'], inplace = True)
             extra_df = pd.DataFrame()
 
 

@@ -86,11 +86,11 @@ class GraphQT(QDialog):
         self.lastClicked = []
 
         self.plot = self.graph.getPlotItem()
-
         self.hoverPen = pg.mkPen(color='yellow', width=2)
 
-        cpts = pg.ScatterPlotItem(size=12, symbol='x', pen=pg.mkPen(None), brush=pg.mkBrush(155, 55, 255, 120))
 
+
+        cpts = pg.ScatterPlotItem(size=12, symbol='x', pen=pg.mkPen(None), brush=pg.mkBrush(155, 55, 255, 120))
         cpts.sigClicked.connect(self.clicked)
 
         self.plot.addItem(cpts)
@@ -163,7 +163,7 @@ class GraphQT(QDialog):
 app = QApplication(sys.argv)
 main = GraphQT(123)
 
-with open("uis/white_theme.qss", "r") as f:
+with open("../uis/white_theme.qss", "r") as f:
     _style = f.read()
     app.setStyleSheet(_style)
 

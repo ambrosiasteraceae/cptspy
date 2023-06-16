@@ -88,9 +88,9 @@ def load_dataframe(ffps):
     # ffps = glob.glob(out_fp + "*.csv")  #
 
     headers = ['Date:', 'Assumed GWL:', 'groundlvl', 'Pre-Drill:', 'Easting', 'Northing',
-               'aratio', 'Length', 'CPT-ID', 'Object', 'ffp']
+               'aratio', 'Length', 'Name', 'Object', 'ffp']
     limit = 24
-    hh = headers[0:-4]  # Up to but not including the 'CPT-ID' & 'Object'. T
+    hh = headers[0:-4]  # Up to but not including the 'Name' & 'Object'. T
     dfo = pd.DataFrame(columns=[""] * 11)
     dfo.columns = headers
     for i, file in enumerate(ffps):
@@ -116,7 +116,7 @@ def load_dataframe(ffps):
         val_list.extend([cpt.depth.size / 100, name, cpt, file])  # Grow list to the size of headers
         # Append to data frame
         dfo.loc[i, :] = val_list
-    col_order = ['CPT-ID', 'groundlvl', 'Length', 'Easting', 'Northing', 'Pre-Drill:', 'Assumed GWL:', 'aratio',
+    col_order = ['Name', 'groundlvl', 'Length', 'Easting', 'Northing', 'Pre-Drill:', 'Assumed GWL:', 'aratio',
                  'Date:', 'Object', 'ffp']
     # dfo = dfo[dfo_order]
     return dfo[col_order]
@@ -171,7 +171,7 @@ def convert_to_dtype(df):
     df['Assumed GWL:'] = df['Assumed GWL:'].astype(float)
     df['Pre-Drill:'] = df['Pre-Drill:'].astype(float)
     df['aratio'] = df['aratio'].astype(float)
-    df['CPT-ID'] = df['CPT-ID'].astype(str)
+    df['Name'] = df['Name'].astype(str)
 
     return None
 

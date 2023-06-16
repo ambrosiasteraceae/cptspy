@@ -85,7 +85,7 @@ class OverviewQT(QWidget):
         self.main.hdf = pd.concat([self.main.hdf, self.main.thdf], ignore_index=True)
 
         # # Check differences in header
-        # mask_dif = self.main.thdf['CPT-ID'].isin(self.main.hdf['CPT-ID'])
+        # mask_dif = self.main.thdf['Name'].isin(self.main.hdf['Name'])
         # if mask_dif.any():
         #     self.main.hdf = pd.concat((self.main.hdf, self.main.thdf[~mask_dif])).reset_index(drop=True)
 
@@ -109,10 +109,10 @@ class OverviewQT(QWidget):
             return
         self.main.df.dropna(inplace=True, how='all')
         self.main.hdf.dropna(inplace=True, how='all')
-        self.main.hdf.drop_duplicates(inplace=True, subset=['CPT-ID'])
-        self.main.df.drop_duplicates(inplace=True, subset=['CPT-ID'])
-        self.main.hdf.sort_values(by=['CPT-ID'], inplace=True)
-        self.main.df.sort_values(by=['CPT-ID'], inplace=True)
+        self.main.hdf.drop_duplicates(inplace=True, subset=['Name'])
+        self.main.df.drop_duplicates(inplace=True, subset=['Name'])
+        self.main.hdf.sort_values(by=['Name'], inplace=True)
+        self.main.df.sort_values(by=['Name'], inplace=True)
         self.table.updateView(self.main.df)
 
     def save_dataframes(self):

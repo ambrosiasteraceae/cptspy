@@ -1,42 +1,44 @@
 from dataclasses import dataclass
 from PyQt6.QtGui import QStandardItem
+from shapely import Polygon
 
 @dataclass
 class Grid:
-    #name, grid-id, size, x, y, z
+    # name, grid-id, size, x, y, z
     name: str
-    coords: tuple
+    bounds: tuple
+    polygon: Polygon
+    contained_tests: set
     tests: list
 
     def __repr__(self):
         return f'{self.name}'
 
-    def insert(self,obj):
-        if isinstance(obj, Test):
-            self.tests.append(obj)
-
-            if len(self.tests) ==0:
-                pass
-            else:
-                setattr(self, 'test_count', len(self.tests))
-
-            print(obj)
+    def insert(self, test):
+        if test.Name not in self.contained_tests:
+            self.tests.append(test)
+            self.contained_tests.add(test.Name)
             return
-        print('Cannot insert a Non-Test obj')
+        # print(f'Test {test.Name} already in the grid. You cannot have him twice')
+
 
 @dataclass
 class Test:
-    #name,east,north
-    name: str
-    contractor: str
-    easting: str
-    northing: float
-    date: float
-    length: float
-    summary : object
+    Name: str
+    groundlvl: float
+    Easting: str
+    Northing: float
+    max_fos_elev: float
+    max_ic_elev: float
+    min_fos_elev: float
+    min_ic_elev: float
+    cum_fos: float
+    cum_ic: float
+    min_fos: float
 
     def __repr__(self):
-        return f'{self.name}'
+        return self.Name
+
 
 
 class TreeGridItem:
@@ -52,7 +54,7 @@ class TreeGridItem:
     def add_tests(self, obj):
         tests = obj.tests
         for test in tests:
-            test_item = QStandardItem(test.name)
+            test_item = QStandardItem(test.Name)
             test_attributes = [(k, v) for k, v in test.__dict__.items()]
             self.add_items(test_item, test_attributes)
             self.parent.appendRow(test_item)

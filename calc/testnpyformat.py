@@ -21,6 +21,7 @@ np.savez('myarr', **d)
 
 
 file =np.load('myarr.npz', allow_pickle= True)
+
 print([key for key in file.keys()])
 
 
@@ -96,12 +97,34 @@ class CPTloader():
         for key,val in file.items():
             if key in ['depth', 'q_c', 'f_s', 'u_2', 'gwl', 'a_ratio', 'folder_path', 'file_name', 'delimiter', 'elevation']:
                 temp[key] = val
-        if key == 'cpt':
-            pass
+                if key == 'depth':
+                    setattr(self, key, val)
+            if key == 'cpt':
+                continue
             setattr(self,key,val)
         print(temp.keys())
         self.cpt = CPT3(**temp)
 
-obj = CPTloader(file)
-print(obj.cpt.file_name)
+rw_1997 = CPTloader(file)
+# print(obj.cpt.file_name)
+
+# from miscellaneous.figures import *
+# import matplotlib.pyplot as plt
+#
+# fig, sps = plt.subplots(nrows=1, ncols=3, figsize=(16, 10))
+# create_fos_and_index_plot(sps, rw_1997)
+# fig.savefig('liq' + '.png', bbox_inches='tight')
+#
+# fig2, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4))
+# create_compactibilty_plot(ax, rw_1997)
+# fig2.savefig('liq'+ '_compactibility.png', bbox_inches='tight')
+#
+# fig3, axs = plt.subplots(1, 4, figsize=(16, 12), sharey=True)
+# create_cpt_plots(axs, rw_1997.cpt)
+# fig3.savefig('liq' + '_basicplot.png')
+#
+# fig4, axes = plt.subplots(1, 3, figsize=(16, 4))
+# create_massarasch_and_legend_plot(axes, rw_1997)
+# fig4.savefig('legends.png', bbox_inches='tight')
+
 

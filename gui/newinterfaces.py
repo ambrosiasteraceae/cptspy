@@ -20,7 +20,7 @@ def generate_coords(path):
     df['Easting'] = df['Easting'].astype(float)
     northing = df['Northing'].values
     easting = df['Easting'].values
-    ids = df['CPT-ID'].values
+    ids = df['Name'].values
     return easting, northing, ids
 
 

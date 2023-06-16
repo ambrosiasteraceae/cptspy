@@ -83,7 +83,7 @@ class CalcWidget(QDialog):
 
         calc_df = pd.DataFrame(data, columns=list(summary.__dict__.keys()))
 
-        main_df = self.main.thdf[['CPT-ID', 'groundlvl', 'Easting', 'Northing']]
+        main_df = self.main.thdf[['Name', 'groundlvl', 'Easting', 'Northing']]
 
         self.main.tdf = pd.concat([main_df, calc_df], axis=1)
         self.tableWidget.loadDF('aa', self.main.tdf)
