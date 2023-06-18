@@ -207,10 +207,16 @@ def convert_nmdc_to_csv_00(ffp, out_fp=None, verbose=0):
     elif "CPT" in ffp:
         cpt_num = ffp.split("CPT-")[-1]
 
-    else:
+    elif "HUD" in ffp:
         cpt_num = ffp.split("HUD-")[-1]
 
-    cpt_num = cpt_num.split(".xlsx")[0]
+    else:
+        cpt_num = ffp
+
+    if ".xlsx" in cpt_num:
+        cpt_num = cpt_num.split(".xlsx")[0]
+    elif ".xls" in cpt_num:
+        cpt_num = cpt_num.split(".xls")[0]
 
     print(cpt_num)
 

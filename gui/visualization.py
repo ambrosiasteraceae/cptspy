@@ -57,9 +57,8 @@ class GraphQT(QDialog):
             self.plot_proj()
         else:
             self.plot_btn.clicked.connect(self.plot_proj)
-
-        self.plot.setXRange(self.df['Easting'].min(), self.df['Easting'].max())
-        self.plot.setYRange(self.df['Northing'].min(), self.df['Northing'].max())
+            # self.plot.setXRange(self.df['Easting'].min(), self.df['Easting'].max())
+            # self.plot.setYRange(self.df['Northing'].min(), self.df['Northing'].max())
 
         self.children = self.plot.scene().items()  # child for child in children if isinstance(child, CustomGrid
 
@@ -85,9 +84,8 @@ class GraphQT(QDialog):
         #3. bearing capacity
         #4. settlement
 
-        
-        pass
 
+        pass
 
     def grid_passing(self):
         print('Btnclicked')
@@ -259,14 +257,16 @@ class GraphQT(QDialog):
     def ungroup(self):
         # Get all the child items in the group
         items = self.grid_group.childItems()
-
         # Remove each item from the group
         for item in items:
             self.grid_group.removeFromGroup(item)
 
+
+
     def generate_coords(self):
         if self.main == 123:
-            self.df =pd.read_excel('D:/05_Example/Hudayriyat/summary/Results.xlsx')
+            # self.df =pd.read_excel('D:/05_Example/Hudayriyat/summary/Results.xlsx')
+            self.df =pd.read_excel('C:/Users/dragos/Documents/GitHub/cptspy/gui/hudayriyat/summary/Results.xlsx')
         else:
             self.df = pd.read_excel(self.main.ffp.summary + 'Results.xlsx')
         self.df['Northing'] = self.df['Northing'].astype(float)
@@ -280,6 +280,11 @@ class GraphQT(QDialog):
     def insert_grid(self, _grid):
         self.treemodel.appendRow(TreeGridItem(_grid).parent)
 
+
+# from graph.graphqt import GraphQT
+
+
+
 app = QApplication(sys.argv)
 main = GraphQT(123)
 
@@ -289,3 +294,4 @@ with open("uis/white_theme.qss", "r") as f:
 
 main.show()
 sys.exit(app.exec())
+

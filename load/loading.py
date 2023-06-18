@@ -207,7 +207,10 @@ def load_mpa_cpt_file(ffp, scf=1, delimiter=";", a_ratio_override=None):
             if gwl == '-':
                 gwl = None
             else:
-                gwl = float(line.split(delimiter)[1])
+                try:
+                    gwl = float(line.split(delimiter)[1])
+                except ValueError:
+                    gwl = None
         if "aratio" in line:
             try:
                 a_ratio = float(line.split(delimiter)[1])

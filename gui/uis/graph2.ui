@@ -187,19 +187,6 @@
           <string>PushButton</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="grid_passing_btn">
-         <property name="geometry">
-          <rect>
-           <x>1040</x>
-           <y>10</y>
-           <width>101</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Shpw Passing</string>
-         </property>
-        </widget>
         <widget class="QLabel" name="label_4">
          <property name="geometry">
           <rect>
@@ -277,8 +264,8 @@
         <widget class="QPushButton" name="plot_btn">
          <property name="geometry">
           <rect>
-           <x>170</x>
-           <y>630</y>
+           <x>160</x>
+           <y>570</y>
            <width>111</width>
            <height>41</height>
           </rect>
@@ -290,8 +277,8 @@
         <widget class="QPushButton" name="color_grids_btn">
          <property name="geometry">
           <rect>
-           <x>170</x>
-           <y>690</y>
+           <x>150</x>
+           <y>620</y>
            <width>111</width>
            <height>41</height>
           </rect>
@@ -368,8 +355,8 @@
         <widget class="QPushButton" name="refresh_grid_color_btn">
          <property name="geometry">
           <rect>
-           <x>170</x>
-           <y>740</y>
+           <x>160</x>
+           <y>660</y>
            <width>111</width>
            <height>41</height>
           </rect>
@@ -404,6 +391,68 @@
           <string>Tests</string>
          </property>
         </widget>
+        <widget class="QComboBox" name="combo_list_btn">
+         <property name="geometry">
+          <rect>
+           <x>170</x>
+           <y>770</y>
+           <width>111</width>
+           <height>22</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="repaint_tests_btn">
+         <property name="geometry">
+          <rect>
+           <x>170</x>
+           <y>800</y>
+           <width>111</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>repaint</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_5">
+         <property name="geometry">
+          <rect>
+           <x>170</x>
+           <y>740</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Select Options</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="grid_passing_btn">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>880</y>
+           <width>101</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Shpw Passing</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="compare_btn">
+         <property name="geometry">
+          <rect>
+           <x>180</x>
+           <y>900</y>
+           <width>101</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>compare</string>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -415,7 +464,7 @@
   <customwidget>
    <class>PlotWidget</class>
    <extends>QWidget</extends>
-   <header location="global">newinterfaces</header>
+   <header location="global">graphqt</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

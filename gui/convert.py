@@ -55,7 +55,11 @@ class ConvertQT(QWidget):
     def upload_folder(self):
 
         folder_name = QFileDialog.getExistingDirectory(self, 'Open Folder', directory='D:/01_Projects/38.Al Hudayriyat')
-        folder_files = glob.glob(folder_name + '/*.xlsx')
+        patterns = ['/*.xlsx', '/*.xls']
+        folder_files = []
+        for pattern in patterns:
+            folder_files.extend(glob.glob(folder_name +  pattern))
+        # folder_files = glob.glob(folder_name + '/*.xlsx')
 
         self.processed = self.get_all_pass_and_fail_files()
         _files_to_copy = [os.path.basename(f) for f in folder_files]
@@ -65,13 +69,14 @@ class ConvertQT(QWidget):
 
         files_to_copy = [os.path.join(folder_name, f) for f in _files_to_copy]
 
-
+        print('so far so good')
         if files_to_copy:
+            GreenMessageBox('iles To COpy')
             self.progressBar.setValue(0)
             self.move_files_to_directory(files_to_copy)
             self.update_list_view()
         elif not folder_files:
-            RedMessageBox('No .xlsx files in the folder')
+            RedMessageBox('No .xlsx or .xls files in the folder')
             # RedMessageBox('No .xlsx files in the folder')
         else:
             # RedMessageBox.warning(self, 'Warning', 'You are trying to insert files that have already been uploaded')
@@ -85,6 +90,7 @@ class ConvertQT(QWidget):
     def update_list_view(self):
         # The idea is to list the files that are yet to be converted. Sitting outside the fail/pass fodlers
         files_to_add = glob.glob(self.main.ffp.raw + "*.xlsx")
+        files_to_add.extend(glob.glob(self.main.ffp.raw + "*.xls"))
         if files_to_add:
             print(f"{len(files_to_add)} being updated")
             new_files = set(files_to_add) - self.uploaded_files

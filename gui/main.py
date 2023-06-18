@@ -11,7 +11,7 @@ from home import HomeQT
 from convert import ConvertQT
 from overview import OverviewQT
 from extras import TabWidgetManager
-from visualization import GraphQT
+# from visualization import GraphQT
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -35,7 +35,7 @@ class MyWindow(QMainWindow):
         self.proj_req = ProjReqWidget(self)
         self.calc = CalcWidget(self)
         self.overview = OverviewQT(self)
-        self.graph = GraphQT(self)
+        # self.graph = GraphQT(self)
 
         # self.something = SomethingQT(self)
         # self.home2 = HomeQT2(self)
@@ -59,7 +59,7 @@ class MyWindow(QMainWindow):
         self.tab_widget.addTab(self.loadcsv, "Load")
         self.tab_widget.addTab(self.overview, "Overview")
         self.tab_widget.addTab(self.calc, "Analysis")
-        self.tab_widget.addTab(self.graph, "Graph")
+        # self.tab_widget.addTab(self.graph, "Graph")
 
         # self.tab_widget.addTab(self.something, "Something")
         # self.tab_widget.addTab(self.home2, "Convert2")
