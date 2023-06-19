@@ -69,7 +69,13 @@ def generate_tests(points,ids):
     # ids = np.arange(easting.size)
     colors = ['#ffe3b3', '#53d2dc', '#4f8fc0']
     color_array = np.random.choice(colors, ids.size)
-    cpts = pg.ScatterPlotItem(size=16, symbol='o', pen=pg.mkPen(None), brush=pg.mkBrush(155, 55, 255, 120))
+    cpts = pg.ScatterPlotItem(size=10, symbol='o', pen=pg.mkPen(None), brush=pg.mkBrush(155, 55, 255, 120),
+                              hoverable=True,
+                              hoverSymbol='s',
+                              hoverSize=12,
+                              hoverPen=pg.mkPen('b', width=2),
+                              hoverBrush=pg.mkBrush('b')
+                              )
 
 
     spots = [{'pos': [*points[i]], 'data': ids[i], 'brush': color_array[i]} for i in
@@ -100,7 +106,13 @@ def generate_scatter(self):
     ids = np.arange(easting.size)
     colors = ['#ffe3b3', '#53d2dc', '#4f8fc0']
     color_array = np.random.choice(colors, ids.size)
-    cpts = pg.ScatterPlotItem(size=16, symbol='o', pen=pg.mkPen(None), brush=pg.mkBrush(155, 55, 255, 120))
+    cpts = pg.ScatterPlotItem(size=12, symbol='x', pen=pg.mkPen(None), brush=pg.mkBrush(155, 55, 255, 120),
+                              hoverable=True,
+                              hoverSymbol='s',
+                              hoverSize=15,
+                              hoverPen=pg.mkPen('r', width=2),
+                              hoverBrush=pg.mkBrush('g')
+                              )
     cpts.sigClicked.connect(self.clicked)
     spots = [{'pos': [*self.points[i]], 'data': ids[i], 'brush': color_array[i]} for i in
              range(ids.size)]

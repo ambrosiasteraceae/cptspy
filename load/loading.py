@@ -110,6 +110,7 @@ def load_dataframe(ffps):
 
         vals = dict(zip(headers, l))
         # print(vals)
+        print('File with problems: ', file)
         cpt = load_mpa_cpt_file(file, delimiter=";")
         # Create a list out of the dictionary values
         val_list = list(vals.values())
@@ -186,9 +187,12 @@ def load_mpa_cpt_file(ffp, scf=1, delimiter=";", a_ratio_override=None):
     ncols = 4
     try:
         data = np.loadtxt(ffp, skiprows=24, delimiter=delimiter, usecols=(0, 1, 2, 3))
-    except:
-        ncols = 3
-        data = np.loadtxt(ffp, skiprows=24, delimiter=delimiter, usecols=(0, 1, 2))
+    except ValueError:
+        try:
+            data = np.loadtxt(ffp, skiprows=25, delimiter=delimiter, usecols=(0, 1, 2, 3))
+        except:
+            ncols = 3
+            data = np.loadtxt(ffp, skiprows=24, delimiter=delimiter, usecols=(0, 1, 2))
     depth = data[:, 0]
     q_c = data[:, 1] * 1e3 * scf  # convert to kPa
     f_s = data[:, 2] * 1e3  # convert to kPa
@@ -224,6 +228,9 @@ def load_mpa_cpt_file(ffp, scf=1, delimiter=";", a_ratio_override=None):
             val = line.split(delimiter)[1]
             if val != '':
                 groundlvl = float(val)
+            else:
+                groundlvl = np.nan #It could be empty
+                print(1)
     if a_ratio_override:
         a_ratio = a_ratio_override
     if pre_drill is not None:
@@ -294,3 +301,4 @@ class CPT(object):
     # def q_t(self, q_t):
     #     self.q_c = q_t - ((1 - self.a_ratio) * self.u_2)
 
+cpt = load_mpa_cpt_file(ffp = 'C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/converted/1U-141.csv')

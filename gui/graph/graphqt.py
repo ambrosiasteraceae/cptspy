@@ -60,32 +60,76 @@ class GraphQT(QDialog):
         self.combo_list_btn.addItems(
             ['groundlvl', 'max_fos_elev', 'max_ic_elev', 'min_fos_elev', 'min_ic_elev', 'cum_fos', 'cum_ic', 'min_fos'])
         self.repaint_tests_btn.clicked.connect(self.repaint_tests)
+        self.compare_btn.clicked.connect(self.compare)
 
 
+    def compare(self):
+        #QFileSystemModel
+        #get all elements of treemodel
+        #
 
-    def display_item(self):
-        pass
+        elements = []
+        for row in range(self.treemodel.rowCount()):
+            for column in range(self.treemodel.columnCount()):
+                item = self.treemodel.item(row, column)
+                if item is not None:
+                    element = item.text()
+                    elements.append(element)
+                       
+        print(elements) 
+        from calc.testnpyformat import CPTloader
+        #from calc.liquefaction import run_rw1997
+        from miscellaneous.plots import create_cpt_9_plot
+        ffp = 'C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/calc/'
+        cpts = []
+        for ele in elements:
+            f = np.load(ffp + ele + '.npz', allow_pickle= True)
+            cpt = CPTloader(f)
+            cpts.append(cpt)
+        create_cpt_9_plot(cpts)
+        #find all items of treemodel
+
 
     def repaint_tests(self):
         pass
         objective = self.combo_list_btn.currentText()
         val = self.df[objective].values
 
+        val = np.where(np.isnan(val), 0, val)
+
         # Create 5 colors for each stop (these are RGB values)
 
         print(val)
         # Create the colormap
-        colormap = pg.colormap.get('cividis')
+        if objective == "cum_ic" or objective == "cum_fos":
+            pos = [0., 0.098, 0.196, 0.294, 0.392, 0.49, 0.5, 0.75, 1]
+            colors = [
+                (0, 100, 0),  # Dark Green
+                (34, 139, 34),  # Forest Green
+                (173, 255, 47),  # Green Yellow
+                (255, 140, 0),  # Dark Orange
+                (255, 165, 0),  # Orange
+                (255, 223, 0),  # Gold
+                (255, 0, 0),  # Red
+                (178, 34, 34),  # Firebrick
+                (139, 0, 0),  # Dark Red
+            ]
+            colormap = pg.ColorMap(pos, colors)
+        else:
+            colormap = pg.colormap.get('viridis')
 
-        normalized = (val - val.min()) / (val.max() - val.min())
-        # if objective == "cum_ic":
-        #     normalized = val / 2*125
-        # elif objective == "cum_fos":
-        #     normalized = val / 2*125
-        # else:
-        #     diff = val.max() - val.min()
-        #     normalized = (val - val.min()) / (val.max() - val.min())
-        # Get the colors from the colormap
+        #normalized = (val - val.min()) / (val.max() - val.min())
+        if objective == "cum_ic":
+            normalized = val / (2*125)
+        elif objective == "cum_fos":
+            normalized = val / (2*150)
+        else:
+            diff = val.max() - val.min()
+            normalized = (val - val.min()) / (val.max() - val.min())
+        for i,x in zip(val[:100], normalized[:100]):
+            print(i,x)
+
+        #Get the colors from the colormap
         colors = colormap.map(normalized, mode='byte')
 
         # Convert colors to QColor objects
@@ -103,11 +147,12 @@ class GraphQT(QDialog):
 
         self.color_bar_item.setGradient(colormap.getGradient())
         diff = val.max() - val.min()
+        valmin = val.min() if val.min() != 0 else 1
         if objective not in ['cum_ic', 'cum_fos']:
             self.color_bar_item.setLabels({f'{min(val)}': 0,
-                                           f'{0.25 * diff / val.min()}': 0.25,
-                                           f'{0.5 * diff / val.min()}': 0.5,
-                                           f'{0.75 * diff / val.min()}': 0.75,
+                                           f'{0.25 * diff / valmin}': 0.25,
+                                           f'{0.5 * diff / valmin}': 0.5,
+                                           f'{0.75 * diff / valmin}': 0.75,
                                            f'{max(val)}': 1})
         else:
             self.color_bar_item.setLabels({f'{min(val)}': 0,
@@ -118,130 +163,14 @@ class GraphQT(QDialog):
         # color_bar_item.showLegend(True)
         self.color_bar_item.setOpacity(0.7)
         self.plot.addItem(self.color_bar_item)
-        self.cpts.setBrush(brushes)
+
+        # self.cpts.setBrush(brushes)
+        print(len(self.points), len(self.ids))
+        spots = [{'pos': [*self.points[i]], 'data': val[i], 'brush':brushes[i]} for i in
+             range(self.ids.size)]
+        self.cpts.clear()
+        self.cpts.addPoints(spots)
         self.plot.update()
-
-
-    def repaint_tests2(self):
-        # Thresholds
-        thresh_yellow = 110
-        thresh_red = 150
-
-        # Define the color map
-        pos = np.array([0.0, 0.5, 1.0])
-        color = np.array([[0, 255, 0, 255], [255, 255, 0, 255], [255, 0, 0, 255]], dtype=np.ubyte)
-        cmap = pg.ColorMap(pos, color)
-
-        # Normalize values
-        objective = self.combo_list_btn.currentText()
-        val = self.df[objective].values
-        normalized = (val - val.min()) / (val.max() - val.min())
-
-        # Apply color map
-        colors = cmap.map(normalized, mode='qcolor')
-        print(colors[:10])
-
-        # Adjust colors based on thresholds
-        if objective == "cum_ic":
-            for i, color in enumerate(colors):
-                if val[i] > thresh_red:
-                    color.setRed(255)  # make it darker red if it exceeds the red threshold
-                elif val[i] > thresh_yellow:
-                    color.setRed(255)
-                    color.setGreen(255)  # make it yellow if it exceeds the yellow threshold
-                else:
-                    color.setGreen(255)  # keep it green otherwise
-
-        # Convert colors to brushes
-        brushes = [QBrush(color) for color in colors]
-
-        # Apply brushes
-        self.cpts.setBrush(brushes)
-        self.plot.update()
-
-
-
-    def limit_colors(self):
-
-        objective = self.combo_list_btn.currentText()
-        val = self.df[objective].values
-        limit = 150
-        def determine_color(x):
-            if x > limit + 100:
-                return QColor(191, 0, 0, 255)
-            elif limit < x < limit + 50:
-                return QColor(242, 0, 0, 255)
-            elif limit > x > limit-25:
-                return QColor(229, 102, 38, 255)
-            else:
-                return QColor(26, 153, 26, 255)
-
-        vectorized = np.vectorize(determine_color)
-
-        colors = vectorized(val)
-
-        brushes = [QBrush(color) for color in colors]
-
-        color_map = pg.ColorMap(
-            [0, 0.25, 0.5, 0.75, 1],
-            [
-                QColor(191, 0, 0, 255),
-                QColor(242, 0, 0, 255),
-                QColor(229, 102, 38, 255),
-                QColor(255, 166, 64, 255),
-                QColor(26, 153, 26, 255)
-            ]
-        )
-
-        # Create the color bar item
-        color_bar_item = pg.GradientLegend(size=(10, 200), offset=(20, 0))
-        color_bar_item.setGradient(color_map.getGradient())
-
-        # color_bar_item.showLegend(True)
-        color_bar_item.setOpacity(0.7)
-        # Add the color bar to the plot
-        self.plot.addItem(color_bar_item)
-
-        # Define label values
-        labels = {
-            0: '0',
-            0.25: str(limit),
-            0.5: str(limit + 25),
-            0.75: str(limit + 50),
-            1: str(limit + 100)
-        }
-
-        # Create and add TextItem labels to plot
-        # for position, text in labels.items():
-        #     label = pg.TextItem(text, anchor=(0, 0.5))
-        #     label.setColor('k')
-        #     self.plot.addItem(label)
-        #     label.setPos(20, position * 200)
-
-
-        # Apply brushes
-        self.cpts.setBrush(brushes)
-        self.plot.update()
-
-
-
-    def kk(self):
-        pass
-
-    # FS_0p50_to_0p75
-    # QColor(191, 0, 0, 255)
-    # # FS_0p75_to_1p0: (0.95, 0, 0)
-    # QColor(242, 0, 0, 255)
-    # # FS_1p0_to_1p25: (0.9, 0.4, 0.15, 255)
-    # QColor(229, 102, 38, 255)
-
-    # # FS_1p25_to_1p5: (1, 0.65, 0.25, 255)
-    # QColor(255, 166, 64, 255)
-
-    # # FS_1p5_to_HIGH: (0.1, 0.6, 0.1, 255)
-    # QColor(26, 153, 26, 255)
-    # # FS_NON_LIQ: (0.4, 0.4, 0.4)
-    # QColor(102, 102, 102)
 
     def fill_check_manager_analysis(self):
         # so the idea is that we wwill have 3 checkboxes

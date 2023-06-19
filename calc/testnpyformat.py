@@ -1,28 +1,27 @@
 import os.path
 
-from liquefaction import run_rw1997
-from load.loading import load_mpa_cpt_file, CPT
+#from liquefaction import run_rw1997
+#from load.loading import load_mpa_cpt_file, CPT
 import numpy as np
 import glob
 
-folder = 'D:/04_R&D/cptspy/output/'
-ffps = glob.glob(folder + '*.csv')
-
-
+# folder = 'D:/04_R&D/cptspy/output/'
+# ffps = glob.glob(folder + '*.csv')
 #
-choice = np.random.choice(ffps)
 #
-cpt = load_mpa_cpt_file(choice)
-rw = run_rw1997(cpt, pga = 0.12, m_w = 6, gwl = 0)
-d = {**cpt.__dict__, **rw.__dict__}
+# #
+# choice = np.random.choice(ffps)
+#
+#cpt = load_mpa_cpt_file(choice)
+#rw = run_rw1997(cpt, pga = 0.12, m_w = 6, gwl = 0)
+#d = {**cpt.__dict__, **rw.__dict__}
 
 
-np.savez('myarr', **d)
+#np.savez('myarr', **d)
 
+#ile =np.load('myarr.npz', allow_pickle= True)
 
-file =np.load('myarr.npz', allow_pickle= True)
-
-print([key for key in file.keys()])
+#print([key for key in file.keys()])
 
 
 class CPT2(object):
@@ -105,7 +104,7 @@ class CPTloader():
         print(temp.keys())
         self.cpt = CPT3(**temp)
 
-rw_1997 = CPTloader(file)
+#rw_1997 = CPTloader(file)
 # print(obj.cpt.file_name)
 
 # from miscellaneous.figures import *

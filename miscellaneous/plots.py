@@ -181,7 +181,7 @@ def create_cpt_9_plot(cpts):
 
     matplotlib.rcParams.update({'font.size': 14})
     plt.show()
-    bf.savefig('cpt_9_chart_plot.pdf', papertype='a4', bbox_inches='tight')
+    bf.savefig('cpt_grid_chart_plot.pdf', papertype='a4', bbox_inches='tight')
 
 
 
