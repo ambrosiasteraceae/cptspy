@@ -109,9 +109,10 @@ def load_dataframe(ffps):
             l.append(dicty[x])
 
         vals = dict(zip(headers, l))
-        # print(vals)
-        print('File with problems: ', file)
-        cpt = load_mpa_cpt_file(file, delimiter=";")
+        try:
+            cpt = load_mpa_cpt_file(file, delimiter=";")
+        except ValueError: #TODO WILL CHANGE LATER
+            continue
         # Create a list out of the dictionary values
         val_list = list(vals.values())
         val_list.extend([cpt.depth.size / 100, name, cpt, file])  # Grow list to the size of headers
@@ -184,6 +185,7 @@ def load_mpa_cpt_file(ffp, scf=1, delimiter=";", a_ratio_override=None):
     # import data from csv file
     folder_path, file_name = ntpath.split(ffp)
     file_name = file_name.split(".")[0]
+    print(file_name)
     ncols = 4
     try:
         data = np.loadtxt(ffp, skiprows=24, delimiter=delimiter, usecols=(0, 1, 2, 3))
@@ -301,4 +303,4 @@ class CPT(object):
     # def q_t(self, q_t):
     #     self.q_c = q_t - ((1 - self.a_ratio) * self.u_2)
 
-cpt = load_mpa_cpt_file(ffp = 'C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/converted/1U-141.csv')
+#cpt = load_mpa_cpt_file(ffp = 'C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/converted/1U-141.csv')

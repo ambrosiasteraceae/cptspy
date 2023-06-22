@@ -7,7 +7,7 @@ from shapely import Polygon
 from rtree import index
 from PyQt6.QtCore import QPointF
 from PyQt6.QtGui import QPolygonF, QFont
-from utility import CustomGrid
+from gui.graph.utility import CustomGrid
 import pyqtgraph as pg
 
 def gen_polygon(x, y, l):
@@ -17,8 +17,10 @@ def gen_polygon(x, y, l):
 
 def generate_coords(graphqt):
     if graphqt.main == 123:
-        # self.df =pd.read_excel('D:/05_Example/Hudayriyat/summary/Results.xlsx')
-        df = pd.read_excel('C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/summary/Results.xlsx')
+        # df =pd.read_excel('D:/05_Example/Hudayriyat2/summary/Results.xlsx')
+        # df = pd.read_excel('C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/summary/Results.xlsx') home
+        df = pd.read_excel('D:/04_R&D/cptspy/gui/Hudayriyat2/summary/Results.xlsx') #Bigger df
+        #df = pd.read_excel('D:/05_Example/biotopia/summary/Results.xlsx')
     else:
         df = pd.read_excel(graphqt.main.ffp.summary + 'Results.xlsx')
         df = graphqt.main.df # TODO Later add this

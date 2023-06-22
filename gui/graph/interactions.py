@@ -1,6 +1,6 @@
 from PyQt6 import QtCore
 import pyqtgraph as pg
-from utility import CustomGrid
+from gui.graph.utility import CustomGrid
 
 
 

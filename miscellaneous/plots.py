@@ -50,7 +50,7 @@ def label_x_ticks(sps, major_tick, minor_tick):
 
 @timed
 def create_cpt_9_plot(cpts):
-    bf, ax = plt.subplots(3, 3, sharey=True, figsize=(8, 12))
+    bf, ax = plt.subplots(3, 3, sharey=True, figsize=(20, 40))
 
     qcs = []
     phis = []
@@ -69,6 +69,8 @@ def create_cpt_9_plot(cpts):
     sus_26 = []
 
     max_size = 0
+    cpt_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+                  '#bcbd22', '#17becf', '#ff9896', '#aec7e8', '#ffbb78', '#98df8a', '#c5b0d5']
 
     for i, cpt in enumerate(cpts):
         gwl = cpt.elevation[0] - GWL
@@ -94,17 +96,17 @@ def create_cpt_9_plot(cpts):
         depths_26.append(rw.depth[rw.i_c > 2.6])
         sus_26.append(rw.s_u[rw.i_c > 2.6])
 
-        ax[0, 0].plot(rw.cpt.q_c / 10 ** 3, -rw.depth, color='gray', alpha=.3)
-        ax[0, 1].plot(rw.cpt.f_s, -rw.depth, color='gray', alpha=.3)
-        ax[0, 2].plot(rw.i_c, -rw.depth, color='gray', alpha=.3)
+        ax[0, 0].plot(rw.cpt.q_c / 10 ** 3, -rw.depth, color=cpt_colors[i%len(cpt_colors)], alpha=.3)
+        ax[0, 1].plot(rw.cpt.f_s, -rw.depth, color=cpt_colors[i%len(cpt_colors)], alpha=.3)
+        ax[0, 2].plot(rw.i_c, -rw.depth, color=cpt_colors[i%len(cpt_colors)], alpha=.3)
 
-        ax[1, 0].plot(rw.elastic_modulus / 10 ** 3, -rw.depth, color='gray', alpha=.3)
-        ax[1, 1].plot(rw.phi, -rw.depth, color='gray', alpha=.3)
-        ax[1, 2].plot(rw.unit_wt, -rw.depth, color='gray', alpha=.3)
+        ax[1, 0].plot(rw.elastic_modulus / 10 ** 3, -rw.depth, color=cpt_colors[i%len(cpt_colors)], alpha=.3)
+        ax[1, 1].plot(rw.phi, -rw.depth, color=cpt_colors[i%len(cpt_colors)], alpha=.3)
+        ax[1, 2].plot(rw.unit_wt, -rw.depth, color=cpt_colors[i%len(cpt_colors)], alpha=.3)
 
-        ax[2, 0].plot(rw.factor_of_safety, -rw.depth, color='gray', alpha=.3)
-        ax[2, 1].scatter(rw.s_u[rw.i_c > 2.6], - rw.depth[rw.i_c > 2.6], color='gray', alpha=.3)
-        ax[2, 2].plot(rw.permeability, -rw.depth, color='gray', alpha=.3)
+        ax[2, 0].plot(rw.factor_of_safety, -rw.depth, color=cpt_colors[i%len(cpt_colors)], alpha=.3)
+        ax[2, 1].scatter(rw.s_u[rw.i_c > 2.6], - rw.depth[rw.i_c > 2.6], color=cpt_colors[i%len(cpt_colors)], alpha=.3)
+        ax[2, 2].plot(rw.permeability, -rw.depth, color=cpt_colors[i%len(cpt_colors)], alpha=.3)
 
         ax[0, 0].grid(True, alpha=0.5)
         ax[0, 0].set_xlim(0, 30)
@@ -152,7 +154,7 @@ def create_cpt_9_plot(cpts):
 
         ax[2, 1].grid(True, alpha=0.5)
         ax[2, 1].set_xlabel('Undrained SHear Strength su (kPa)')
-        ax[2, 1].set_xlim(0, 100)
+        ax[2, 1].set_xlim(0, 515)
         label_x_ticks(ax[2, 1], 25, 5)
         ax[2, 1].legend([Line2D([0], [0], marker='o', color='w', label='Scatter',
                                 markerfacecolor='gray', alpha=0.5, markersize=15)], ['su where i_c > 2.6'])
@@ -168,15 +170,15 @@ def create_cpt_9_plot(cpts):
 
     depth = calc_max_depth(max_size)
 
-    generate_plot(ax[0, 0], qcs, max_size)
-    generate_plot(ax[0, 1], fss, max_size)
-    generate_plot(ax[0, 2], ics, max_size)
-    generate_plot(ax[1, 0], ems, max_size)
-    generate_plot(ax[1, 1], phis, max_size)
-    generate_plot(ax[1, 2], uws, max_size)
+    #generate_plot(ax[0, 0], qcs, max_size)
+    #generate_plot(ax[0, 1], fss, max_size)
+    #generate_plot(ax[0, 2], ics, max_size)
+    #generate_plot(ax[1, 0], ems, max_size)
+    #generate_plot(ax[1, 1], phis, max_size)
+    #generate_plot(ax[1, 2], uws, max_size)
 
-    generate_plot(ax[2, 0], foss, max_size)
-    generate_plot(ax[2,1],sus_26,max_size)
+    #generate_plot(ax[2, 0], foss, max_size)
+    #generate_plot(ax[2,1],sus_26,max_size)
     # generate_plot(ax[2, 2], kks, max_size)
 
     matplotlib.rcParams.update({'font.size': 14})

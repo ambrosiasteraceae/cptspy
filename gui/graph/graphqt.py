@@ -5,14 +5,14 @@ import pandas as pd
 import os
 from PyQt6.QtWidgets import *
 from PyQt6.uic import loadUi
-from utility import CustomGrid
+from gui.graph.utility import CustomGrid
 from PyQt6.QtGui import QStandardItemModel, QStandardItem, QBrush,QColor
 
 from gui.extras import TreeGridItem
 from pyqtgraph import PlotWidget
 
-from datagen import generate_coords, generate_custom_grid, generate_tests
-from interactions import GraphButtonHandler
+from gui.graph.datagen import generate_coords, generate_custom_grid, generate_tests
+from gui.graph.interactions import GraphButtonHandler
 from miscellaneous.plots import create_cpt_9_plot
 
 
@@ -80,7 +80,8 @@ class GraphQT(QDialog):
         from calc.testnpyformat import CPTloader
         #from calc.liquefaction import run_rw1997
         from miscellaneous.plots import create_cpt_9_plot
-        ffp = 'C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/calc/'
+        #ffp = 'C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/calc/'
+        ffp = 'D:/05_Example/biotopia/calc/'
         cpts = []
         for ele in elements:
             f = np.load(ffp + ele + '.npz', allow_pickle= True)
@@ -116,7 +117,7 @@ class GraphQT(QDialog):
             ]
             colormap = pg.ColorMap(pos, colors)
         else:
-            colormap = pg.colormap.get('viridis')
+            colormap = pg.colormap.get('inferno')
 
         #normalized = (val - val.min()) / (val.max() - val.min())
         if objective == "cum_ic":
@@ -235,8 +236,10 @@ class GraphQT(QDialog):
 app = QApplication(sys.argv)
 main = GraphQT(123)
 
+path = 'D:/04_R&D/cptspy/gui/uis/white_theme.qss' #work
+#path = "C:/Users/dragos/Documents/GitHub/cptspy/gui/uis/white_theme.qss" #home
 # with open("uis/white_theme.qss", "r") as f:
-with open ("C:/Users/dragos/Documents/GitHub/cptspy/gui/uis/white_theme.qss", "r") as f:
+with open (path, "r") as f:
     _style = f.read()
     app.setStyleSheet(_style)
 

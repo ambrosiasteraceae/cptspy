@@ -218,7 +218,7 @@ def convert_nmdc_to_csv_00(ffp, out_fp=None, verbose=0):
     elif ".xls" in cpt_num:
         cpt_num = cpt_num.split(".xls")[0]
 
-    print(cpt_num)
+    #print(cpt_num)
 
     xf = pd.ExcelFile(ffp)
     if 'Header' in xf.sheet_names and 'Data' in xf.sheet_names:

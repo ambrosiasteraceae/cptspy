@@ -32,6 +32,7 @@ class ConvertQT(QWidget):
 
         self.previous_btn.clicked.connect(self.main.tab_widget.previous)
         self.next_btn.clicked.connect(self.main.tab_widget.next)
+        self.refresh_btn.clicked.connect(self.treeView.refresh)
 
 
     def get_all_pass_and_fail_files(self):
