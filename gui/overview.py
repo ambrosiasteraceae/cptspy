@@ -108,7 +108,9 @@ class OverviewQT(QWidget):
         if self.main.df.empty and self.main.hdf.empty:
             return
         self.main.df.dropna(inplace=True, how='all')
+        self.main.df.dropna(subset=['Northing', 'Easting'], inplace=True)
         self.main.hdf.dropna(inplace=True, how='all')
+        self.main.hdf.dropna(subset=['Northing', 'Easting'], inplace=True)
         self.main.hdf.drop_duplicates(inplace=True, subset=['Name'])
         self.main.df.drop_duplicates(inplace=True, subset=['Name'])
         self.main.hdf.sort_values(by=['Name'], inplace=True)
@@ -116,7 +118,7 @@ class OverviewQT(QWidget):
         self.table.updateView(self.main.df)
 
     def save_dataframes(self):
-
+        print('savebtn pressedf')
         self.main.df.to_excel(self.main.ffp.summary + 'Results.xlsx', index=False)
         self.main.hdf.to_excel(self.main.ffp.summary + 'Header.xlsx', index=False)
         GreenMessageBox("Succesfully saved both dataframes")

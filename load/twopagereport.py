@@ -1,28 +1,23 @@
-import matplotlib.pyplot as plt
 import subprocess
 import os
-from pylatex import Document, Section, Subsection, Command,\
-    Tabular, Figure, NewPage, Head, MiniPage, StandAloneGraphic,\
-    LargeText, PageStyle, MediumText, LineBreak, SmallText
-from pylatex.utils import NoEscape, bold
 
-from loading import load_cpt_header, load_mpa_cpt_file #CREATE cpt_file module
+from pylatex import *
+from pylatex.utils import NoEscape, bold
+from load.loading import load_cpt_header, load_mpa_cpt_file
 from calc.liquefaction import run_rw1997
 from calc.summary import CPTSummary
-from miscellaneous.figures import create_fos_and_index_plot, create_compactibilty_plot, \
-    create_cpt_plots, create_massarasch_and_legend_plot
+from miscellaneous.figures import *
 
 #@TODO load_mpa_cpt_file (return both CPT and Header Classes)
 #@TODO Add just plots, no need to save images
+#@todo Add water table symbol to graph
 
-paths = ['C:/Users/dragos/Documents/GitHub/cptspy/output/CPT_L21d.csv']
-# import glob
-# paths = glob.glob('D:/04_R&D/cptspy/read/roshna/post data/processed/' + '*.csv')
-#
-gpath = 'C:/Users/dragos/Documents/GitHub/cptspy/load/pdfs/'
-if not os.path.exists(gpath):
-    os.makedirs(gpath)
-gpath = ''
+# paths = ['D:/04_R&D/cptspy/output/CPT_H16d.csv']
+
+# gpath = 'D:/04_R&D/cptspy/load/pdfs/'
+# if not os.path.exists(gpath):
+#     os.makedirs(gpath)
+# gpath = ''
 
 def generate_table(_dict):
     table = Tabular('ll')
@@ -35,42 +30,61 @@ def generate_table(_dict):
     table.add_hline()
     return table
 
-pga = 0.122
-m_w = 6
-GWL = 0.6
-gwl = 0.6
-scf = 1.30
-my_list = []
-for path in paths:
-    cpt = load_mpa_cpt_file(path, scf=scf)
+
+def generate_doc(path_choice, projreq , ffp):
+#for path in paths:
+    #get path
+    #glob.glob(self.main.ffp.converted, '*.csv')
+    import glob
+
+    #path = np.random.choice(paths) #Get a random file from the folder
+
+    pga = projreq['pga']
+    m_w = projreq['m_w']
+    GWL = projreq['gwl']
+    scf = projreq['scf']
+
+    cpt_name = os.path.basename(path_choice).split('.')[0]
+    proj_name = projreq['proj_name']
+    proj_num = projreq['proj_num']
+    proj_loc = projreq['proj_loc']
+
+    cpt = load_mpa_cpt_file(path_choice, scf=scf)
     gwl = cpt.elevation[0] - GWL
-    my_list.append((path, gwl, cpt.elevation[0]))
+
     rw_1997 = run_rw1997(cpt, pga=pga, m_w=m_w, gwl=gwl)
-    cpth = load_cpt_header(path)
+    cpth = load_cpt_header(path_choice)
     cpts = CPTSummary(rw_1997)
 
+    saved_path = os.path.join(ffp.reports,cpth.name)
+    print('Saved path is ', saved_path)
 
-    #
     fig, sps = plt.subplots(nrows=1, ncols=3, figsize=(16, 10))
     create_fos_and_index_plot(sps, rw_1997)
-    fig.savefig(cpth.name + '.png', bbox_inches='tight')
+    fig.savefig(saved_path + '.png', bbox_inches='tight')
 
     fig2, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4))
     create_compactibilty_plot(ax, rw_1997)
-    fig2.savefig(cpth.name + '_compactibility.png', bbox_inches='tight')
+    fig2.savefig(saved_path + '_compactibility.png', bbox_inches='tight')
 
     fig3, axs = plt.subplots(1, 4, figsize=(16, 12), sharey=True)
     create_cpt_plots(axs, cpt)
-    fig3.savefig(cpth.name + '_basicplot.png')
+    fig3.savefig(saved_path+ '_basicplot.png')
 
     fig4, axes = plt.subplots(1, 3, figsize=(16, 4))
     create_massarasch_and_legend_plot(axes, rw_1997)
-    fig4.savefig('legends.png',bbox_inches='tight')
+    fig4.savefig(saved_path+'legends.png',bbox_inches='tight')
 
-    logo_image_path = 'nmdc.jpg'
-    cpt_file_path = '/load/H15c.png'
+    #logo_image_path = 'nmdc.jpg'
 
     path = os.path.dirname(__file__) #path of module
+    print('*'*50)
+    print(path)
+    print(path_choice)
+    print('*'*50)
+
+    logo_image_path = os.path.join(path + '\\nmdc.jpg').replace('\\', '/')
+
     # Create a new document
     doc = Document()
 
@@ -109,9 +123,9 @@ for path in paths:
 
 
     additional_info = {
-        'Project:': 'Al Hudayriyat Island PDA Enabling Works',
-        'Project Number:': 167,
-        'Location:': 'Abu Dhabi - Al Hudayriyat Island',
+        'Project:': proj_name,
+        'Project Number:': proj_num,
+        'Location:': proj_loc,
     }
 
     #Header and Project Table
@@ -130,7 +144,7 @@ for path in paths:
     #Add basic plots
     with doc.create(Subsection('CPT Plots')):
         with doc.create(Figure(position='h!')) as figure:
-            figure.add_image(cpth.name + '_basicplot.png', width='18.5cm')
+            figure.add_image(saved_path + '_basicplot.png', width='18.5cm')
 
 
     #Second Page
@@ -139,7 +153,7 @@ for path in paths:
     doc.append(section2)
 
 
-    subsection_output1 = Subsection(f'CPT-{cpth.name} Summary')
+    subsection_output1 = Subsection(f'CPT-{cpt_name} Summary')
     doc.append(subsection_output1)
     table2 = generate_table(cpts.latex_dict)
 
@@ -150,10 +164,11 @@ for path in paths:
     mw_path = os.path.join(path + '\\mw_log.PNG').replace('\\', '/')
     pga_path = os.path.join(path + '\\acc.jpg').replace('\\', '/')
 
+    gwl_path = os.path.join(path + '\\gwl.jpg').replace('\\', '/')
+    scf_path = os.path.join(path + '\\shell_logo.jpg').replace('\\', '/')
 
-
-    gwl_path = 'gwl.jpg'
-    scf_path = 'shell_logo.jpg'
+    #gwl_path = 'gwl.jpg'
+    #scf_path = 'shell_logo.jpg'
 
     table3 = Tabular('lll')
     table3.add_hline()
@@ -187,19 +202,22 @@ for path in paths:
     # Add a figure below the tables
     with doc.create(Subsection('Figures')):
         with doc.create(Figure(position='h!')) as figure:
-            figure.add_image(cpth.name + '.png', width='18.5cm')
+            figure.add_image(saved_path + '.png', width='18.5cm')
 
         with doc.create(Figure(position ='h!')) as figure:
-            figure.add_image('legends.png', width='18.5cm')
+            figure.add_image(saved_path+'legends.png', width='18.5cm')
 
+    return doc
+
+def create_pdf_from_doc(doc, path):
 
     # Generate PDF
     try:
-        doc.generate_pdf(gpath+cpth.name, clean_tex = True, clean = True)
+        doc.generate_pdf(path, clean_tex = True, clean = True)
     except subprocess.CalledProcessError as e:
        pass
 
-print(my_list)
+
 
 
 # os.system(f'{cpth.name}.pdf')

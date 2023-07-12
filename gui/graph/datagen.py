@@ -17,9 +17,9 @@ def gen_polygon(x, y, l):
 
 def generate_coords(graphqt):
     if graphqt.main == 123:
-        # df =pd.read_excel('D:/05_Example/Hudayriyat2/summary/Results.xlsx')
+        df =pd.read_excel('D:/05_Example/All/summary/Results.xlsx')
         # df = pd.read_excel('C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/summary/Results.xlsx') home
-        df = pd.read_excel('D:/04_R&D/cptspy/gui/Hudayriyat2/summary/Results.xlsx') #Bigger df
+        #df = pd.read_excel('D:/04_R&D/cptspy/gui/Hudayriyat2/summary/Results.xlsx') #Bigger df
         #df = pd.read_excel('D:/05_Example/biotopia/summary/Results.xlsx')
     else:
         df = pd.read_excel(graphqt.main.ffp.summary + 'Results.xlsx')
@@ -48,7 +48,7 @@ def generate_custom_grid(graphqt, points, ids, df):
 
 def map_grids_to_tests(points, ids, df):
     grid_names = [s for s in ids]
-    multipolygon = [gen_polygon(x, y, 15) for x, y in points]
+    multipolygon = [gen_polygon(x, y, 12.5) for x, y in points]
     list_of_df_records = df.to_dict('records')
     grids = [Grid(name, poly.bounds, poly, set(), []) for name, poly in zip(grid_names, multipolygon)]
     tests = [Test(**d) for d in list_of_df_records]
@@ -71,7 +71,7 @@ def generate_tests(points,ids):
     # ids = np.arange(easting.size)
     colors = ['#ffe3b3', '#53d2dc', '#4f8fc0']
     color_array = np.random.choice(colors, ids.size)
-    cpts = pg.ScatterPlotItem(size=10, symbol='o', pen=pg.mkPen(None), brush=pg.mkBrush(155, 55, 255, 120),
+    cpts = pg.ScatterPlotItem(size=5, symbol='h', pen=pg.mkPen(None), brush=pg.mkBrush(155, 55, 255, 120),
                               hoverable=True,
                               hoverSymbol='s',
                               hoverSize=12,

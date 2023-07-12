@@ -9,6 +9,7 @@ from extras import PDWidget, GreenMessageBox, RedMessageBox
 from calc.liquefaction import run_rw1997
 from calc.summary import CPTSummary
 from overview import on_radio_button_clicked
+from load.twopagereport import generate_doc, create_pdf_from_doc
 
 
 class CalcWidget(QDialog):
@@ -24,7 +25,21 @@ class CalcWidget(QDialog):
 
         self.previous_btn.clicked.connect(self.main.tab_widget.previous)
         self.next_btn.clicked.connect(self.main.tab_widget.next)
+        self.random_sample_btn.clicked.connect(self.random_sample)
 
+    def random_sample(self):
+        """Randomly sample report"""
+        import glob
+
+        paths = glob.glob(self.main.ffp.converted + '*.csv')
+        choice = np.random.choice(paths)
+
+        doc = generate_doc(choice, self.main.proj_requirements, self.main.ffp)
+
+        fname = os.path.basename(choice).split('.')[0]
+        fpath = os.path.join(self.main.ffp.reports, fname)
+
+        create_pdf_from_doc(doc, fpath)
 
     def transferdf(self):
         # print(self.main.df.head())

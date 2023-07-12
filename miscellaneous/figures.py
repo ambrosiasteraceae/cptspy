@@ -18,9 +18,9 @@ FS_1p5_to_HIGH = (0.1, 0.6, 0.1)
 FS_NON_LIQ = (0.4, 0.4, 0.4)
 FONTSIZE = 14
 COLORS_FOS = [FS_LOW_to_0p75, FS_0p75_to_1p0, FS_1p0_to_1p25, FS_1p25_to_1p5, FS_1p5_to_HIGH, FS_NON_LIQ]
-layers = ['Gravelly Sand to Dense Sand', 'Clean Sand to Silty Sand', 'Silty Sand to Sandy Silt',
+LAYERS = ['Gravelly Sand to Dense Sand', 'Clean Sand to Silty Sand', 'Silty Sand to Sandy Silt',
           'Clayey Silt to Silty Clay', 'Silty Clay to Clay', 'Organic Soils - Clay']
-foses = ['FoS < 0.75', '0.75 < FoS < 1.0', '1.0 < FoS < 1.25', '1.25 < FoS < 1.5', 'FoS > 1.5', 'Non-Liquefiable']
+FOS = ['FoS < 0.75', '0.75 < FoS < 1.0', '1.0 < FoS < 1.25', '1.25 < FoS < 1.5', 'FoS > 1.5', 'Non-Liquefiable']
 LEGENDFONTSIZE = 10
 TXTCOLOR = 'gray'
 TXTWEIGHT = 'bold'
@@ -112,6 +112,8 @@ def generate_massarsch_points(obj):
     Then we create an np.array of Points with (qc,fs) coordinates
     Then we check if the points are contained in the polygons
     If they are, we return the color of the polygon
+    We fill the array with teh color of not compactable zones.
+    Then only the zones outside the regions will be colored differently
 
     """
     compactable = [(0, 3), (1, 9.33), (1.0, 100), (0, 100), (0, 3)]
@@ -126,7 +128,7 @@ def generate_massarsch_points(obj):
     colors_pp = np.empty(len(obj.depth), dtype='U30')
     # colors_pp.fill(COLORS_IC[4])
     #The compactibility array is not entirely filled with correct. Ther are points outside the given areas.
-    colors_pp.fill(COLORS_IC[5])
+    colors_pp.fill(MASSARRASCH[2]) #fill with the color of the least compactible zone.
 
     friction_ratio = obj.cpt.f_s[1:]/obj.cpt.q_t[1:] * 100 #in percentages
     friction_ratio = np.insert(friction_ratio, 0,0)
@@ -264,7 +266,7 @@ def create_fos_and_index_plot(axs, obj):
     axs[0].legend(handles=[p1, p2, p3], loc='upper right', framealpha = 0.6)
 
     axs[0].grid()
-    axs[0].plot(obj.q_t / 10**3, obj.cpt.elevation, color='black', linewidth=1.5)
+    axs[0].plot(obj.cpt.q_c / 10**3, obj.cpt.elevation, color='black', linewidth=1.5)
 
 
     
@@ -386,7 +388,7 @@ def generate_ic_legend(ax):
     plt.barh([1,2,3,4,5,6], [2,2,2,2,2,2], color=COLORS_IC[::-1], height = 1, edgecolor='black')
     ax.set_xlim(0, 6)
     ax.set_ylim(0.5, 6.5)
-    for i, layer in enumerate(layers[::-1]):
+    for i, layer in enumerate(LAYERS[::-1]):
         ax.text(2.05, i+0.8, layer, fontsize=LEGENDFONTSIZE, color=TXTCOLOR,style = 'italic')
     ax.set_title('Soil Type Index Legend', fontsize=LEGENDFONTSIZE, color='black', fontweight=TXTWEIGHT)
 
@@ -413,7 +415,7 @@ def generate_fos_legend(ax):
         labelbottom=False,
         labelleft=False)  # ticks along the top edge are off
 
-    for i, fos in enumerate(foses[::-1]):
+    for i, fos in enumerate(FOS[::-1]):
         ax.text(2.05, i+0.8, fos, fontsize=LEGENDFONTSIZE, color=TXTCOLOR, style = 'italic')
     ax.set_title('Liquefaction Safety Factor', fontsize=LEGENDFONTSIZE, color='black', fontweight=TXTWEIGHT)
 

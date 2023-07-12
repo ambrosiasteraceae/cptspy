@@ -224,7 +224,8 @@ class GraphQT(QDialog):
 
 
     def map_grids_to_tests(self):
-        grid_names = [s.split('_')[1][:-1] for s in self.ids]
+        #grid_names = [s.split('_')[1][:-1] for s in self.ids]
+        grid_names = [s for s in self.ids]
         multipolygon = [gen_polygon(x, y, 15) for x, y in self.points]
         list_of_df_records = self.df.to_dict('records')
         grids = [Grid(name, poly.bounds, poly, set(), []) for name, poly in zip(grid_names, multipolygon)]
@@ -265,8 +266,8 @@ class GraphQT(QDialog):
 
     def generate_coords(self):
         if self.main == 123:
-            # self.df =pd.read_excel('D:/05_Example/Hudayriyat/summary/Results.xlsx')
-            self.df =pd.read_excel('C:/Users/dragos/Documents/GitHub/cptspy/gui/hudayriyat/summary/Results.xlsx')
+            self.df =pd.read_excel('D:/05_Example/prakash/summary/Results.xlsx')
+            #self.df =pd.read_excel('C:/Users/dragos/Documents/GitHub/cptspy/gui/hudayriyat/summary/Results.xlsx')
         else:
             self.df = pd.read_excel(self.main.ffp.summary + 'Results.xlsx')
         self.df['Northing'] = self.df['Northing'].astype(float)
@@ -284,14 +285,14 @@ class GraphQT(QDialog):
 # from graph.graphqt import GraphQT
 
 
-
-app = QApplication(sys.argv)
-main = GraphQT(123)
-
-with open("uis/white_theme.qss", "r") as f:
-    _style = f.read()
-    app.setStyleSheet(_style)
-
-main.show()
-sys.exit(app.exec())
-
+#
+# app = QApplication(sys.argv)
+# main = GraphQT(123)
+#
+# with open("uis/white_theme.qss", "r") as f:
+#     _style = f.read()
+#     app.setStyleSheet(_style)
+#
+# main.show()
+# sys.exit(app.exec())
+#

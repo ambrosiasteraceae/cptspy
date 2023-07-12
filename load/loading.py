@@ -1,5 +1,5 @@
 import datetime
-import os.path
+import os
 
 import pandas as pd
 import numpy as np
@@ -14,7 +14,7 @@ class CPTHeader:
         self.pre_drill = pre_drill
         self.easting = easting
         self.northing = northing
-        self.name = name
+        self.name = os.path.basename(name) #SMALL ADDITION
 
     @property
     def latex_dict(self):

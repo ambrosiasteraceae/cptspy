@@ -81,7 +81,7 @@ class GraphQT(QDialog):
         #from calc.liquefaction import run_rw1997
         from miscellaneous.plots import create_cpt_9_plot
         #ffp = 'C:/Users/dragos/Documents/GitHub/cptspy/gui/Hudayriyat2/calc/'
-        ffp = 'D:/05_Example/biotopia/calc/'
+        ffp = 'D:/05_Example/All/calc/'
         cpts = []
         for ele in elements:
             f = np.load(ffp + ele + '.npz', allow_pickle= True)

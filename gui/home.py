@@ -126,23 +126,26 @@ class HomeQT(QWidget):
         self.treeView.setVisible(True)
 
     def load_case_manager(self):
-        # 1 summary is empty
-        # 1.1 Check in the raw files.
-        #   1.1.1 -> check if pending raw files
-        #       1.1.1.1 -> No pending raw files
-        #       1.1.1.2 -> Pending raw files
+        """
+        1 summary is empty
+        1.1 Check in the raw files.
+          1.1.1 -> check if pending raw files
+              1.1.1.1 -> No pending raw files
+              1.1.1.2 -> Pending raw files
 
-        # 2 summary is full
-        #   2.1 differences in sizes? (via ID) check
-        #       yes
-        #       2.1.1 -> Message Box (You have remaining files to convert. Would you like to process them now?)
-        #       2.1.2 -> Proess them
-        #        No
-        #          2.1.3 -> Message Box (Success)
-        # 3 summary only contains header
-        #   3.1 -> You have remaining files to calculate. Would you like to add more or convert them?
+        2 summary is full
+          2.1 differences in sizes? (via ID) check
+              yes
+              2.1.1 -> Message Box (You have remaining files to convert. Would you like to process them now?)
+              2.1.2 -> Proess them
+               No
+                 2.1.3 -> Message Box (Success)
+        3 summary only contains header
+          3.1 -> You have remaining files to calculate. Would you like to add more or convert them?
 
-        #   4 summary only contains results
+        4 summary only contains results
+            4.1 -> Highly unlikely. It isnt covered yet.
+        """
         try:
 
             case = self.check_summary()
