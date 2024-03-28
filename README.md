@@ -2,6 +2,7 @@
 I – CPTsPy
 
 a.CPT
+![0](https://github.com/ambrosiasteraceae/cptspy/assets/66112305/c5333c58-d868-4cdf-9925-c7482f5fd03f)
 
 A cone penetration test (CPT) is a method used in geotechnical engineering to assess the properties of soil. A cone is pushed against the soil and equipped with sensors that measure two resistances at small increments in depth (0.01m, 0.002m):
 •	Tip/Cone resistance:  
